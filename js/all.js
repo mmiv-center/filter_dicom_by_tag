@@ -1,8 +1,8 @@
 function populateStudyInstanceUIDs() {
 	// pull the list of projects for the current user
 	jQuery.getJSON('php/getProjects.php', function(data) {
-	    jQuery('#project').children().remove();
-	    jQuery('#project').append("<option></option>"); // add default
+		jQuery('#project').children().remove();
+		jQuery('#project').append("<option></option>"); // add default
 		for (var i = 0; i < data.length; i++) {
 			jQuery("#project").append("<option value=\"" + data[i]['record_id'] + "\">" + data[i]['record_id'] + "</option>");
 		}
@@ -27,11 +27,21 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	var dd = parseDICOMStruct(jQuery(text_node).text());
 
 
-	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['0090'] !== 'undefined')
+	var ReferringPhysician = "";
+	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['0090'] !== 'undefined') {
+		ReferringPhysician = dd['0008']['0090'];
 		jQuery('#' + StudyInstanceUID).find('div.bottom-back-event span').text(dd['0008']['0090']);
+	}
 
-	if (typeof dd['0010'] !== 'undefined' && typeof dd['0010']['0010'] !== 'undefined')
+	var PatientName = "";
+	if (typeof dd['0010'] !== 'undefined' && typeof dd['0010']['0010'] !== 'undefined') {
 		jQuery('#' + StudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0010']);
+		PatientName = dd['0010']['0010'];
+	}
+	if (PatientName == "") {
+		// if we don't have a patient name use patient ID
+		jQuery('#' + StudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0020']);
+	}
 
 	var SeriesNumber = "";
 	if (typeof dd['0020'] !== 'undefined' && typeof dd['0020']['0011'] !== 'undefined')
@@ -41,7 +51,7 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['0060'] !== 'undefined')
 		modality = dd['0008']['0060'];
 
-	var numImages = "";
+	var numImages = "--";
 	if (typeof dd['0020'] !== 'undefined' && typeof dd['0020']['1209'] !== 'undefined')
 		numImages = dd['0020']['1209'];
 
