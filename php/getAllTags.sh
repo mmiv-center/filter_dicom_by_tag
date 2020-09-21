@@ -77,6 +77,7 @@ do
         fi
         if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
              studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
+             echo "folder ${output}/${StudyInstanceUID} for this file"
              if [ ! -d "${output}/${StudyInstanceUID}" ]; then
                  echo "create folder: ${output}/${StudyInstanceUID}"
                  mkdir -p "${output}/${StudyInstanceUID}"
