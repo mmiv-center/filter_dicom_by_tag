@@ -63,7 +63,7 @@ do
     # for each folder create a raw directory structure with folders by series instance uid and a single DICOM file each
     OLDIFS=$IFS
     IFS=$'\n'
-    filesPerFolder=($(find "/data/${project}/${folder}" -type f))
+    filesPerFolder=($(find "${folder}" -type f))
     IFS=$OLDIFS
     tLenPerFolder=${#filesPerFolder[@]}
     for (( i=0; i < ${tLenPerFolder}; i++ )); do
@@ -76,9 +76,9 @@ do
             if [ ${studiesWithSeries[$StudyInstanceUID][$SeriesInstanceUID]+abc } ]; then
                 echo "series already known"
             else
-                studiesWithSeries[$StudyInstanceUID][$SeriesInstanceUID]="/data/${project}/${folder}/${file}"
+                studiesWithSeries[$StudyInstanceUID][$SeriesInstanceUID]="${folder}/${file}"
                 # one file is sufficient
-                /usr/bin/dcmdump "/data/${project}/${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
+                /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
                     | grep -v ") DT " | grep -v ") DA " \
                     | grep -v ") OD " | grep -v ") UI " | grep -v ") US " \
                     | grep -v ") UL " | grep -v ") SL " | grep -v ") TM " | grep -v ") UN " \
@@ -91,7 +91,7 @@ do
 
                 # we should also create an image cache for this series, it will be best if we create a mosaic
                 # to limit the number of files that need to be downloaded by the client
-                ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} &
+                ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${folder}/${file}" &
 
             fi            
         else
