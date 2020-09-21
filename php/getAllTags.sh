@@ -67,8 +67,8 @@ do
     IFS=$OLDIFS
     tLenPerFolder=${#filesPerFolder[@]}
     echo "start processing $tLenPerFolder files"
-    for (( i=0; i < ${tLenPerFolder}; i++ )); do
-        file="${filesPerFolder[$i]}"
+    for (( j=0; j < ${tLenPerFolder}; j++ )); do
+        file="${filesPerFolder[$j]}"
         # get StudyInstanceUID and SeriesInstanceUID
         StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
