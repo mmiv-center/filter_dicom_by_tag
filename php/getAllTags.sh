@@ -83,7 +83,7 @@ do
                  mkdir -p "${output}/${StudyInstanceUID}"
              fi
              # one file is sufficient
-             /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
+             /usr/bin/dcmdump "${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
                  | grep -v ") DT " | grep -v ") DA " \
                  | grep -v ") OD " | grep -v ") UI " | grep -v ") US " \
                  | grep -v ") UL " | grep -v ") SL " | grep -v ") TM " | grep -v ") UN " \
@@ -96,7 +96,7 @@ do
 
              # we should also create an image cache for this series, it will be best if we create a mosaic
              # to limit the number of files that need to be downloaded by the client
-             ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${folder}/${file}" &
+             ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${file}" &
         fi
     done
 done
