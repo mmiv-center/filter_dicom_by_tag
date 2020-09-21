@@ -32,7 +32,7 @@ if ($allowCache == "1") {
 }
 
 // start the real work in the background
-shell_exec(dirname(__FILE__).'/getAllTags.sh "'.$uid.'" "'.$project.'" >> getAllTags.log 2>&1 &');
+shell_exec(dirname(__FILE__).'/getAllTags.sh "'.$uid.'" "'.$project.'" >> /tmp/getAllTags.log 2>&1 &');
 
 file_put_contents($path . "/". $uid . "/info.json", json_encode($data));
 echo("{ \"ID\": \"". $uid . "\" }");
