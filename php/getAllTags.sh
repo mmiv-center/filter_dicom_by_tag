@@ -74,7 +74,7 @@ do
         if [[ -z "${StudyInstanceUID}${SeriesInstanceUID}" ]]; then
             continue
         fi
-        if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]; then
+        if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
                 studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
                 mkdir -p "${output}/${StudyInstanceUID}"
                 # one file is sufficient
