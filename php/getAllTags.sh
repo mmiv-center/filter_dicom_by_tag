@@ -49,7 +49,7 @@ tmp="$(mktemp)"
 mv "$tmp" $infofilename
 rm "$tmp"
 
-declare -a studiesWithSeries
+declare -A studiesWithSeries
 
 for (( i=0; i<${tLen}; i++ ));
 do
