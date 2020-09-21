@@ -71,12 +71,11 @@ do
         # get StudyInstanceUID and SeriesInstanceUID
         StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
-        if [ ${studiesWithSeries[$StudyInstanceUID]+abc} ]; then
-            # check if the series is in there
-            if [ ${studiesWithSeries[$StudyInstanceUID][$SeriesInstanceUID]+abc } ]; then
-                echo "series already known"
-            else
-                studiesWithSeries[$StudyInstanceUID][$SeriesInstanceUID]="${folder}/${file}"
+        if [[ -z "${StudyInstanceUID},${SeriesInstanceUID}" ]]; then
+            continue
+        fi
+        if [[ -z "${studiesWithSeries[${StudyInstanceUID},${SeriesInstanceUID}]+abc}" ]; then
+                studiesWithSeries[${StudyInstanceUID},${SeriesInstanceUID}]="${folder}/${file}"
                 # one file is sufficient
                 /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
                     | grep -v ") DT " | grep -v ") DA " \
@@ -92,11 +91,8 @@ do
                 # we should also create an image cache for this series, it will be best if we create a mosaic
                 # to limit the number of files that need to be downloaded by the client
                 ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${folder}/${file}" &
-
-            fi            
-        else
-            declare -a studiesWithSeries[$StudyInstanceUID]
-        fi 
+            fi
+        fi
     done
 done
 
