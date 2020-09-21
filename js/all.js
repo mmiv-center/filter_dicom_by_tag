@@ -1,7 +1,8 @@
 function populateStudyInstanceUIDs() {
 	// pull the list of projects for the current user
 	jQuery.getJSON('php/getProjects.php', function(data) {
-		jQuery('#project').children().remove();
+	    jQuery('#project').children().remove();
+	    jQuery('#project').append("<option></option>"); // add default
 		for (var i = 0; i < data.length; i++) {
 			jQuery("#project").append("<option value=\"" + data[i]['record_id'] + "\">" + data[i]['record_id'] + "</option>");
 		}
