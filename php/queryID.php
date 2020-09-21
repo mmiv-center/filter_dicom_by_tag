@@ -58,8 +58,9 @@ $data = array();
 $files = glob('data/'.$uid.'/*/*.cache');
 foreach($files as $file) {
   $tmp = explode("/", $file);
-  $StudyInstanceUID=$tmp[2];
-  $SeriesInstanceUID=$tmp[3];
+  $StudyInstanceUID=$tmp[count($tmp)-2];
+  $SeriesInstanceUID=$tmp[count($tmp)-1];
+
   if (!isset($data[$StudyInstanceUID])) {
      $data[$StudyInstanceUID] = array();
   }
