@@ -71,11 +71,11 @@ do
         # get StudyInstanceUID and SeriesInstanceUID
         StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
-        if [[ -z "${StudyInstanceUID},${SeriesInstanceUID}" ]]; then
+        if [[ -z "${StudyInstanceUID}${SeriesInstanceUID}" ]]; then
             continue
         fi
-        if [[ -z "${studiesWithSeries[${StudyInstanceUID},${SeriesInstanceUID}]+abc}" ]; then
-                studiesWithSeries[${StudyInstanceUID},${SeriesInstanceUID}]="${folder}/${file}"
+        if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]; then
+                studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
                 mkdir -p "${output}/${StudyInstanceUID}"
                 # one file is sufficient
                 /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
