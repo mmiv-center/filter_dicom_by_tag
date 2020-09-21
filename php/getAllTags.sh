@@ -63,7 +63,7 @@ do
     # for each folder create a raw directory structure with folders by series instance uid and a single DICOM file each
     OLDIFS=$IFS
     IFS=$'\n'
-    filesPerFolder=($(find "${folder}" -type f))
+    filesPerFolder=($(find "${folder}" -mindepth 1 -maxdepth 1 -type f))
     IFS=$OLDIFS
     tLenPerFolder=${#filesPerFolder[@]}
     for (( i=0; i < ${tLenPerFolder}; i++ )); do
