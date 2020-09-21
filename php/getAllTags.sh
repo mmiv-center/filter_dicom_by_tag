@@ -28,7 +28,7 @@ rm "$tmp"
 
 
 # put results into this folder
-output="data/$uid/"
+output="/var/www/html/php/data/$uid/"
 
 DCMDICTPATH=/usr/share/dcmtk/dicom.dic
 #/usr/bin/findscu -v -aet FIONA -aec DICOM_QR_SCP --study -k "(0008,0052)=STUDY" -k "InstitutionName=$project" -k "PatientID" -k "StudyInstanceUID" -od "${od}/" -X +sr --repeat 2 vir-app5274.ihelse.net 7840
@@ -63,7 +63,7 @@ do
     # for each folder create a raw directory structure with folders by series instance uid and a single DICOM file each
     OLDIFS=$IFS
     IFS=$'\n'
-    filesPerFolder=($(find "${folder}" -mindepth 1 -maxdepth 1 -type f))
+    filesPerFolder=($(find "${folder}" -type f))
     IFS=$OLDIFS
     tLenPerFolder=${#filesPerFolder[@]}
     echo "start processing $tLenPerFolder files"
@@ -77,7 +77,7 @@ do
         fi
         if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
              studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
-             echo "folder ${output}/${StudyInstanceUID} for this file"
+             #echo "folder ${output}/${StudyInstanceUID} for this file"
              if [ ! -d "${output}/${StudyInstanceUID}" ]; then
                  echo "create folder: ${output}/${StudyInstanceUID}"
                  mkdir -p "${output}/${StudyInstanceUID}"
