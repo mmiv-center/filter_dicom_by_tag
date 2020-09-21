@@ -79,7 +79,9 @@
 	<form>
 	  <div class="form-group">
 	    <label for="project">Project</label>
-	    <select class="form-control selectpicker" data-live-search="true" id="project" aria-describedby="projectHelp"></select>
+	    <select class="form-control selectpicker" data-live-search="true" id="project" aria-describedby="projectHelp">
+        <option></option>
+      </select>
 	    <small id="projectHelp" class="form-text text-muted">Select the project name to start loading data</small>
 	  </div>
 

@@ -10,3 +10,4 @@ Start the container like this:
 ```
 docker run --rm -d -p 80:80 -v /my/folder/with/projects:/data filter_dicom_by_tag 
 ```
+Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on your local disk.
