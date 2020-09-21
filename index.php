@@ -13,16 +13,12 @@
     
     <title>Select Image Series</title>
 <?php
-  session_start(); /// initialize session
-  include("../../php/AC.php");
-  $user_name = check_logged(); /// function checks if visitor is logged.
+  $user_name = "local"; /// function checks if visitor is logged.
   echo('<script type="text/javascript"> user_name = "'.$user_name.'"; </script>'."\n");
 
   $allowed = false;
-  if (check_permission( "Export" )) {
-     echo('<script type="text/javascript"> role = "export"; </script>'."\n");
-     $allowed = true;
-  }
+  echo('<script type="text/javascript"> role = "export"; </script>'."\n");
+  $allowed = true;
   $siuid = "";
   if (isset($_GET['siuid'])) {
      $siuid = $_GET['siuid'];
