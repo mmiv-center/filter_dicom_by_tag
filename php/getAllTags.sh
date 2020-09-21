@@ -71,6 +71,9 @@ do
         file="${filesPerFolder[$j]}"
         # get StudyInstanceUID and SeriesInstanceUID
         StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
+        if [[ -z "${StudyInstanceUID}" ]]; then
+            continue
+        fi
         SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         if [[ -z "${StudyInstanceUID}${SeriesInstanceUID}" ]]; then
             continue
@@ -78,7 +81,7 @@ do
         if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
              studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
              #echo "folder ${output}/${StudyInstanceUID} for this file"
-             if [ ! -d "${output}/${StudyInstanceUID}" ]; then
+             if [[ ! -d "${output}/${StudyInstanceUID}" ]]; then
                  echo "create folder: ${output}/${StudyInstanceUID}"
                  mkdir -p "${output}/${StudyInstanceUID}"
              fi
