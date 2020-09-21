@@ -34,8 +34,8 @@ if [ -e "${file}" ]; then
     # we create an index of the different images first
     find "/var/www/html/php/data/${uid}/images" -type f -print > "/var/www/html/php/data/${uid}/imageIndex.txt"
     if [ -z "$(pidof /usr/bin/montage)" ]; then
-	# This might fail for large projects (many series in many studies). The default limit for the height pixel number in ImageMagick
-	# is 16K. Adjust this setting to 32k to allow larger projects image cache to build (emacs -nw /etc/ImageMagick-6/policy.xml).
-	/usr/bin/montage -geometry 32x32+0+0 -background black -tile 6x @/var/www/html/php/data/${uid}/imageIndex.txt "/var/www/html/php/data/${uid}/imageMontage.jpg"	
+  	  # This might fail for large projects (many series in many studies). The default limit for the height pixel number in ImageMagick
+	  # is 16K. Adjust this setting to 32k to allow larger projects image cache to build (emacs -nw /etc/ImageMagick-6/policy.xml).
+	  /usr/bin/montage -geometry 32x32+0+0 -background black -tile 6x @/var/www/html/php/data/${uid}/imageIndex.txt "/var/www/html/php/data/${uid}/imageMontage.jpg"
     fi
 fi
