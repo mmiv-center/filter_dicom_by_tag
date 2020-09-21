@@ -36,7 +36,7 @@ DCMDICTPATH=/usr/share/dcmtk/dicom.dic
 # now ask for all these studies
 OLDIFS=$IFS
 IFS=$'\n'
-fileArray=($(find "/data/${project}" -type d))
+fileArray=($(find "/data/${project}" -mindepth 1 -maxdepth 1 -type d))
 IFS=$OLDIFS
 
 # instead of moving all, lets check first if there is something to do for this study - check for a sequence that has the pattern
