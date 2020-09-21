@@ -66,6 +66,7 @@ do
     filesPerFolder=($(find "${folder}" -mindepth 1 -maxdepth 1 -type f))
     IFS=$OLDIFS
     tLenPerFolder=${#filesPerFolder[@]}
+    echo "start processing $tLenPerFolder files"
     for (( i=0; i < ${tLenPerFolder}; i++ )); do
         file="${filesPerFolder[$i]}"
         # get StudyInstanceUID and SeriesInstanceUID
@@ -76,7 +77,10 @@ do
         fi
         if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
              studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
-             mkdir -p "${output}/${StudyInstanceUID}"
+             if [ ! -d "${output}/${StudyInstanceUID}" ]; then
+                 echo "create folder: ${output}/${StudyInstanceUID}"
+                 mkdir -p "${output}/${StudyInstanceUID}"
+             fi
              # one file is sufficient
              /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
                  | grep -v ") DT " | grep -v ") DA " \
