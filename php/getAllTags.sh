@@ -76,6 +76,7 @@ do
         fi
         if [[ -z "${studiesWithSeries[${StudyInstanceUID},${SeriesInstanceUID}]+abc}" ]; then
                 studiesWithSeries[${StudyInstanceUID},${SeriesInstanceUID}]="${folder}/${file}"
+                mkdir -p "${output}/${StudyInstanceUID}"
                 # one file is sufficient
                 /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
                     | grep -v ") DT " | grep -v ") DA " \
