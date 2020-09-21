@@ -75,24 +75,23 @@ do
             continue
         fi
         if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
-                studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
-                mkdir -p "${output}/${StudyInstanceUID}"
-                # one file is sufficient
-                /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
-                    | grep -v ") DT " | grep -v ") DA " \
-                    | grep -v ") OD " | grep -v ") UI " | grep -v ") US " \
-                    | grep -v ") UL " | grep -v ") SL " | grep -v ") TM " | grep -v ") UN " \
-                    | grep -v "1 WindowCenter" | grep -v "1 WindowWidth" | grep -v "1 SliceLocation" \
-                    | grep -v "3 ImagePositionPatient" \
-                    | sort | uniq > ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
-                # | egrep -v "[^\[]+\[[+0-9\\-\.]+\].*"
-                # store the number of files as well - does not work anymore because we are triggered at the first file here
-                # echo "(0020,1209) IS [$(ls "${path}"/* | wc -l)] # Number of series related images" >> ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
+             studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
+             mkdir -p "${output}/${StudyInstanceUID}"
+             # one file is sufficient
+             /usr/bin/dcmdump "${folder}/${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
+                 | grep -v ") DT " | grep -v ") DA " \
+                 | grep -v ") OD " | grep -v ") UI " | grep -v ") US " \
+                 | grep -v ") UL " | grep -v ") SL " | grep -v ") TM " | grep -v ") UN " \
+                 | grep -v "1 WindowCenter" | grep -v "1 WindowWidth" | grep -v "1 SliceLocation" \
+                 | grep -v "3 ImagePositionPatient" \
+                 | sort | uniq > ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
+             # | egrep -v "[^\[]+\[[+0-9\\-\.]+\].*"
+             # store the number of files as well - does not work anymore because we are triggered at the first file here
+             # echo "(0020,1209) IS [$(ls "${path}"/* | wc -l)] # Number of series related images" >> ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
 
-                # we should also create an image cache for this series, it will be best if we create a mosaic
-                # to limit the number of files that need to be downloaded by the client
-                ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${folder}/${file}" &
-            fi
+             # we should also create an image cache for this series, it will be best if we create a mosaic
+             # to limit the number of files that need to be downloaded by the client
+             ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${folder}/${file}" &
         fi
     done
 done
