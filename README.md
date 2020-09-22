@@ -37,3 +37,9 @@ Export the selection as a spreadsheet using the download-icon on the columns lab
 
  - Try to keep the number of "love" and "hate" selections balanced.
  - Each selection of "love" and "hate" forces an asynchronous recalculation of the model training and prediction step. Based on the number of series and the available DICOM tags the processing time can be a couple of seconds and learning of different steps may overlap. Wait until the system is done and do a single additional selection to show the correct selection.
+ - In order to have the data cache saved outside of the container you can mount the folder during startup of the container with
+ ```
+ mkdir cache
+docker run --rm -d -p 80:80 -v /my/folder/with/projects:/data -v `pwd`/cache:/var/www/html/php/project_cache filter_dicom_by_tag 
+ ```
+ 
