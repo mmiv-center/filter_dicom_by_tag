@@ -23,13 +23,13 @@
   //$input  = "cal.json";
   //$output = "result.json";
   
-  $input = tempnam("/var/www/html/applications/Filter/php/data/", "A01_input");
-  $output = tempnam("/var/www/html/applications/Filter/php/data/", "A01_prediction");
+  $input = tempnam("/var/www/html/php/data/", "A01_input");
+  $output = tempnam("/var/www/html/php/data/", "A01_prediction");
 
   file_put_contents($input, json_encode($data)); // write the JSON as file
   // now call the external classifier and get the output data back
   $start_time = microtime(true);
-  $lastline   = exec("/usr/bin/Rscript --vanilla /var/www/html/applications/Filter/php/classify.R ".$input." ".$output);
+  $lastline   = exec("/usr/bin/Rscript --vanilla /var/www/html/php/classify.R ".$input." ".$output);
   $end_time   = microtime(true);
   $data       = json_decode(file_get_contents($output), TRUE);
   $data['processing_time'] = ($end_time - $start_time);
