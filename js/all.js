@@ -263,7 +263,7 @@ function addThumbnails() {
 	jQuery.get('php/data/' + lastQueryID + '/imageIndex.txt', function(data) {
 		// the order in this file indicates the order of images in the montage
 		var l = data.split("\n").map(function(a) {
-			return a.split("/").pop().split(".")[0];
+			return a.split("/").pop().replace(".png", "");
 		});
 		var imageURL = "/php/data/" + lastQueryID + "/imageMontage.jpg?_=" + Math.random();
 		l.forEach(function(value, idx) {
