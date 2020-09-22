@@ -4,6 +4,8 @@ Research medical imaging data is complex. Luckily, the DICOM standard provides s
 
 The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples all image series in all studies of the project are classified interactively.
 
+![Interface](images/example.png)
+
 ### Setup the program
 
 Create a docker container by running
