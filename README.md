@@ -18,7 +18,7 @@ Start the container like this:
 ```
 docker run --rm -d -p 80:80 -v /my/folder/with/projects:/data filter_dicom_by_tag 
 ```
-Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on your local disk. Open a web-browser on your local machine to start the interface:
+Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on your local disk. The structure of this folder is not important. One of the nice things about DICOM is that all the information is in the header. You do not have to sort files into specific folders or name the files in a specific way. Open a web-browser on your local machine to start the interface:
 ```
 open http://localhost:80/
 ```
