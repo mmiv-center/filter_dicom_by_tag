@@ -69,6 +69,9 @@ do
     echo "start processing $tLenPerFolder files"
     for (( j=0; j < ${tLenPerFolder}; j++ )); do
         file="${filesPerFolder[$j]}"
+        # to speed things up we should check if the filename is something we know can be ignored
+        
+
         # get StudyInstanceUID and SeriesInstanceUID
         StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         if [[ -z "${StudyInstanceUID}" ]]; then
@@ -117,4 +120,4 @@ rm "$tmp"
 if [ ! -d "/var/www/html/php/project_cache/${project}/" ]; then
     mkdir -p "/var/www/html/php/project_cache/${project}/"
 fi
-cp -R "/var/www/html/php/${output}"* "/var/www/html/php/project_cache/${project}/"
+cp -R "${output}"* "/var/www/html/php/project_cache/${project}/"
