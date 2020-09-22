@@ -63,8 +63,8 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['103e'] !== 'undefined')
 		SeriesDescription = dd['0008']['103e'];
 
-	var escapedStudyInstanceUID = StudyInstanceUID.replace("\.", "\\\\.");
-	var escapedSeriesInstanceUID = SeriesInstanceUID.replace("\.", "\\\\.");
+	var escapedStudyInstanceUID = StudyInstanceUID.replace(/\./g, "\\\\.");
+	var escapedSeriesInstanceUID = SeriesInstanceUID.replace(/\./g, "\\\\.");
 	// We should add the series based on the SeriesNumber to get the sorting right
 	var t = '<div class="Series" id="' + SeriesInstanceUID + '" title="Mouse-click to see full tags in console">' +
 		'<div class="modality">' + modality + '</div>' +
