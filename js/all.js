@@ -232,7 +232,7 @@ function sendToClassifier() {
 			var series = jQuery(b).attr('id');
 			var escapedstudy = study.replace(/\./g, "\\.");
 			var escapedseries = series.replace(/\./g, "\\.");
-			jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + escapedseries + '-s">' +
+			jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + series + '-s">' +
 				'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
 				'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
 				'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
