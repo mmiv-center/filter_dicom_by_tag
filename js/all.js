@@ -357,7 +357,7 @@ function checkFinished() {
 				dots += ".";
 			}
 
-			jQuery('#message-text').text("Move data from PACS and scan for tags" + dots + " (" + data['num_participant'] + " of " + data['total_num_participants'] + " DICOM studies)");
+			jQuery('#message-text').text("Scan for tags" + dots + " (" + data['num_participant'] + " of " + data['total_num_participants'] + " DICOM studies)");
 		}
 		setTimeout(checkFinished, 6000);
 	});
