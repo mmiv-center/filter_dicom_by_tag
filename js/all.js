@@ -26,6 +26,9 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	var text_node = document.createTextNode(data);
 	var dd = parseDICOMStruct(jQuery(text_node).text());
 
+	var escapedStudyInstanceUID = StudyInstanceUID.replace(/\./g, "\\.");
+	var escapedSeriesInstanceUID = SeriesInstanceUID.replace(/\./g, "\\.");
+    
 	// lets cache the values instead of adding them to the DOM
 	if (typeof dataCache[StudyInstanceUID] === 'undefined')
 		dataCache[StudyInstanceUID] = {};
@@ -34,17 +37,17 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	var ReferringPhysician = "";
 	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['0090'] !== 'undefined') {
 		ReferringPhysician = dd['0008']['0090'];
-		jQuery('#' + StudyInstanceUID).find('div.bottom-back-event span').text(dd['0008']['0090']);
+		jQuery('#' + escapedStudyInstanceUID).find('div.bottom-back-event span').text(dd['0008']['0090']);
 	}
 
 	var PatientName = "";
 	if (typeof dd['0010'] !== 'undefined' && typeof dd['0010']['0010'] !== 'undefined') {
-		jQuery('#' + StudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0010']);
+		jQuery('#' + escapedStudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0010']);
 		PatientName = dd['0010']['0010'];
 	}
 	if (PatientName == "") {
 		// if we don't have a patient name use patient ID
-		jQuery('#' + StudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0020']);
+		jQuery('#' + escapedStudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0020']);
 	}
 
 	var SeriesNumber = "";
@@ -63,8 +66,6 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['103e'] !== 'undefined')
 		SeriesDescription = dd['0008']['103e'];
 
-	var escapedStudyInstanceUID = StudyInstanceUID.replace(/\./g, "\\\\.");
-	var escapedSeriesInstanceUID = SeriesInstanceUID.replace(/\./g, "\\\\.");
 	// We should add the series based on the SeriesNumber to get the sorting right
 	var t = '<div class="Series" id="' + SeriesInstanceUID + '" title="Mouse-click to see full tags in console">' +
 		'<div class="modality">' + modality + '</div>' +
