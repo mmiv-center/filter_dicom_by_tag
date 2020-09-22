@@ -192,7 +192,7 @@ function sendToClassifier() {
 			var st = data.study[i];
 			var se = "div#" + data.series[i];
 			var c = data.class[i];
-			jQuery(se.replace(".", "\\\\.")).removeClass('a').removeClass('b').addClass(c);
+			jQuery(se.replace(/\./g, "\\.")).removeClass('a').removeClass('b').addClass(c);
 		}
 		if (typeof data['splits'] == 'string') {
 			data['splits'] = [data['splits']];
