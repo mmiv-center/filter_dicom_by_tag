@@ -6,6 +6,8 @@ The user visually selects samples of the data he/she wants to export. From this 
 
 ![Interface](images/example.png)
 
+In the image above selected icons with "love" are in green and "hate" icons selected with Shift+left-mouse are in red. A single image series is selected on the right. The selection only included "love" examples for a sagittal DX.
+
 ### Setup the program
 
 Clone this repository and create a docker container (requires git and docker installed) by running
