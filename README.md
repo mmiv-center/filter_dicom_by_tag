@@ -34,4 +34,4 @@ Export the selection as a spreadsheet using the download-icon on the columns lab
 ### Tips
 
  - Try to keep the number of "love" and "hate" selections balanced.
-
+ - Each selection of "love" and "hate" forces an asynchronous recalculation of the model training and prediction step. Based on the number of series and the available DICOM tags the processing time can be a couple of seconds and learning of different steps may overlap. Wait until the system is done and do a single additional selection to show the correct selection.
