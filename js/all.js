@@ -9,8 +9,8 @@ function populateStudyInstanceUIDs() {
 		jQuery('select').selectpicker('refresh');
 	});
 }
-//var lastQueryID = "";
 
+var dataCache = {}; // a dictionary with StudyInstanceUID and SeriesInstanceUID and Strings
 function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	// do something
 	var entry = jQuery('#content #' + StudyInstanceUID);
@@ -26,6 +26,10 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	var text_node = document.createTextNode(data);
 	var dd = parseDICOMStruct(jQuery(text_node).text());
 
+	// lets cache the values instead of adding them to the DOM
+	if (typeof dataCache[StudyInstanceUID] === 'undefined')
+		dataCache[StudyInstanceUID] = {};
+	dataCache[StudyInstanceUID][SeriesInstanceUID] = dd;
 
 	var ReferringPhysician = "";
 	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['0090'] !== 'undefined') {
@@ -60,7 +64,7 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 		SeriesDescription = dd['0008']['103e'];
 
 	// We should add the series based on the SeriesNumber to get the sorting right
-	var t = '<div class="Series" id="' + SeriesInstanceUID + '" data="' + jQuery(text_node).text() + '" title="Mouse-click to see full tags in console">' +
+	var t = '<div class="Series" id="' + SeriesInstanceUID + '" title="Mouse-click to see full tags in console">' +
 		'<div class="modality">' + modality + '</div>' +
 		'<div class="numImages">' + numImages + '</div>' +
 		'<div class="SeriesNumber">' + SeriesNumber + '</div>' +
@@ -136,19 +140,22 @@ function sendToClassifier() {
 			else
 				type = "b";
 		}
-		if (type != "unknown")
+		var studyinstanceuid = jQuery(this).parent().attr('id');
+		var seriesinstanceuid = jQuery(this).attr('id');
+		if (type != "unknown") {
 			data['train'].push({
 				class: type,
-				study: jQuery(this).parent().attr('id'),
-				series: jQuery(this).attr('id'),
-				data: parseDICOMStruct(jQuery(this).attr('data'))
+				study: studyinstanceuid,
+				series: seriesinstanceuid,
+				data: dataCache[studyinstanceuid][seriesinstanceuid]
 			});
-		else
+		} else {
 			data['predict'].push({
-				study: jQuery(this).parent().attr('id'),
-				series: jQuery(this).attr('id'),
-				data: parseDICOMStruct(jQuery(this).attr('data'))
+				study: studyinstanceuid,
+				series: seriesinstanceuid,
+				data: dataCache[studyinstanceuid][seriesinstanceuid]
 			});
+		}
 	});
 	// before we send the query out we should remove our current results
 	jQuery('#content-selected div.Series').remove();
