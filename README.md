@@ -1,18 +1,20 @@
 # Filter DICOM data by DICOM tags
 
-Research medical imaging data is complex. Luckily, the DICOM standard provides structured information on the project level in each image file. As many processing pipelines require a subset of the collected data this project will help export data appropriate for a processing or data sharing task.
+Research medical imaging data is complex. Luckily, the DICOM standard provides structured information on the project level in each image file. As many processing pipelines require a subset of the collected data this project helps exporting data appropriate for a processing or data sharing task.
 
-The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples all image series in all studies of the project are classified interactively.
+The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples all image series in all studies of the project are classified.
 
 ![Interface](images/example.png)
 
 ### Setup the program
 
-Create a docker container by running
+Clone this repository and create a docker container (requires git and docker installed) by running
 ```
+git clone https://github.com/mmiv-center/filter_dicom_by_tag.git
+cd filter_dicom_by_tag
 docker build -t filter_dicom_by_tag -f Dockerfile .
 ```
-in the directory of this project.
+from the command line.
 
 Start the container like this:
 ```
