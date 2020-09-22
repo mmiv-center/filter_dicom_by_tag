@@ -63,6 +63,8 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	if (typeof dd['0008'] !== 'undefined' && typeof dd['0008']['103e'] !== 'undefined')
 		SeriesDescription = dd['0008']['103e'];
 
+	var escapedStudyInstanceUID = StudyInstanceUID.replace("\.", "\\\\.");
+	var escapedSeriesInstanceUID = SeriesInstanceUID.replace("\.", "\\\\.");
 	// We should add the series based on the SeriesNumber to get the sorting right
 	var t = '<div class="Series" id="' + SeriesInstanceUID + '" title="Mouse-click to see full tags in console">' +
 		'<div class="modality">' + modality + '</div>' +
@@ -70,9 +72,9 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 		'<div class="SeriesNumber">' + SeriesNumber + '</div>' +
 		'<div class="SeriesDescription">' + SeriesDescription + '</div>' +
 		'<img src="" /></div>';
-	var els = jQuery('#' + StudyInstanceUID).find('div.Series');
+	var els = jQuery('#' + escapedStudyInstanceUID).find('div.Series');
 	if (els.length == 0) {
-		jQuery('#' + StudyInstanceUID).append(t);
+		jQuery('#' + escapedStudyInstanceUID).append(t);
 	} else {
 		var inserted = false;
 		for (var i = 0; i < els.length; i++) {
@@ -84,7 +86,7 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 			}
 		}
 		if (!inserted) {
-			jQuery('#' + StudyInstanceUID).append(t);
+			jQuery('#' + escapedStudyInstanceUID).append(t);
 		}
 	}
 	/*    jQuery('#' + StudyInstanceUID).append('<div class="Series" id="' + SeriesInstanceUID + '" data="' + jQuery(text_node).text() + '" title="Mouse-click to see full tags in console">' +
