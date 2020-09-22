@@ -28,7 +28,7 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 
 	var escapedStudyInstanceUID = StudyInstanceUID.replace(/\./g, "\\.");
 	var escapedSeriesInstanceUID = SeriesInstanceUID.replace(/\./g, "\\.");
-    
+
 	// lets cache the values instead of adding them to the DOM
 	if (typeof dataCache[StudyInstanceUID] === 'undefined')
 		dataCache[StudyInstanceUID] = {};
@@ -230,7 +230,9 @@ function sendToClassifier() {
 		jQuery('#content div.a,div.highlighted-human-a').each(function(a, b) {
 			var study = jQuery(b).parent().attr('id');
 			var series = jQuery(b).attr('id');
-			jQuery('#content-selected').find('div#' + study + "-s").append('<div class="Series" id="' + series + '-s" data="' + jQuery(b).attr('data') + '">' +
+			var escapedstudy = study.replace(/\./g, "\\.");
+			var escapedseries = series.replace(/\./g, "\\.");
+			jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + escapedseries + '-s">' +
 				'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
 				'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
 				'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
@@ -272,9 +274,10 @@ function addThumbnails() {
 				// top left corner for this image is:
 				var y = Math.floor(idx / 6);
 				var x = idx - (y * 6);
-				jQuery('#series_' + value + ' img').attr('src', imageURL);
-				jQuery('#series_' + value + ' img').css('margin-left', -x * 32);
-				jQuery('#series_' + value + ' img').css('margin-top', -y * 32);
+				var escapedvalue = value.replace(/\./g, "\\.");
+				jQuery('#series_' + escapedvalue + ' img').attr('src', imageURL);
+				jQuery('#series_' + escapedvalue + ' img').css('margin-left', -x * 32);
+				jQuery('#series_' + escapedvalue + ' img').css('margin-top', -y * 32);
 				//jQuery('#series_'+value+' img').attr('bla', idx);
 			}
 		});
@@ -365,11 +368,11 @@ function alignRight() {
 		// console.log("we have row number: " + (idx % 3));
 		var height = jQuery(value).css('height');
 		var id = jQuery(value).attr('id');
-		var height2 = jQuery('#' + id + '-s').css('height');
+		var height2 = jQuery('#' + id.replace(/\./g, "\\.") + '-s').css('height');
 		//if (parseInt(height) < parseInt(height2)) {
 		//    height = height2;
 		//}
-		jQuery('#' + id + '-s').css('height', height);
+		jQuery('#' + id.replace(/\./g, "\\.") + '-s').css('height', height);
 	});
 	// we should also sort the series by SeriesNumber - but this inserts them twice with the same ID
 	/*jQuery('#content div.Study').each(function(idx, value) {
@@ -460,8 +463,10 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('#content').on('click', 'div.Series', function(e) {
-		console.log(jQuery(this).attr('data'));
-		var ar = parseDICOMStruct(jQuery(this).attr('data'));
+		// console.log(jQuery(this).attr('data'));
+		var studyinstanceuid = jQuery(this).parent().attr('id');
+		var seriesinstanceuid = jQuery(this).attr('id');
+		var ar = dataCache[studyinstanceuid][seriesinstanceuid]; // parseDICOMStruct(jQuery(this).attr('data'));
 		// we have now a group, tag structure with values
 		console.log(JSON.stringify(ar));
 		// highlight this image
