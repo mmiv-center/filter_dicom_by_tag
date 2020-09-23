@@ -352,7 +352,10 @@ function checkFinished() {
 			jQuery('#finished').attr('aria-valuenow', t);
 			jQuery('#finished').css('width', t + "%");
 			var now = moment();
-			jQuery('#progress-message').text(moment.duration(now.diff(startDateTime)).humanize());
+			// running now
+			var timespend = moment.duration(now.diff(startDateTime)).asSeconds(); // per t so far
+			var timeexpected = timespend / (100 - t) * 100;
+			jQuery('#progress-message').text("processing running now for " + moment.duration(now.diff(startDateTime)).humanize() + ", will be done " + moment.duration(timeexpected, 'seconds').humanize());
 
 			counter++;
 			var dots = ".";
