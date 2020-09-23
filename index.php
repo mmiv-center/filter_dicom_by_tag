@@ -175,7 +175,8 @@
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="js/jquery-3.4.1.min.js"></script>
     <script src="js/jquery-ui.min.js"></script>
-    <script src="js/events.js"></script>    
+    <script src="js/events.js"></script>
+    <script src="js/moment.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
