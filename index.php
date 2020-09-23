@@ -92,7 +92,8 @@
 	<div class="col-md-12">
 	  <div class="progress" style="margin-bottom: 2px; display: none;">
 	    <div id="finished" class="finished progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
-	  </div>
+      <div id="progress-message" style="margin-left: auto; margin-right: auto; margin-top: 8px; font-size: 9px;">time to finish, calculating...</div>
+    </div>
 	</div>
       </div>
       <hr style="border-color: #555;" />

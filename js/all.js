@@ -334,7 +334,7 @@ function checkQueryID() {
 
 var stopQuery = false;
 var counter = 0;
-
+var startDateTime; // for tracking of time required to finish
 function checkFinished() {
 	jQuery.getJSON('php/data/' + lastQueryID + '/info.json', function(data) {
 		if (typeof data['enddate'] != 'undefined') {
@@ -346,11 +346,14 @@ function checkFinished() {
 		} else {
 			jQuery('#finished').removeClass('finished');
 		}
-		// update the progress bar length
+		// update the progress bar length and message
 		if (typeof data['num_participant'] != 'undefined' && typeof data['total_num_participants'] != 'undefined') {
 			var t = Math.floor((data['num_participant'] / data['total_num_participants']) * 100);
 			jQuery('#finished').attr('aria-valuenow', t);
 			jQuery('#finished').css('width', t + "%");
+			var now = moment();
+			jQuery('#progress-message').text(moment.duration(now.diff(startDateTime)).humanize());
+
 			counter++;
 			var dots = ".";
 			for (var i = 0; i < counter % 3; i++) {
@@ -435,6 +438,9 @@ jQuery(document).ready(function() {
 		jQuery('#processing-time').text("");
 		jQuery('span.stats').text("");
 		jQuery('span.stats-general').text("");
+
+		// remember when this was
+		startDateTime = moment();
 
 		var project = jQuery(this).val();
 		var allowCache = "0";
