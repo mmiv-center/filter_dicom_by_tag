@@ -354,8 +354,9 @@ function checkFinished() {
 			var now = moment();
 			// running now
 			var timespend = moment.duration(now.diff(startDateTime)).asSeconds(); // per t so far
-			var timeexpected = timespend / (100 - t) * 100;
-			jQuery('#progress-message').text("processing running now for " + moment.duration(now.diff(startDateTime)).humanize() + ", will be done " + moment.duration(timeexpected, 'seconds').humanize());
+			// timespend/data['num_participant'] = ?/(data['total_num_participants'] - data['num_participant'])
+			var timeexpected = timespend / data['num_participant'] * (data['total_num_participants'] - data['num_participant']);
+			jQuery('#progress-message').text("processing running now for " + moment.duration(now.diff(startDateTime)).humanize() + ", will be done in " + moment.duration(timeexpected, 'seconds').humanize());
 
 			counter++;
 			var dots = ".";
