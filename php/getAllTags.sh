@@ -70,18 +70,21 @@ do
     for (( j=0; j < ${tLenPerFolder}; j++ )); do
         file="${filesPerFolder[$j]}"
         # to speed things up we should check if the filename is something we know can be ignored
-        
+        unset StudyInstanceUID
+        unset SeriesInstanceUID
+        unset SOPInstanceUID
+        $(dcmdump +P SOPInstanceUID +P SeriesInstanceUID +P StudyInstanceUID "${file}" | awk '/[ ]*\([0-9a-z]+,[0-9a-z]+\) [A-Z][A-Z] \[.*/ { gsub(/[\[\]]/,""); print("declare " $7 "=" $3) }')
 
         # get StudyInstanceUID and SeriesInstanceUID
-        StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
+        #StudyInstanceUID=`dcmdump +P "StudyInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         if [[ -z "${StudyInstanceUID}" ]]; then
             continue
         fi
-        SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
+        #SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         if [[ -z "${StudyInstanceUID}${SeriesInstanceUID}" ]]; then
             continue
         fi
-        SOPInstanceUID=`dcmdump +P "SOPInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
+        #SOPInstanceUID=`dcmdump +P "SOPInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
         if [[ ! -z "${SOPInstanceUID}" ]]; then
             # remember every slice using a symbolic link, makes it possible to export later and to debug now
             if [[ ! -d "${output}/${StudyInstanceUID}/${SeriesInstanceUID}" ]]; then
