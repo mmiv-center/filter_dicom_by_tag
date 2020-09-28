@@ -72,7 +72,7 @@ do
         # to speed things up we should check if the filename is something we know can be ignored
         type=`file -b --mime-type "${file}"`
         if [[ $type != "application/dicom" ]]; then
-            # ignore these files
+            # ignore this file
             continue
         fi
 
@@ -88,7 +88,7 @@ do
             continue
         fi
         #SeriesInstanceUID=`dcmdump +P "SeriesInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
-        if [[ -z "${StudyInstanceUID}${SeriesInstanceUID}" ]]; then
+        if [[ -z "${SeriesInstanceUID}" ]]; then
             continue
         fi
         #SOPInstanceUID=`dcmdump +P "SOPInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
@@ -99,9 +99,12 @@ do
             fi
             ln -s "${file}" "${output}/${StudyInstanceUID}/${SeriesInstanceUID}/${SOPInstanceUID}"
         fi
-
-        if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
-             studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
+        if [[ ! -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
+            # we only need to keep counting, nothing else to do here
+            studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]=$(( studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}] + 1 ))
+            sed -i /\(0020,1209\) IS \[[0-9]+/$studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]/g "${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache"
+        else
+            studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]=1
              #echo "folder ${output}/${StudyInstanceUID} for this file"
              if [[ ! -d "${output}/${StudyInstanceUID}" ]]; then
                  echo "create folder: ${output}/${StudyInstanceUID}"
@@ -116,8 +119,8 @@ do
                  | grep -v "3 ImagePositionPatient" \
                  | sort | uniq > ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
              # | egrep -v "[^\[]+\[[+0-9\\-\.]+\].*"
-             # store the number of files as well - does not work anymore because we are triggered at the first file here
-             # echo "(0020,1209) IS [$(ls "${path}"/* | wc -l)] # Number of series related images" >> ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
+             # store the number of files as well
+             echo "(0020,1209) IS [1] # Number of series related images" >> ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
 
              # we should also create an image cache for this series, it will be best if we create a mosaic
              # to limit the number of files that need to be downloaded by the client
