@@ -70,9 +70,16 @@ do
     for (( j=0; j < ${tLenPerFolder}; j++ )); do
         file="${filesPerFolder[$j]}"
         # to speed things up we should check if the filename is something we know can be ignored
+        type=`file -b --mime-type "${file}"`
+        if [[ $type != "application/dicom" ]]; then
+            # ignore these files
+            continue
+        fi
+
         unset StudyInstanceUID
         unset SeriesInstanceUID
         unset SOPInstanceUID
+        # use a single call of dcmdump to get the UIDs
         $(dcmdump +P SOPInstanceUID +P SeriesInstanceUID +P StudyInstanceUID "${file}" | awk '/[ ]*\([0-9a-z]+,[0-9a-z]+\) [A-Z][A-Z] \[.*/ { gsub(/[\[\]]/,""); print("declare " $7 "=" $3) }')
 
         # get StudyInstanceUID and SeriesInstanceUID
