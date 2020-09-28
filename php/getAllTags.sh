@@ -102,7 +102,7 @@ do
         if [[ ! -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
             # we only need to keep counting, nothing else to do here
             studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]=$(( studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}] + 1 ))
-            sed -i "/\(0020,1209\) IS \[[0-9]+/$studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]/g" "${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache"
+            sed -i "s/(0020,1209) IS \[[0-9]*/(0020,1209) IS \[$studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]/g" "${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache"
         else
             studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]=1
              #echo "folder ${output}/${StudyInstanceUID} for this file"
