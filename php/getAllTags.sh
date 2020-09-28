@@ -81,6 +81,15 @@ do
         if [[ -z "${StudyInstanceUID}${SeriesInstanceUID}" ]]; then
             continue
         fi
+        SOPInstanceUID=`dcmdump +P "SOPInstanceUID" "${file}" | cut -d'[' -f 2 | cut -d']' -f1`
+        if [[ ! -z "${SOPInstanceUID}" ]]; then
+            # remember every slice using a symbolic link, makes it possible to export later and to debug now
+            if [[ ! -d "${output}/${StudyInstanceUID}/${SeriesInstanceUID}" ]]; then
+                mkdir -p "${output}/${StudyInstanceUID}/${SeriesInstanceUID}"
+            fi
+            ln -s "${file}" "${output}/${StudyInstanceUID}/${SeriesInstanceUID}/${SOPInstanceUID}"
+        fi
+
         if [[ -z "${studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]+abc}" ]]; then
              studiesWithSeries[${StudyInstanceUID}${SeriesInstanceUID}]="${folder}/${file}"
              #echo "folder ${output}/${StudyInstanceUID} for this file"
