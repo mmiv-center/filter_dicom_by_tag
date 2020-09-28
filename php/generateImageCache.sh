@@ -11,7 +11,7 @@ SeriesInstanceUID=$3
 dcmfile="$4"
 
 if [ "${SeriesInstanceUID}" == "force" ]; then
-    /usr/bin/montage -geometry 32x32+0+0 -background black -tile 6x @/var/www/html/php/data/${uid}/imageIndex.txt "/var/www/html/php/data/${uid}/imageMontage.jpg"
+    /usr/bin/montage -geometry 32x32+0+0 -background black -tile 60x @/var/www/html/php/data/${uid}/imageIndex.txt "/var/www/html/php/data/${uid}/imageMontage.jpg"
     exit
 fi
 
@@ -36,6 +36,6 @@ if [ -e "${file}" ]; then
     if [ -z "$(pidof /usr/bin/montage)" ]; then
   	  # This might fail for large projects (many series in many studies). The default limit for the height pixel number in ImageMagick
 	  # is 16K. Adjust this setting to 32k to allow larger projects image cache to build (emacs -nw /etc/ImageMagick-6/policy.xml).
-	  /usr/bin/montage -geometry 32x32+0+0 -background black -tile 6x @/var/www/html/php/data/${uid}/imageIndex.txt "/var/www/html/php/data/${uid}/imageMontage.jpg"
+	  /usr/bin/montage -geometry 32x32+0+0 -background black -tile 60x @/var/www/html/php/data/${uid}/imageIndex.txt "/var/www/html/php/data/${uid}/imageMontage.jpg"
     fi
 fi

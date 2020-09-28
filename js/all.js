@@ -269,11 +269,11 @@ function addThumbnails() {
 		l.forEach(function(value, idx) {
 			if (value.length > 0) {
 				// given the idx what is the image we look for?
-				// each image has a with of 6 * 64 (image size is 64x64)
+				// each image has a with of 60 * 32 (image size is 32x32)
 				// given the idx value we end up with a location in the image of
 				// top left corner for this image is:
-				var y = Math.floor(idx / 6);
-				var x = idx - (y * 6);
+				var y = Math.floor(idx / 60);
+				var x = idx - (y * 60);
 				var escapedvalue = value.replace(/\./g, "\\.");
 				jQuery('#series_' + escapedvalue + ' img').attr('src', imageURL);
 				jQuery('#series_' + escapedvalue + ' img').css('margin-left', -x * 32);
