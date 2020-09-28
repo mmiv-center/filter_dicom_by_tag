@@ -30,7 +30,7 @@ rm "$tmp"
 # put results into this folder
 output="/var/www/html/php/data/$uid/"
 
-DCMDICTPATH=/usr/share/dcmtk/dicom.dic
+DCMDICTPATH=/usr/share/libdcmtk14/dicom.dic
 #/usr/bin/findscu -v -aet FIONA -aec DICOM_QR_SCP --study -k "(0008,0052)=STUDY" -k "InstitutionName=$project" -k "PatientID" -k "StudyInstanceUID" -od "${od}/" -X +sr --repeat 2 vir-app5274.ihelse.net 7840
 
 # now ask for all these studies
