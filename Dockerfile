@@ -17,7 +17,9 @@ RUN apt-get install -y r-base \
 RUN cd /var/www/html && rm index.html && git clone https://github.com/mmiv-center/filter_dicom_by_tag.git . \
     && chmod 777 /var/www/html/php/data \
     && chmod 777 /var/www/html/php/project_cache \
-    && chown -R www-data:www-data /var/www/html/php/project_cache
+    && chown -R www-data:www-data /var/www/html/php/project_cache \
+    && sed -i 's/128M/2048M/g' /etc/php/7.4/apache2/php.ini \
+    && sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/7.4/apache2/php.ini
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 EXPOSE 80
