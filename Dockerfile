@@ -19,7 +19,8 @@ RUN cd /var/www/html && rm index.html && git clone https://github.com/mmiv-cente
     && chmod 777 /var/www/html/php/project_cache \
     && chown -R www-data:www-data /var/www/html/php/project_cache \
     && sed -i 's/128M/2048M/g' /etc/php/7.4/apache2/php.ini \
-    && sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/7.4/apache2/php.ini
+    && sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/7.4/apache2/php.ini \
+    && sed -i 's/16KP/32KP/g' /etc/ImageMagick-6/policy.xml
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 EXPOSE 80
