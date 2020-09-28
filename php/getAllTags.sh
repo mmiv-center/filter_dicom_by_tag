@@ -111,7 +111,7 @@ do
                  mkdir -p "${output}/${StudyInstanceUID}"
              fi
              # one file is sufficient
-             /usr/bin/dcmdump "${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
+             DCMDICTPATH=/usr/share/libdcmtk14/dicom.dic:/usr/share/libdcmtk14/private.dic /usr/bin/dcmdump "${file}" | grep -v "PixelData" | egrep -v "^#" | grep -v ") FD " \
                  | grep -v ") DT " | grep -v ") DA " \
                  | grep -v ") OD " | grep -v ") UI " | grep -v ") US " \
                  | grep -v ") UL " | grep -v ") SL " | grep -v ") TM " | grep -v ") UN " \
