@@ -47,7 +47,9 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 	}
 	if (PatientName == "") {
 		// if we don't have a patient name use patient ID
-		jQuery('#' + escapedStudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0020']);
+		if (typeof dd['0010'] !== 'undefined' && typeof dd['0010']['0020'] !== 'undefined') {
+			jQuery('#' + escapedStudyInstanceUID).find('div.bottom-back span').text(dd['0010']['0020']);
+		}
 	}
 
 	var SeriesNumber = "";
