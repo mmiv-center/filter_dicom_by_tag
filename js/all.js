@@ -400,7 +400,7 @@ jQuery(document).ready(function() {
 		jQuery('#tree-modal').modal('show');
 	});
 
-	jQuery('#download-selected').on('click', function() {
+	jQuery('.download-selected').on('click', function() {
 		// download a spreadsheet with the series instance uid's from research PACS
 		var content = "SeriesInstanceUID,StudyInstanceUID\n";
 		jQuery('#content-selected').find('div.Series').each(function(i, a) {

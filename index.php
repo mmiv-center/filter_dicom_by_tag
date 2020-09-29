@@ -122,7 +122,7 @@
 	  <div class="sub-heading-2">
 	    <span>Selected</span><span class="stats"></span>
 	    <div class="actions">
-	      <button class="btn btn-sm" style="line-height: .5;" id="download-selected" title="Download selected image series information as a spreadsheet.">
+	      <button class="btn btn-sm download-selected" style="line-height: .5;" id="download-selected" title="Download selected image series." data-toggle="modal" data-target="#export-modal">
 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
   <path fill-rule="evenodd" d="M4.646 11.646a.5.5 0 0 1 .708 0L8 14.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
   <path fill-rule="evenodd" d="M8 4.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5z"/>
@@ -169,6 +169,27 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="export-modal" tabindex="-1" role="dialog" aria-labelledby="exportModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Export selection</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="overflow-x: scroll;">
+      	<p>The current selection can be exported as a <a href="#" class="download-selected" id="download-spreadsheet">spreadsheet</a> or as a series of folders that include the raw data.</p>
+        <button class="btn btn-primary">Full data export</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     
     <!-- Optional JavaScript -->
