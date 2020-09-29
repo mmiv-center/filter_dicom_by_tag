@@ -409,13 +409,13 @@ jQuery(document).ready(function() {
 				to_export[StudyInstanceUID] = [];
 			to_export[StudyInstanceUID].push(SeriesInstanceUID);
 		});
-		jQuery.getJSON('php/exportAsFolders.php', {
+		jQuery.post('php/exportAsFolders.php', {
 			to_export: to_export
 		}, function(data) {
 			// should be in the background.. may take a long time
 			console.log("ok, is running now");
 			alert(data['message']);
-		});
+		}, 'json');
 	});
 
 	jQuery('.download-selected').on('click', function() {
