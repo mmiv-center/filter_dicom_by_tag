@@ -122,7 +122,7 @@
 	  <div class="sub-heading-2">
 	    <span>Selected</span><span class="stats"></span>
 	    <div class="actions">
-	      <button class="btn btn-sm download-selected" style="line-height: .5;" id="download-selected" title="Download selected image series." data-toggle="modal" data-target="#export-modal">
+	      <button class="btn btn-sm" style="line-height: .5;" title="Download selected image series." data-toggle="modal" data-target="#export-modal">
 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-box-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
   <path fill-rule="evenodd" d="M4.646 11.646a.5.5 0 0 1 .708 0L8 14.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
   <path fill-rule="evenodd" d="M8 4.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5z"/>
