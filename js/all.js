@@ -410,7 +410,7 @@ jQuery(document).ready(function() {
 			to_export[StudyInstanceUID].push(SeriesInstanceUID);
 		});
 		jQuery.post('php/exportAsFolders.php', {
-			to_export: to_export
+			to_export: JSON.stringify(to_export)
 		}, function(data) {
 			// should be in the background.. may take a long time
 			console.log("ok, is running now");
