@@ -400,6 +400,24 @@ jQuery(document).ready(function() {
 		jQuery('#tree-modal').modal('show');
 	});
 
+	jQuery('#full-export').on('click', function() {
+		var to_export = {};
+		jQuery('#content-selected').find('div.Series').each(function(i, a) {
+			var SeriesInstanceUID = jQuery(a).attr('id').replace("-s", "").replace("series_", "");
+			var StudyInstanceUID = jQuery(a).parent().attr('id').replace("-s", "").replace("study_", "");
+			if (typeof to_export[StudyInstanceUID] === 'undefined')
+				to_export[StudyInstanceUID] = [];
+			to_export[StudyInstanceUID].push(SeriesInstanceUID);
+		});
+		jQuery.getJSON('php/exportAsFolders.php', {
+			to_export: to_export
+		}, function(data) {
+			// should be in the background.. may take a long time
+			console.log("ok, is running now");
+			alert(data['message']);
+		});
+	});
+
 	jQuery('.download-selected').on('click', function() {
 		// download a spreadsheet with the series instance uid's from research PACS
 		var content = "SeriesInstanceUID,StudyInstanceUID\n";

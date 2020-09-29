@@ -180,8 +180,8 @@
         </button>
       </div>
       <div class="modal-body" style="overflow-x: scroll;">
-      	<p>The current selection can be exported as a <a href="#" class="download-selected" id="download-spreadsheet">spreadsheet</a> or as a series of folders that include the raw data.</p>
-        <button class="btn btn-primary">Full data export</button>
+      	<p>The current selection can be exported as a <a href="#" class="download-selected" id="download-spreadsheet">spreadsheet</a> containing a list of StudyInstanceUID and SeriesInstanceUID, or as a series of folders that include the raw data.</p>
+        <button class="btn btn-primary" id="full-export">Full data export</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
