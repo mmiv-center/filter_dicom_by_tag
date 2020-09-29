@@ -401,7 +401,7 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('#full-export').on('click', function() {
-		var to_export = {};
+		var to_export = [];
 		jQuery('#content-selected').find('div.Series').each(function(i, a) {
 			var SeriesInstanceUID = jQuery(a).attr('id').replace("-s", "").replace("series_", "");
 			var StudyInstanceUID = jQuery(a).parent().attr('id').replace("-s", "").replace("study_", "");
