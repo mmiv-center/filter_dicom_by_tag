@@ -257,6 +257,7 @@ function sendToClassifier() {
 		//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
 	}, "json").fail(function() {
 		console.log("we did not get something back ... ");
+		alert("Error: There seems to be a problem with running the statistical analysis, please contact the developer.");
 	});
 
 }
