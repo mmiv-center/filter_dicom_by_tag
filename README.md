@@ -49,3 +49,9 @@ Export the selection as a spreadsheet using the download-icon on the columns lab
                               -v `pwd`/cache:/var/www/html/php/project_cache \
                               -v `pwd`/exports:/var/www/html/php/exports filter_dicom_by_tag 
 ```
+ - In some environments port 80 is already used. Change the Dockerfile and use an alternative port
+ for the integrated website. 
+ - In order to be able to see the website outside of the docker environment
+ start a local docker with '--network host' instead of providing the '-p' argument. This will run
+ the system on the hosts network and thus make it accessible to external users.
+ 
