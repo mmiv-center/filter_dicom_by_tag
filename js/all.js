@@ -250,10 +250,10 @@ function sendToClassifier() {
 			if (jQuery(value).find('div.Series').length > 0)
 				numSelectedStudies++;
 		});
-		jQuery('span.stats-general').text(" (" + numParticipants + " participants, " +
+	    jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants>1?"s":"") + ", " +
 			jQuery('#content div.Series').length + " imaging series in " +
-			jQuery('#content div.Study').length + " imaging studies)");
-		jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " studies");
+					      jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length>1?"ies":"y") + ")");
+	    jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies>1?"ies":"y") + "");
 		//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
 	}, "json").fail(function() {
 		console.log("we did not get something back ... ");
