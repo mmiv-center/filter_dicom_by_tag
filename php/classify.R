@@ -66,13 +66,20 @@ for (i in seq(1, length(names(df)))) {
 
 
 idx = grep("0([0-9]+)[YM]", df$g0010.1010, value=FALSE)
-df$g0010.1010[idx] <- as.integer(sub("0([0-9]+)Y", "\\1", df$g0010.1010[idx]))
+if (length(idx) > 0) {
+  # this does not work because we cannot convert the column from factor to numeric this way
+  df$g0010.1010 <- as.numeric(as.integer(sub("0([0-9]+)Y", "\\1", df$g0010.1010)))
+}
 
 idx = grep("([0-9]+) %", df$g0040.0310, value=FALSE)
-df$g0040.0310[idx] <- as.integer(sub("([0-9]+) %", "\\1", df$g0040.0310[idx]))
+if (length(idx) > 0) {
+   df$g0040.0310 <- as.numeric(as.integer(sub("([0-9]+) %", "\\1", df$g0040.0310)))
+}
 
 idx = grep("([0-9]+)", df$g0020.1209, value=FALSE)
-df$g0020.1209[idx] <- as.integer(sub("([0-9]+)", "\\1", df$g0020.1209[idx]))
+if (length(idx) > 0) {
+   df$g0020.1209 <- as.numeric(as.integer(sub("([0-9]+)", "\\1", df$g0020.1209)))
+}
 
 # test if we can randomize the column in the data frame to get different answers
 #df = df[,sample(seq(1,dim(df)[2]))]
