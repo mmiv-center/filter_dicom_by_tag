@@ -93,7 +93,7 @@ for (i in seq(1, length(names(tr)))) {
   co = names(tr)[i]
   if (class(df[[co]]) == "factor") {
     pr[[co]] <- factor(pr[[co]], levels = levels(tr[[co]]))
-    if (length(levels(tr[[co]])) < 2 & co != "class") {
+    if (length(levels(tr[[co]])) < 2 & co != "class" & co != "series" & co != "study" & co != "train") {
        rem = c(rem, co)
     }
   }
