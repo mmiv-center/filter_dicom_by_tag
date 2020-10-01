@@ -15,9 +15,7 @@ if [ ! -e "${folder}" ]; then
 fi
 
 output=`jq -r ".output" "${folder}"`
-echo "OK, we are ready to start processing on the information in ${folder}."
-storepath="${output%/*}"
-echo "Output will be placed in: $storepath"
+echo "OK, we are ready to start processing on the information in ${folder} (${output})."
 
 
 # lets start with creating the folder structure
@@ -34,8 +32,9 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
         echo "work on this study: ${u}"
         for v in $(_jq ".[${u}][]"); do
             echo "  series: ${v}"
-	    # ok, now where is the data?
-	    mkdir -p "${storepath}/${u}/${v}"
+            # ok, now where is the data?
+            p=$(echo ${output}/${u}/${v} | tr -d '"')
+            mkdir -p "${p}"
         done
     done
 done
