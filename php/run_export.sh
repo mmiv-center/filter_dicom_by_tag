@@ -16,6 +16,7 @@ fi
 
 output=`jq -r ".output" "${folder}"`
 echo "OK, we are ready to start processing on the information in ${folder}."
+storepath="${output%/*}"
 
 # lets start with creating the folder structure
 # each .data[i] has a key which is the StudyInstanceUID and a value which is a list of
@@ -32,6 +33,7 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
         for v in $(_jq ".[${u}][]"); do
             echo "  series: ${v}"
 	    # ok, now where is the data?
+	    mkdir -p "${storepath}/${u}/${v}"
         done
     done
 done
