@@ -14,7 +14,7 @@
   mkdir($path, 0777, TRUE);
   $content = $path."job.json";
   file_put_contents($content, json_encode($to_export));
-  shell_exec("/usr/bin/nohup /var/www/html/php/run_export.sh ".$content." > /tmp/export.log &");
+  shell_exec("/usr/bin/nohup /var/www/html/php/run_export.sh ".$content." > /tmp/export.log 2>&1 &");
   echo(json_encode(array("message" => "Create export structure with key ".$key. ". Running in the background...", "key" => $key)));
 
 ?>

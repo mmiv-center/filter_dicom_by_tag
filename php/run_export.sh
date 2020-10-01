@@ -25,6 +25,6 @@ for row in $(jq -r '.data[] | @base64' "${folder}"); do
     _jq() {
         echo ${row} | base64 --decode | jq -r ${1}
     }
-
+    
    echo $(_jq '.key')
 done
