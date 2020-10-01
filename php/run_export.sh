@@ -3,7 +3,7 @@
 #
 # export data (batch processing)
 #
-if [ "$#" -ne "2" ]; then
+if [ "$#" -ne "1" ]; then
     echo "Usage: <project folder>"
     exit;
 fi
