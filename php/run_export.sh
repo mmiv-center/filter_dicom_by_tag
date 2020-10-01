@@ -3,7 +3,7 @@
 #
 # export data (batch processing)
 #
-if [ "$#" -neq "2" ]; then
+if [ "$#" -ne "2" ]; then
     echo "Usage: <project folder>"
     exit;
 fi
