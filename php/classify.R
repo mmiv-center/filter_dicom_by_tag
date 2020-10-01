@@ -48,8 +48,8 @@ for (i in seq(1, length(data['predict'][[1]]))) {
     }
   }
 }
-# remove the first row again
-df = df[-1,]
+## remove the first row again
+##df = df[-1,]
 df$g0008.0050 <- NULL
 df$g0010.0010 <- NULL
 df$g0010.0020 <- NULL

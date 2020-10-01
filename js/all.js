@@ -12,8 +12,11 @@ function populateStudyInstanceUIDs() {
 
 var dataCache = {}; // a dictionary with StudyInstanceUID and SeriesInstanceUID and Strings
 function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
+	var escapedStudyInstanceUID = StudyInstanceUID.replace(/\./g, "\\.");
+	var escapedSeriesInstanceUID = SeriesInstanceUID.replace(/\./g, "\\.");
+
 	// do something
-	var entry = jQuery('#content #' + StudyInstanceUID);
+	var entry = jQuery('#content #' + escapedStudyInstanceUID);
 	if (!entry.length > 0) {
 		jQuery('#content').append("<div class='Study' id='" + StudyInstanceUID + "'><div class='bottom-back'><span></span></div><div class='bottom-back-event'><span></span></div></div>");
 		jQuery('#content-selected').append("<div class='Study' id='" + StudyInstanceUID + "-s'></div>");
@@ -25,9 +28,6 @@ function appendSeries(StudyInstanceUID, SeriesInstanceUID, data) {
 
 	var text_node = document.createTextNode(data);
 	var dd = parseDICOMStruct(jQuery(text_node).text());
-
-	var escapedStudyInstanceUID = StudyInstanceUID.replace(/\./g, "\\.");
-	var escapedSeriesInstanceUID = SeriesInstanceUID.replace(/\./g, "\\.");
 
 	// lets cache the values instead of adding them to the DOM
 	if (typeof dataCache[StudyInstanceUID] === 'undefined')
