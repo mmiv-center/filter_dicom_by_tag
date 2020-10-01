@@ -10,7 +10,7 @@ fi
 
 folder="$1"
 if [ ! -e "${folder}" ]; then
-   echo "Error: folder ${folder} does not exist, or structure file not found."
+   echo "Error: control file ${folder} does not exist, or structure file not found."
    exit;
 fi
 
