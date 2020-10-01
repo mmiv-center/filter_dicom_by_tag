@@ -17,6 +17,8 @@ fi
 output=`jq -r ".output" "${folder}"`
 echo "OK, we are ready to start processing on the information in ${folder}."
 storepath="${output%/*}"
+echo "Output will be placed in: $storepath"
+
 
 # lets start with creating the folder structure
 # each .data[i] has a key which is the StudyInstanceUID and a value which is a list of
