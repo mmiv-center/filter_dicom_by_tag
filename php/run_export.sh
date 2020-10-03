@@ -32,6 +32,7 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
     #echo $(_jq 'keys' | jq ".[]")                                                                                                                                                                                                                                                  
     for u in $(_jq 'keys' | jq ".[]"); do
         echo "work on this study: ${u}"
+        StudyInstanceUID=$(echo ${u} | tr -d '"')
         for v in $(_jq ".[${u}][]"); do
             echo "  series: ${v}"
             # ok, now where is the data?
@@ -41,7 +42,7 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
                 # we can have the directory already from a previous run
                 mkdir -p "${p}"
             fi
-            /usr/bin/cp -L -R "/var/www/html/php/data/${id}/${u}/${v}/"* "${p}/"
+            /usr/bin/cp -L -R "/var/www/html/php/data/${id}/${StudyInstanceUID}/${v}/"* "${p}/"
         done
     done
 done
