@@ -16,6 +16,7 @@ fi
 
 name=`jq -r ".name" "${folder}"`
 output=`jq -r ".output" "${folder}"`
+id=`jq -r ".id" "${folder}"`
 echo "OK, we are ready to start processing on the information in ${folder} (${output})."
 
 
@@ -34,11 +35,13 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
         for v in $(_jq ".[${u}][]"); do
             echo "  series: ${v}"
             # ok, now where is the data?
+            # This could be a problem if the path to the data contains double quotes...
             p=$(echo ${output}/${u}/${name}/${v} | tr -d '"')
             if [ ! -d "${p}" ]; then
                 # we can have the directory already from a previous run
                 mkdir -p "${p}"
             fi
+
         done
     done
 done
