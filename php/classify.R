@@ -81,6 +81,12 @@ if (length(idx) > 0) {
    df$g0020.1209 <- as.numeric(as.integer(sub("([0-9]+)", "\\1", df$g0020.1209)))
 }
 
+# g0028.0030 for pixel spacing    # c = strsplit(a, "\\\\");
+if ( !is.na(match("g0028.0030", names(df))) ) {
+   df$g0028.0030x <- sub("(.*)\\\\(.*)", "\\1", df$g0028.0030)
+   df$g0028.0030y <- sub("(.*)\\\\(.*)", "\\2", df$g0028.0030)
+}
+
 # test if we can randomize the column in the data frame to get different answers
 #df = df[,sample(seq(1,dim(df)[2]))]
 
