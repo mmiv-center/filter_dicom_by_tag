@@ -82,7 +82,7 @@
 	    <select class="form-control selectpicker" data-live-search="true" id="project" aria-describedby="projectHelp">
         <option></option>
       </select>
-	    <small id="projectHelp" class="form-text text-muted">Select the folder name to start loading data from this locaion</small>
+	    <small id="projectHelp" class="form-text text-muted">Select a folder name to start loading data from this locaion</small>
 	  </div>
 
 	</form>
