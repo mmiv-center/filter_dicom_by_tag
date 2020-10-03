@@ -8,7 +8,7 @@ The user visually selects samples of the data he/she wants to export. From this 
 
 In the image above selected icons with "love" are in green and "hate" icons selected with Shift+left-mouse are in red. A single image series is selected on the right. The selection only included "love" examples for a sagittal DX.
 
-### Setup the program
+### Setup
 
 Clone this repository and create a docker container (requires git and docker installed) by running
 ```
@@ -20,9 +20,9 @@ from the command line.
 
 Start the container like this:
 ```
-docker run --rm -d -p 80:80 -v /my/folder/with/projects:/data filter_dicom_by_tag 
+docker run --rm -d -p 80:8888 -v /my/folder/with/projects:/data filter_dicom_by_tag 
 ```
-Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on your local disk. The structure of this folder is not important. One of the nice things about DICOM is that all the information is in the header. You do not have to sort files into specific folders or name the files in a specific way. Open a web-browser on your local machine to start the interface:
+Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on your local disk. The structure of this folder is not important. One of the nice things about DICOM is that all the information are in the header. You do not have to sort files into specific folders or name the files in a specific way. Open a web-browser on your local machine to start the interface:
 ```
 open http://localhost:80/
 ```
@@ -49,8 +49,8 @@ Export the selection as a spreadsheet using the download-icon on the columns lab
                               -v `pwd`/cache:/var/www/html/php/project_cache \
                               -v `pwd`/exports:/var/www/html/php/exports filter_dicom_by_tag 
 ```
- - In some environments port 80 is already used. Change the Dockerfile and use an alternative port
- for the integrated website. 
+ - In some environments port 80 is already in use. Change the Dockerfile and use an alternative port
+ for the integrated website.
  - In order to be able to see the website outside of the docker environment
  start a local docker with '--network host' instead of providing the '-p' argument. This will run
  the system on the hosts network and thus make it accessible to external users.
