@@ -41,7 +41,7 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
                 # we can have the directory already from a previous run
                 mkdir -p "${p}"
             fi
-
+            /usr/bin/cp -L -R "/var/www/html/php/data/${id}/${u}/${v}/"* "${p}/"
         done
     done
 done
