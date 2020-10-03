@@ -19,17 +19,19 @@ output=`jq -r ".output" "${folder}"`
 id=`jq -r ".id" "${folder}"`
 echo "OK, we are ready to start processing on the information in ${folder} (${output})."
 
+tmp="$(mktemp)"
+/usr/bin/jq '. |= .+ { "startdate": "'"${stime}"'" }' "$folder" > "$tmp"
+mv "$tmp" $folder
 
 # lets start with creating the folder structure
 # each .data[i] has a key which is the StudyInstanceUID and a value which is a list of
 # SeriesInstanceUIDs
 
+c=0
 for row in $(jq -r '.data | @base64' "${folder}"); do
     _jq() {
         echo ${row} | base64 --decode | jq -r ${1}
     }
-
-    #echo $(_jq 'keys' | jq ".[]")                                                                                                                                                                                                                                                  
     for u in $(_jq 'keys' | jq ".[]"); do
         echo "work on this study: ${u}"
         StudyInstanceUID=$(echo ${u} | tr -d '"')
@@ -42,7 +44,16 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
                 # we can have the directory already from a previous run
                 mkdir -p "${p}"
             fi
+            c=$(( c + 1 ))
             /usr/bin/cp -L -R "/var/www/html/php/data/${id}/${StudyInstanceUID}/${v}/"* "${p}/"
+            # store the number of exported image series
+            tmp="$(mktemp)"
+            /usr/bin/jq '. |= .+ { "num_exported": "'"${c}"'" }' "$folder" > "$tmp"
+            mv "$tmp" $folder
         done
     done
 done
+
+tmp="$(mktemp)"
+/usr/bin/jq '. |= .+ { "enddate": "'"${stime}"'" }' "$folder" > "$tmp"
+mv "$tmp" $folder
