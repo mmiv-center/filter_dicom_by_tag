@@ -250,10 +250,10 @@ function sendToClassifier() {
 			if (jQuery(value).find('div.Series').length > 0)
 				numSelectedStudies++;
 		});
-	    jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants>1?"s":"") + ", " +
+		jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants > 1 ? "s" : "") + ", " +
 			jQuery('#content div.Series').length + " imaging series in " +
-					      jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length>1?"ies":"y") + ")");
-	    jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies>1?"ies":"y") + "");
+			jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
+		jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies > 1 ? "ies" : "y") + "");
 		//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
 	}, "json").fail(function() {
 		console.log("we did not get something back ... ");
@@ -402,7 +402,12 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('#full-export').on('click', function() {
-	    var to_export = {};
+		var name = jQuery('#export-name').val();
+		if (name.length == 0) {
+			name = "selection";
+		}
+
+		var to_export = {};
 		jQuery('#content-selected').find('div.Series').each(function(i, a) {
 			var SeriesInstanceUID = jQuery(a).attr('id').replace("-s", "").replace("series_", "");
 			var StudyInstanceUID = jQuery(a).parent().attr('id').replace("-s", "").replace("study_", "");
@@ -411,6 +416,7 @@ jQuery(document).ready(function() {
 			to_export[StudyInstanceUID].push(SeriesInstanceUID);
 		});
 		jQuery.post('php/exportAsFolders.php', {
+			name: name,
 			to_export: JSON.stringify(to_export)
 		}, function(data) {
 			// should be in the background.. may take a long time
@@ -428,11 +434,15 @@ jQuery(document).ready(function() {
 			content = content + SeriesInstanceUID + "," + StudyInstanceUID + "\n";
 		});
 
+		var name = jQuery('#export-name').val();
+		if (name.length == 0) {
+			name = "selection";
+		}
 		var csv = "data:text/csv;charset=utf-8," + content;
 		var encodeUri = encodeURI(csv);
 		var link = document.createElement("a");
 		link.setAttribute("href", encodeUri);
-		link.setAttribute("download", "selection.csv");
+		link.setAttribute("download", name + ".csv");
 		document.body.appendChild(link);
 		link.click();
 	});

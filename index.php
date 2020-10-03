@@ -181,6 +181,10 @@
       </div>
       <div class="modal-body" style="overflow-x: scroll;">
       	<p>The current selection can be exported as a spreadsheet containing a list of StudyInstanceUID and SeriesInstanceUID entries, or as a series of folders that include the raw data.</p>
+        <div class="form-group">
+           <label for="export-name" class="control-label">Export type</label>
+           <input type="text" class="form-control" id="export-name" placeholder="Name your selection (T1, T2, etc.)"/>
+        </div>
         <button class="btn btn-primary download-selected">Spreadsheet</button>
         <button class="btn btn-primary" id="full-export">Full data export</button>
       </div>

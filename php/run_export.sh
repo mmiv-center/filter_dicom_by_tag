@@ -14,6 +14,7 @@ if [ ! -e "${folder}" ]; then
    exit;
 fi
 
+name=`jq -r ".name" "${folder}"`
 output=`jq -r ".output" "${folder}"`
 echo "OK, we are ready to start processing on the information in ${folder} (${output})."
 
@@ -33,8 +34,11 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
         for v in $(_jq ".[${u}][]"); do
             echo "  series: ${v}"
             # ok, now where is the data?
-            p=$(echo ${output}/${u}/${v} | tr -d '"')
-            mkdir -p "${p}"
+            p=$(echo ${output}/${u}/${name}/${v} | tr -d '"')
+            if [ ! -d "${p}" ]; then
+                # we can have the directory already from a previous run
+                mkdir -p "${p}"
+            fi
         done
     done
 done

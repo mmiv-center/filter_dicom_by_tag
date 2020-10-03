@@ -3,13 +3,16 @@
   $key = uniqid("export_");
   $path = "/var/www/html/php/exports/".$key;
 
-  $to_export = array( "key" => $key, "output" => $path, "data" => array() );
+  $to_export = array( "key" => $key, "output" => $path, "data" => array(), "name" => "" );
   if (isset($_POST['to_export'])) {
       $to_export["data"] = json_decode($_POST['to_export'], TRUE);
       echo(json_encode(array("message" => "OK: found variable." . $_POST['to_export'])));
   } else {
       echo(json_encode(array("message" => "Error: no to_export variable found.")));
       return;
+  }
+  if (isset($_POST['name'])) {
+      $to_export['name'] = $_POST['name'];
   }
 
   mkdir($path, 0777, TRUE);
