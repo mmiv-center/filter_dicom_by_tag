@@ -37,7 +37,7 @@
   // file_put_contents("/tmp/bla.log", json_encode($out));
   if ($return == 0) {
     echo("Ok, process is running\n");
-    if (length($out) > 1) {
+    if (count($out) > 1) {
       foreach($out as $o) {
          if (strlen($o) > 0) {
             echo("Kill ".$o);
