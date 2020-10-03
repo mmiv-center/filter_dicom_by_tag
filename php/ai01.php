@@ -31,10 +31,10 @@
 
   // we should check if a call is already running, we can kill that call first before
   // starting a new call
-  exec("pgrep -f \"php/classify.R\"", $output, $return);
+  exec("pgrep -f \"php/classify.R\"", $out, $return);
   if ($return == 0) {
     echo("Ok, process is running\n");
-    foreach($output as $o) {
+    foreach($out as $o) {
        if (strlen($o) > 0) {
           echo("Kill ".$o);
           exec("kill -9 ".$o); // would be better to kill only the current users runs
