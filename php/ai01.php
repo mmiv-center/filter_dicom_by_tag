@@ -33,7 +33,7 @@
   // starting a new call
   // this does not work, the exec call will also run the string we are looking for, so we will
   // always detect at least one job
-  exec("pgrep -f \"php/classify.R\"", $out, $return);
+  /* exec("pgrep -f \"php/classify.R\"", $out, $return);
   // file_put_contents("/tmp/bla.log", json_encode($out));
   if ($return == 0) {
     echo("Ok, process is running\n");
@@ -45,7 +45,7 @@
          }
       }
     }
-  }
+    } */
 
   // now call the external classifier and get the output data back
   $start_time = microtime(true);
