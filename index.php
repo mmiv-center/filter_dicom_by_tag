@@ -186,6 +186,7 @@
            <input type="text" class="form-control" id="export-name" placeholder="Name your selection (T1, T2, etc.)"/>
         </div>
         <button class="btn btn-primary download-selected">Spreadsheet</button>
+        <button class="btn btn-primary" id="share-world" data-dismiss="modal" title="Share your classification model with other users - no data, just the classification tree.">Share</button>
         <button class="btn btn-primary" id="full-export">Full data export</button>
       </div>
       <div class="modal-footer">
