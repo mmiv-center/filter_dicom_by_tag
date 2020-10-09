@@ -180,9 +180,6 @@ div.actions {
 	background-color: #fff;
 	-webkit-box-shadow: inset 0 0 6px rgba(90, 90, 90, 0.7);
 }
-.ac_results {
-	background-color: gray;
-}
 .acInput {
 	width: 200px;
 }
@@ -231,7 +228,8 @@ div.actions {
 .ac_results {
 	padding: 0px;
 	border: 1px solid WindowFrame;
-	background-color: white;
+	background-color: gray;
+	color: white;
 	overflow: hidden;
 	text-align: left;
 	z-index: 99999;
