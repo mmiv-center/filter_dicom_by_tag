@@ -222,7 +222,7 @@ function sendToClassifier() {
 					erg = erg + nam + weight;
 				}
 			}
-			jQuery('#chat').val(erg);
+			jQuery('#chat').val(data['treevars'].join(", ") + erg);
 			jQuery('#chat').effect('highlight');
 
 		} else
