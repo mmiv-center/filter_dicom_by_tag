@@ -94,7 +94,7 @@ function bpMinVersion(min, actual) {
   function bpQuickJumpOnLoad() {
     jQuery(document).ready(function() {
         // Install any CSS we need (check to make sure it hasn't been loaded)
-        if (jQuery('link[href$="' + BP_SEARCH_SERVER + '/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"]')) {
+        /* if (jQuery('link[href$="' + BP_SEARCH_SERVER + '/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"]')) {
             jQuery("head").append("<link>");
             css = jQuery("head").children(":last");
             css.attr({
@@ -102,16 +102,16 @@ function bpMinVersion(min, actual) {
                 type: "text/css",
                 href: BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"
             });
-        }
+        }*/
   
         jQuery("#bp_quick_jump").append("<input type=\"textbox\" class=\"form-control\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\" placeholder=\"Search for known DICOM related entry\">");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_concept_id'>");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_ontology_id'>");
 
         // Grab the specific scripts we need and fires it start event
-        jQuery.getScript(BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/crossdomain_autocomplete.js", function() {
+        /* jQuery.getScript(BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/crossdomain_autocomplete.js", function() {
             jumpTo_setup_functions();
-        });
+        });*/
     });
   }
   
