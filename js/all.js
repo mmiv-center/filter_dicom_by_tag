@@ -241,7 +241,7 @@ function sendToClassifier() {
 					erg2 = erg2 + nam;
 				}
 			}
-			jQuery('#chat').val(erg2 + erg);
+			jQuery('#chat').val(erg2 + "; replacement if missing: " + erg);
 			jQuery('#chat').effect('highlight');
 
 		} else
