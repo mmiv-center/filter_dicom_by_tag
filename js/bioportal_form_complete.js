@@ -109,9 +109,9 @@ function bpMinVersion(min, actual) {
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_ontology_id'>");
 
         // Grab the specific scripts we need and fires it start event
-        /* jQuery.getScript(BP_SEARCH_SERVER + "/javascripts/JqueryPlugins/autocomplete/crossdomain_autocomplete.js", function() {
+        jQuery.getScript("/js/crossdomain_autocomplete.js", function() {
             jumpTo_setup_functions();
-        });*/
+        });
     });
   }
   
