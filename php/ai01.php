@@ -56,5 +56,8 @@
   if (file_exists($output.".svg")) {
      $data['tree_image'] = basename($output.".svg");
   }
-  echo(json_encode($data));
+  if (file_exists($output."_model.RDS")) {
+     $data['model_binary'] = basename($output."_model.RDS");
+  }
+echo(json_encode($data));
 ?>
