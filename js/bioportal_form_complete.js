@@ -104,7 +104,7 @@ function bpMinVersion(min, actual) {
             });
         }
   
-        jQuery("#bp_quick_jump").append("<input type=\"textbox\" class=\"form-control\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\">");
+        jQuery("#bp_quick_jump").append("<input type=\"textbox\" class=\"form-control\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\" placeholder=\"Search for known DICOM related entry\">");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_concept_id'>");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_ontology_id'>");
 
