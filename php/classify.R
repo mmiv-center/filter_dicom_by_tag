@@ -83,8 +83,8 @@ if (length(idx) > 0) {
 
 # g0028.0030 for pixel spacing    # c = strsplit(a, "\\\\");
 if ( !is.na(match("g0028.0030", names(df))) ) {
-   df$g0028.0030x <- as.numeric(as.character(sub("(.*)\\\\(.*)", "\\1", df$g0028.0030)))
-   df$g0028.0030y <- as.numeric(as.character(sub("(.*)\\\\(.*)", "\\2", df$g0028.0030)))
+   df$g0028.0030row <- as.numeric(as.character(sub("(.*)\\\\(.*)", "\\1", df$g0028.0030)))
+   df$g0028.0030col <- as.numeric(as.character(sub("(.*)\\\\(.*)", "\\2", df$g0028.0030)))
 }
 
 # test if we can randomize the column in the data frame to get different answers
@@ -120,6 +120,12 @@ fit  <- rpart(formula(f), data=df[sub,], control=list(cp=0, minsplit=1, minbucke
 cp_choose <- fit$cptable[,1][which.min(fit$cptable[,4])]
 print(paste("Prune value is (1SE rule): ", cp_choose, sep=""))
 fit.pruned <- prune.rpart(fit, cp_choose)
+
+# variables used in the generation of the tree
+# levels(fit$frame$var)[!(levels(fit$frame$var) %in% "<leaf>")]
+
+# we should store our model in the output folder for later predictions
+saveRDS(fit.pruned, paste(args[2], "_model.RDS", sep=""))
 
 # add some visualization
 # library(rattle) # does not exist on 3.4.4
