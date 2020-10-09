@@ -207,10 +207,10 @@
       </div>
       <div class="modal-body" style="overflow-x: scroll;">
       	<p>The current classification tree can be uploaded to the cloud. You need internet access to make this work. 
-        We will upload your classification tree so that other users can benefit from your selection.</p>
+        You will upload your classification tree so that other users can benefit from your selection.</p>
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
-           <input type="text" class="form-control" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/>
+           <input type="text" class="form-control" class="bp_form_complete-DCM-name" size="100" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/>
         </div>
         <button class="btn btn-primary" id="share-world-button">Share</button>
       </div>
@@ -231,6 +231,7 @@
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <script src="js/bioportal_form_complete.js"></script>
     <script src="js/all.js" type="text/javascript"></script>
   </body>
 </html>
