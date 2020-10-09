@@ -104,7 +104,7 @@ function bpMinVersion(min, actual) {
             });
         }
   
-        jQuery("#bp_quick_jump").append("Jump To: <input type=\"textbox\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\"> <input type=\"button\" value=\"Go to " + BP_SITE + "\" onclick=\"jumpTo_jump_clicked();\">");
+        jQuery("#bp_quick_jump").append("<input type=\"textbox\" class=\"form-control\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\">");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_concept_id'>");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_ontology_id'>");
 
