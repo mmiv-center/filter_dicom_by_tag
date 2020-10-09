@@ -210,7 +210,7 @@
         You will upload your classification tree so that other users can benefit from your selection.</p>
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
-           <input type="text" class="form-control" class="bp_form_complete-DCM-name" size="100" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/>
+           <input type="text" class="form-control bp_form_complete-DCM-name" size="100" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/>
         </div>
         <button class="btn btn-primary" id="share-world-button">Share</button>
       </div>
