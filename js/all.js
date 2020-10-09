@@ -415,6 +415,13 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 
+	jQuery('#share-world').on('click', function() {
+		// open another dialog - but only after the current dialog is closed
+		setTimeout(function() {
+			jQuery('#modal-share').modal('show');
+		}, 500);
+	});
+
 	jQuery('#processing-time').on('click', function() {
 		// display the decision tree as a graphic
 		jQuery('#tree-modal').modal('show');

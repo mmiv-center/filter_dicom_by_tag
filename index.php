@@ -196,6 +196,30 @@
   </div>
 </div>
 
+<div class="modal fade" id="modal-share" tabindex="-1" role="dialog" aria-labelledby="modalShare" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalShare">Share your knowledge</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="overflow-x: scroll;">
+      	<p>The current classification tree can be uploaded to the cloud. You need internet access to make this work. 
+        We will upload your classification tree so that other users can benefit from your selection.</p>
+        <div class="form-group">
+           <label for="export-name" class="control-label">What did you select?</label>
+           <input type="text" class="form-control" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/>
+        </div>
+        <button class="btn btn-primary" id="share-world-button">Share</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
     
     <!-- Optional JavaScript -->
