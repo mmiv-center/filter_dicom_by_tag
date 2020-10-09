@@ -122,7 +122,7 @@ print(paste("Prune value is (1SE rule): ", cp_choose, sep=""))
 fit.pruned <- prune.rpart(fit, cp_choose)
 
 # variables used in the generation of the tree
-# levels(fit$frame$var)[!(levels(fit$frame$var) %in% "<leaf>")]
+treevars <- levels(fit$frame$var)[!(levels(fit$frame$var) %in% "<leaf>")]
 
 # we should store our model in the output folder for later predictions
 saveRDS(fit.pruned, paste(args[2], "_model.RDS", sep=""))
@@ -149,6 +149,7 @@ confusion.matrix = table(predict(fit.pruned, type="class"), df[sub,]$class)
 tab$error_train_confusion_matrix = confusion.matrix
 tab$accuracy_percent = 100 * sum(diag(confusion.matrix)) / sum(confusion.matrix)
 tab$cptable = toString(fit$cptable)
+tab$treevars = treevars
 library(RColorBrewer)
 library(htmlTable)
 tab$rules = htmlTable(rpart.rules(fit.pruned, cover = TRUE))
