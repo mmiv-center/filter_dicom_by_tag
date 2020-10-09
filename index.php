@@ -212,6 +212,10 @@
            <label for="export-name" class="control-label">What did you select?</label>
            <input type="text" class="form-control bp_form_complete-DCM-name" size="100" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/>
         </div>
+        <div id="bp_quick_jump"></div>
+<script type="text/javascript">
+    var BP_ontology_id = "DCM";
+</script>
         <button class="btn btn-primary" id="share-world-button">Share</button>
       </div>
       <div class="modal-footer">
