@@ -235,6 +235,7 @@
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-select-1.13.9/dist/js/bootstrap-select.min.js"></script>
+    <script src="js/crossdomain_autocomplete.js"></script>
     <script src="js/bioportal_form_complete.js"></script>
     <script src="js/all.js" type="text/javascript"></script>
   </body>
