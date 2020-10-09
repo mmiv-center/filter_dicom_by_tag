@@ -222,10 +222,26 @@ function sendToClassifier() {
 					erg = erg + nam + weight;
 				}
 			}
+			var erg2 = "";
 			if (typeof data['treevars'] === 'string') {
 				data['treevars'] = [data['treevars']];
 			}
-			jQuery('#chat').val(data['treevars'].join(", ") + erg);
+			for (var i = 0; i < data['treevars'].length; i++) {
+				var elem = data['treevars'][i];
+				var el = elem.replace(/^g/, "").replace(".", "").toUpperCase();
+				var nam = "";
+				if (typeof dicom_dict[el] !== 'undefined') {
+					nam = dicom_dict[el];
+				} else {
+					nam = elem;
+				}
+				if (i < data['treevars'].length - 1) {
+					erg2 = erg2 + nam + ", ";
+				} else {
+					erg2 = erg2 + nam;
+				}
+			}
+			jQuery('#chat').val(erg2 + erg);
 			jQuery('#chat').effect('highlight');
 
 		} else
