@@ -51,13 +51,24 @@
   $start_time = microtime(true);
   $lastline   = exec("/usr/bin/Rscript --vanilla /var/www/html/php/classify.R ".$input." ".$output);
   $end_time   = microtime(true);
-  $data       = json_decode(file_get_contents($output), TRUE);
-  $data['processing_time'] = ($end_time - $start_time);
-  if (file_exists($output.".svg")) {
-     $data['tree_image'] = basename($output.".svg");
+  $data = array();
+  $count = 0;
+  while(TRUE) {
+     $o = sprintf("%s_%04d", $output, $count);
+     // do we still have such a file?
+     if (!file_exists($o)) {
+        break  
+     }
+     $data[$count] = json_decode(file_get_contents($o), TRUE);
+     $data[$count]['processing_time'] = ($end_time - $start_time);
+      if (file_exists($output.".svg")) {
+         $data[$count]['tree_image'] = basename(sprintf("%s_%04d.svg", $output, $count));
+      }
+      if (file_exists($output."_model.RDS")) {
+         $data[$count]['model_binary'] = basename(sprintf("%s_model_%04d.RDS", $output, $count));
+      }
+      $count = $count + 1;
   }
-  if (file_exists($output."_model.RDS")) {
-     $data['model_binary'] = basename($output."_model.RDS");
-  }
+}
 echo(json_encode($data));
 ?>
