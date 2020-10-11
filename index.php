@@ -205,7 +205,7 @@
         <p>The current classification tree can be uploaded to the cloud (requires a working internet connection) so that other users can benefit from your knowledge. Other users can use your model to classify their own data and to discover links between classifications.</p>                                                                                                                                                                                    
         <div class="form-group">
            <label for="handle-name" class="control-label">What is your handle?</label>
-           <input type="text" class="form-control" id="handle-name" aria-describedby="handleNameHelp"/>
+           <input type="text" class="form-control" id="handle-name" aria-describedby="handleNameHelp" placeholder="What do you want to be known as?"/>
            <small id="handleNameHelp" class="form-text text-muted">In case we ever establish a reputation this would be helpful.</small>
         </div>
         <div class="form-group">
