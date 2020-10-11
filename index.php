@@ -183,7 +183,7 @@
       	<p>The current selection can be exported as a spreadsheet containing a list of StudyInstanceUID and SeriesInstanceUID entries, or as a series of folders that include the raw data. If you want to help make the world a better place donate your model to be used by other users.</p>
 
 <ul class="nav nav-tabs" id="tabContent">
-    <li class="nav-item"><a class="nav-link" href="#spreadsheet" data-toggle="tab">Spreadsheet</a></li>
+    <li class="nav-item"><a class="nav-link active" href="#spreadsheet" data-toggle="tab">Spreadsheet</a></li>
     <li class="nav-item"><a class="nav-link" href="#data-export" data-toggle="tab">Data export</a></li>
     <li class="nav-item"><a class="nav-link" href="#share-world" data-toggle="tab">Share with the World</a></li>
 </ul>
