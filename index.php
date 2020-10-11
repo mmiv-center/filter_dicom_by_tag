@@ -191,9 +191,6 @@
 <div class="tab-content">
     <div class="tab-pane active" id="spreadsheet" style="height: 250px;padding-top: 10px;">
        <button class="btn btn-primary download-selected">Spreadsheet</button>
-       <div class="control-group">
-           <label class="control-label">Instance Name</label>
-       </div>
     </div>
 
     <div class="tab-pane" id="data-export"  style="height: 250px; padding-top: 10px;">
@@ -204,7 +201,8 @@
         <button class="btn btn-primary" id="full-export">Full data export</button>
     </div> 
     <div class="tab-pane" id="share-world"  style="height: 250px; padding-top: 10px;">
-      	<p>The current classification tree can be uploaded to the cloud. You need internet access to make this work. You will upload your classification tree so that other users can benefit from your selection.</p>
+        <p>The current classification tree can be uploaded to the cloud (requires a working internet connection) so that other users can benefit from your knowledge.</p>
+        <p>Other users can use your model to classify their own data and to discover links between classifications.</p>                                                                                                                                                                                                                 
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
            <div id="bp_quick_jump"></div>
