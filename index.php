@@ -204,6 +204,11 @@
     <div class="tab-pane" id="share-world"  style="height: 250px; padding-top: 10px;">
         <p>The current classification tree can be uploaded to the cloud (requires a working internet connection) so that other users can benefit from your knowledge. Other users can use your model to classify their own data and to discover links between classifications.</p>                                                                                                                                                                                    
         <div class="form-group">
+           <label for="handle-name" class="control-label">What is your handle?</label>
+           <input type="text" class="form-control" id="handle-name" aria-describedby="handleNameHelp"/>
+           <small id="handleNameHelp" class="form-text text-muted">In case we ever establish a reputation this would be helpful.</small>
+        </div>
+        <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
            <div id="bp_quick_jump"></div>
 <script type="text/javascript">

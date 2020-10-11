@@ -177,7 +177,7 @@ function sendToClassifier() {
 		jQuery('#content-selected div.Series').remove();
 		jQuery('#content div.Series.a').removeClass('a');
 		jQuery('#content div.Series.b').removeClass('b');
-
+   	        jQuery('#share-world-button').attr('model-names', JSON.stringify(data['model_binary']));
 
 		console.log("Got some data back from the model: " + JSON.stringify(data));
 		jQuery('#processing-time').text(data['processing_time'].toFixed(2) + "sec, training acc. = " + data['accuracy_percent'].toFixed(0) + "%");
@@ -415,14 +415,19 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 
-	jQuery('#share-world').on('click', function() {
-		// open another dialog - but only after the current dialog is closed
-		setTimeout(function() {
-			jQuery('#modal-share').modal('show');
-		}, 500);
+    jQuery('#share-world-button').on('click', function() {
+	var handle = jQuery('#handle-name').val();
+	var name = jQuery('#export-name').val();
+	var models = jQuery('#share-world-button').attr('model-names');
+	if (name == "") {
+	    console.log("Info: a name for the export is not required, nor a handle");
+	}
+	jQuery.getJSON('/php/shareModel.php', { name: name, handle: handle, models: models }, function(data) {
+	    console.log("got back: " + JSON.stringify(data));
 	});
+    });
 
-	jQuery('#processing-time').on('click', function() {
+        jQuery('#processing-time').on('click', function() {
 		// display the decision tree as a graphic
 		jQuery('#tree-modal').modal('show');
 	});
