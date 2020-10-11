@@ -435,7 +435,7 @@ jQuery(document).ready(function() {
     
     jQuery('#share-world-button').on('click', function() {
 	var handle = jQuery('#handle-name').val();
-	var name = jQuery('#export-name').val();
+	var name = jQuery('#BP_search_box').val();
 	var models = jQuery('#share-world-button').attr('model-names');
 	if (name == "") {
 	    console.log("Info: a name for the export is not required, nor a handle");
