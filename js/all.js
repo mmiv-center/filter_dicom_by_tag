@@ -415,6 +415,24 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 
+    jQuery('#handle-name').on('change', function() {
+	var name = jQuery('#handle-name').val();
+	try {
+	    localStorage.setItem('testObject', JSON.stringify(testObject));
+	} catch(e) {
+	    console.log("Warning: no localStorage");
+	}
+    });
+    // if the name exists we pull and fill
+    try {
+	var handle = localStorage.getItem("handle-name");
+	if (handle !== null) {
+	    jQuery('#handle-name').val(handle);
+	}
+    } catch(e) {
+	console.log("Warning: no localStorage");
+    }    
+    
     jQuery('#share-world-button').on('click', function() {
 	var handle = jQuery('#handle-name').val();
 	var name = jQuery('#export-name').val();
