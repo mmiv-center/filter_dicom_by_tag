@@ -131,6 +131,9 @@ models_last_run = [];
 current_model = -1;
 
 function updateModel(current_model) {
+	jQuery('#model_nav').children().remove();
+	jQuery('#model_nav').append("(<a href='#'>next</a>, <a href='#'>previous</a> " + current_model + "/" + models_last_run.length + ")");
+
 	var data = models_last_run[current_model];
 	// remove again in case we have more than one mouse-click
 	// TODO: Any way to cancel the previous iteration? Delayed execution?

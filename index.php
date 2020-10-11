@@ -101,7 +101,7 @@
 	<div class="col-md-12">
 	  <form>
 	    <div class="form-group">
-	      <label for="chat">Our learning machine thinks these tags are important</label>
+	      <label for="chat">Our learning machine thinks these tags are important <div id="model_nav" style="display: inline-block;"></div></label>
 	      <div class="input-group">
 		<input type="text" disabled class="form-control" id="chat" title="Variables used for the current classification (pruned CART) by decreasing importance. These variable might not appear in the graph used for classification but instead be used in case that variables from the graph are missing for some cases. In those cases substitute variables listed will replace the missing entries." placeholder="No prediction without training, no training without examples... (love: left-click, hate: Shift+left-click)">
 		<div class="input-group-append">
