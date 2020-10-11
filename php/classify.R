@@ -90,69 +90,98 @@ if ( !is.na(match("g0028.0030", names(df))) ) {
 # test if we can randomize the column in the data frame to get different answers
 #df = df[,sample(seq(1,dim(df)[2]))]
 
-sub = (df$train == "train")
+# we want to compute more than 1 model, in this case we can create a model first and 
+# remove its components from the data frame before computing another model
+censor <- c()
+stopIfBadModel <- FALSE
+bestAccuracy <- NULL
+countModels <- 0
+repeat {
+  # lets remove the variables from the data frame that are censored in this repeat run
+  df <- df[,!(names(df) %in% censor)]
 
-tr = df[sub,]
-pr = df[!sub,]
-rem = c()
-for (i in seq(1, length(names(tr)))) {
-  co = names(tr)[i]
-  if (class(df[[co]]) == "factor") {
-    pr[[co]] <- factor(pr[[co]], levels = levels(tr[[co]]))
-    if (length(levels(tr[[co]])) < 2 & co != "class" & co != "series" & co != "study" & co != "train") {
-       rem = c(rem, co)
+  sub = (df$train == "train")
+
+  tr = df[sub,]
+  pr = df[!sub,]
+  rem = c()
+  for (i in seq(1, length(names(tr)))) {
+    co = names(tr)[i]
+    if (class(df[[co]]) == "factor") {
+      pr[[co]] <- factor(pr[[co]], levels = levels(tr[[co]]))
+      if (length(levels(tr[[co]])) < 2 & co != "class" & co != "series" & co != "study" & co != "train") {
+        rem = c(rem, co)
+      }
     }
   }
+  df[!sub,] = pr
+  df = df[,!names(df) %in% rem]
+  #print(paste("left over variables are: ", length(names(df))))
+
+  v = names(df)
+  v = v[-which(names(df) %in% c("class","train","study","series"))]
+  f = paste("class ~", paste(v, collapse=" + "))
+  #
+  # rpart can do its own boostrap based pruning, here we take control and prune by 1-err
+  #
+  fit  <- rpart(formula(f), data=df[sub,], control=list(cp=0, minsplit=1, minbucket=1), method="class")
+
+
+  cp_choose <- fit$cptable[,1][which.min(fit$cptable[,4])]
+  print(paste("Prune value is (1SE rule): ", cp_choose, sep=""))
+  fit.pruned <- prune.rpart(fit, cp_choose)
+
+  # variables used in the generation of the tree
+  treevars <- levels(fit$frame$var)[!(levels(fit$frame$var) %in% "<leaf>")]
+
+  pred <- predict(fit.pruned, df[!sub,], type = "class")
+  idx=row.names(df[!sub,])
+  erg = data.frame(class=array(pred), study=df[idx,"study"], series=df[idx,"series"])
+
+  confusion.matrix = table(predict(fit.pruned, type="class"), df[sub,]$class)
+  accuracy_percent = 100 * sum(diag(confusion.matrix)) / sum(confusion.matrix)
+  # ok, we are still in the repeat loop, we want to get out if we have a worst model
+  if (bestAccuracy == NULL) {
+    bestAccuracy <- accuracy_percent
+  }
+  if (bestAccuracy > accuracy_percent || countModels > 10) {
+    # ignore if the model gets worse -- but we need to ignore before we save anything...
+    break;
+  }
+  # now add the current list of variables to the banned list
+  censor <- c(censor, treevars)
+
+  #
+  # save our results
+  #
+
+  # we should store our model in the output folder for later predictions
+  saveRDS(fit.pruned, paste(args[2], sprintf("_model_%04d", countModel), ".RDS", sep=""))
+
+  # add some visualization
+  # library(rattle) # does not exist on 3.4.4
+  library(rpart.plot)
+  svg(paste(args[2], sprintf("_%04d", countModel), ".svg", sep=""))
+  # fancyRpartPlot(fit, caption = "Decision Tree Model")
+  rpart.plot( fit.pruned , extra = 104, box.palette = "GnBu", branch.lty = 3, shadow.col = "gray", nn = TRUE, roundint = FALSE)
+  dev.off()
+
+  fileConn<-file(paste(args[2], sprintf("_%04d", countModel), sep=""))
+  tab = fromJSON(toJSON(erg))
+  tab$splits = names(fit.pruned$variable.importance)
+  tab$splits_weight = as.character(fit.pruned$variable.importance)
+  tab$cp_choose = cp_choose
+  # compute the error rate as well
+  tab$error_train_confusion_matrix = confusion.matrix
+  tab$accuracy_percent = 100 * sum(diag(confusion.matrix)) / sum(confusion.matrix)
+  tab$cptable = toString(fit$cptable)
+  tab$treevars = treevars
+  library(RColorBrewer)
+  library(htmlTable)
+  tab$rules = htmlTable(rpart.rules(fit.pruned, cover = TRUE))
+  tab$formula = f
+  writeLines(toJSON(tab), fileConn)
+  close(fileConn)
+
+  countModels = countModels + 1
 }
-df[!sub,] = pr
-df = df[,!names(df) %in% rem]
-#print(paste("left over variables are: ", length(names(df))))
-
-v = names(df)
-v = v[-which(names(df) %in% c("class","train","study","series"))]
-f = paste("class ~", paste(v, collapse=" + "))
-#
-# rpart can do its own boostrap based pruning, here we take control and prune by 1-err
-#
-fit  <- rpart(formula(f), data=df[sub,], control=list(cp=0, minsplit=1, minbucket=1), method="class")
-
-
-cp_choose <- fit$cptable[,1][which.min(fit$cptable[,4])]
-print(paste("Prune value is (1SE rule): ", cp_choose, sep=""))
-fit.pruned <- prune.rpart(fit, cp_choose)
-
-# variables used in the generation of the tree
-treevars <- levels(fit$frame$var)[!(levels(fit$frame$var) %in% "<leaf>")]
-
-# we should store our model in the output folder for later predictions
-saveRDS(fit.pruned, paste(args[2], "_model.RDS", sep=""))
-
-# add some visualization
-# library(rattle) # does not exist on 3.4.4
-library(rpart.plot)
-svg(paste(args[2], ".svg", sep=""))
-# fancyRpartPlot(fit, caption = "Decision Tree Model")
-rpart.plot( fit.pruned , extra = 104, box.palette = "GnBu", branch.lty = 3, shadow.col = "gray", nn = TRUE, roundint = FALSE)
-dev.off()
-
-pred <- predict(fit.pruned, df[!sub,], type = "class")
-idx=row.names(df[!sub,])
-erg = data.frame(class=array(pred), study=df[idx,"study"], series=df[idx,"series"])
-
-fileConn<-file(args[2])
-tab = fromJSON(toJSON(erg))
-tab$splits = names(fit.pruned$variable.importance)
-tab$splits_weight = as.character(fit.pruned$variable.importance)
-tab$cp_choose = cp_choose
-# compute the error rate as well
-confusion.matrix = table(predict(fit.pruned, type="class"), df[sub,]$class)
-tab$error_train_confusion_matrix = confusion.matrix
-tab$accuracy_percent = 100 * sum(diag(confusion.matrix)) / sum(confusion.matrix)
-tab$cptable = toString(fit$cptable)
-tab$treevars = treevars
-library(RColorBrewer)
-library(htmlTable)
-tab$rules = htmlTable(rpart.rules(fit.pruned, cover = TRUE))
-tab$formula = f
-writeLines(toJSON(tab), fileConn)
-close(fileConn)
