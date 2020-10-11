@@ -195,8 +195,9 @@
 
     <div class="tab-pane" id="data-export"  style="height: 250px; padding-top: 10px;">
         <div class="form-group">
-           <label for="export-name" class="control-label">Export type</label>
-           <input type="text" class="form-control" id="export-name" placeholder="Name your selection (T1, T2, etc.)"/>
+           <label for="export-name" class="control-label">Export folder name</label>
+           <input type="text" class="form-control" id="export-name" placeholder="Name your selection (T1, T2, DTI, Fieldmap, Localizer, etc.)"/>
+           <small id="exportNameHelp" class="form-text text-muted">Actual folder names are random but a sub-folder will be named with this string.</small>
         </div>
         <button class="btn btn-primary" id="full-export">Full data export</button>
     </div> 
