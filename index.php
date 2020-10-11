@@ -212,7 +212,7 @@
            <label for="export-name" class="control-label">What did you select?</label>
            <div id="bp_quick_jump"></div>
 <script type="text/javascript">
-    var BP_ontology_id = "DCM";
+    var BP_ontology_id = "DCM,IOBC";
 </script>
            <small id="exportNameHelp" class="form-text text-muted">Search selection from David Clunies <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small>
         </div>
