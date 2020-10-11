@@ -189,16 +189,15 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane active" id="spreadsheet" style="height: 250px;">
-
-       <p>Export as a spreadsheet</p>
+    <div class="tab-pane active" id="spreadsheet" style="height: 250px;padding-top: 10px;">
+       <h4>Export as a spreadsheet</h4>
        <button class="btn btn-primary download-selected">Spreadsheet</button>
        <div class="control-group">
            <label class="control-label">Instance Name</label>
        </div>
     </div>
 
-    <div class="tab-pane" id="data-export"  style="height: 250px;">
+    <div class="tab-pane" id="data-export"  style="height: 250px; padding-top: 10px;">
         <h4>Export data</h4>
         <div class="form-group">
            <label for="export-name" class="control-label">Export type</label>
@@ -206,8 +205,8 @@
         </div>
         <button class="btn btn-primary" id="full-export">Full data export</button>
     </div> 
-    <div class="tab-pane" id="share-world"  style="height: 250px;">
-        <p>Share your selection with the world</p>
+    <div class="tab-pane" id="share-world"  style="height: 250px; padding-top: 10px;">
+        <h4>Share your selection with the world<h4>
       	<p>The current classification tree can be uploaded to the cloud. You need internet access to make this work. You will upload your classification tree so that other users can benefit from your selection.</p>
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
