@@ -181,11 +181,47 @@
       </div>
       <div class="modal-body" style="overflow-x: scroll;">
       	<p>The current selection can be exported as a spreadsheet containing a list of StudyInstanceUID and SeriesInstanceUID entries, or as a series of folders that include the raw data.</p>
+
+<ul class="nav nav-tabs" id="tabContent">
+    <li class="nav-item active"><a class="nav-link" href="#spreadsheet" data-toggle="tab">Spreadsheet</a></li>
+    <li class="nav-item"><a class="nav-link" href="#data-export" data-toggle="tab">Data export</a></li>
+    <li class="nav-item"><a class="nav-link" href="#share-world" data-toggle="tab">Share with the World</a></li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane active" id="spreadsheet">
+
+       <p>Export as a spreadsheet</p>
+       <button class="btn btn-primary download-selected">Spreadsheet</button>
+       <div class="control-group">
+           <label class="control-label">Instance Name</label>
+       </div>
+    </div>
+
+    <div class="tab-pane" id="data-export">
+        <h4>Export data</h4>
+      	<p>The current classification tree can be uploaded to the cloud. You need internet access to make this work. You will upload your classification tree so that other users can benefit from your selection.</p>
+        <div class="form-group">
+           <label for="export-name" class="control-label">What did you select?</label>
+           <div id="bp_quick_jump"></div>
+<script type="text/javascript">
+    var BP_ontology_id = "DCM";
+</script>
+        </div>
+        <small id="exportNameHelp" class="form-text text-muted">Search selection from David\'s <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small></div>
+        <button class="btn btn-primary" id="share-world-button">Share</button>
+      </div>
+    </div> 
+    <div class="tab-pane" id="share-world">
+        <p>Share your selection with the world</p>
+    </div> 
+</div>
+
+                                                                                                                                                                                          
         <div class="form-group">
            <label for="export-name" class="control-label">Export type</label>
            <input type="text" class="form-control" id="export-name" placeholder="Name your selection (T1, T2, etc.)"/>
         </div>
-        <button class="btn btn-primary download-selected">Spreadsheet</button>
         <button class="btn btn-primary" id="share-world" data-dismiss="modal" title="Share your classification model with other users - no data, just the classification tree.">Share</button>
         <button class="btn btn-primary" id="full-export">Full data export</button>
       </div>
