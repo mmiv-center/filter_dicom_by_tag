@@ -136,6 +136,7 @@ function nextModel() {
 		current_model = 0;
 	if (current_model < 0)
 		current_model = models_last_run.length - 1;
+	updateModel(current_model);
 }
 
 function previousModel() {
@@ -144,6 +145,7 @@ function previousModel() {
 		current_model = 0;
 	if (current_model < 0)
 		current_model = models_last_run.length - 1;
+	updateModel(current_model);
 }
 
 function updateModel(current_model) {
