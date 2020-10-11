@@ -126,61 +126,18 @@ function parseDICOMStruct(txt) {
 	return r;
 }
 
-// classify
-function sendToClassifier() {
-	// ok, we need the structure for all found entries and we need to add the classification
-	// by study - so we need to select all that we have and classify all that we need in other
-	// series
-	var data = {
-		"train": [],
-		"predict": []
-	}; // we will need training and prediction (request prediction back - one-shot learning)
+// keep the models from the last run around
+models_last_run = [];
+current_model = -1;
 
-	jQuery('#content').find('div.Series').each(function(a, b) {
-		var type = "unknown";
-		if (jQuery(b).hasClass('highlighted-human-a') || jQuery(b).hasClass('highlighted-human-b')) {
-			// needs to go into training set - positive negative examples
-			if (jQuery(b).hasClass('highlighted-human-a'))
-				type = "a";
-			else
-				type = "b";
-		}
-		var studyinstanceuid = jQuery(this).parent().attr('id');
-		var seriesinstanceuid = jQuery(this).attr('id');
-		if (type != "unknown") {
-			data['train'].push({
-				class: type,
-				study: studyinstanceuid,
-				series: seriesinstanceuid,
-				data: dataCache[studyinstanceuid][seriesinstanceuid]
-			});
-		} else {
-			data['predict'].push({
-				study: studyinstanceuid,
-				series: seriesinstanceuid,
-				data: dataCache[studyinstanceuid][seriesinstanceuid]
-			});
-		}
-	});
-	// before we send the query out we should remove our current results
-	jQuery('#content-selected div.Series').remove();
-	jQuery('#content div.Series.a').removeClass('a');
-	jQuery('#content div.Series.b').removeClass('b');
-
-	// call the server prediction
-	// TODO: we should only allow the last classification to continue
-	jQuery.post('php/ai01.php', {
-		data: JSON.stringify(data)
-	},
-	function(data) {
-		current_model = 0;
-		// remove again in case we have more than one mouse-click
+function updateModel(current_model) {
+			// remove again in case we have more than one mouse-click
 		// TODO: Any way to cancel the previous iteration? Delayed execution?
 		jQuery('#content-selected div.Series').remove();
 		jQuery('#content div.Series.a').removeClass('a');
 		jQuery('#content div.Series.b').removeClass('b');
-   	    jQuery('#share-world-button').attr('model-names', JSON.stringify(data[current_model]['model_binary']));
-
+		jQuery('#share-world-button').attr('model-names', JSON.stringify(data[current_model]['model_binary']));
+		
 		console.log("Got some data back from the model: " + JSON.stringify(data));
 		jQuery('#processing-time').text(data[current_model]['processing_time'].toFixed(2) + "sec, training acc. = " + data[current_model]['accuracy_percent'].toFixed(0) + "%");
 		if (typeof data[current_model]['tree_image'] !== 'undefined') {
@@ -245,9 +202,9 @@ function sendToClassifier() {
 			}
 			jQuery('#chat').val(erg2 + "; replacement if missing: " + erg);
 			jQuery('#chat').effect('highlight');
-
+			
 		} else
-			jQuery('#chat').val("no splits found for this run...");
+		jQuery('#chat').val("no splits found for this run...");
 		// now map all the found series to content-selected
 		//jQuery('#content-selected').find('div.Series').remove();	
 		jQuery('#content div.a,div.highlighted-human-a').each(function(a, b) {
@@ -256,12 +213,12 @@ function sendToClassifier() {
 			var escapedstudy = study.replace(/\./g, "\\.");
 			var escapedseries = series.replace(/\./g, "\\.");
 			jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + series + '-s">' +
-				'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
-				'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
-				'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
-				'<div class="SeriesDescription">' + jQuery(b).find('div.SeriesDescription').text() + '</div>' +
-				'<img src="' + jQuery(b).find('img').attr('src') + '" style="margin-left: ' + jQuery(b).find('img').css('margin-left') + '; margin-top: ' + jQuery(b).find('img').css('margin-top') + ';"/>' +
-				'</div>');
+			'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
+			'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
+			'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
+			'<div class="SeriesDescription">' + jQuery(b).find('div.SeriesDescription').text() + '</div>' +
+			'<img src="' + jQuery(b).find('img').attr('src') + '" style="margin-left: ' + jQuery(b).find('img').css('margin-left') + '; margin-top: ' + jQuery(b).find('img').css('margin-top') + ';"/>' +
+			'</div>');
 		});
 		var numParticipants = [...new Set(jQuery.map(jQuery('#content div.bottom-back span'), function(a, i) {
 			return jQuery(a).text();
@@ -269,18 +226,70 @@ function sendToClassifier() {
 		var numSelectedStudies = 0;
 		jQuery.map(jQuery('#content-selected div.Study'), function(value, i) {
 			if (jQuery(value).find('div.Series').length > 0)
-				numSelectedStudies++;
+			numSelectedStudies++;
 		});
 		jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants > 1 ? "s" : "") + ", " +
-			jQuery('#content div.Series').length + " imaging series in " +
-			jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
+		jQuery('#content div.Series').length + " imaging series in " +
+		jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
 		jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies > 1 ? "ies" : "y") + "");
 		//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
+}
+
+// classify
+function sendToClassifier() {
+	// ok, we need the structure for all found entries and we need to add the classification
+	// by study - so we need to select all that we have and classify all that we need in other
+	// series
+	var data = {
+		"train": [],
+		"predict": []
+	}; // we will need training and prediction (request prediction back - one-shot learning)
+
+	jQuery('#content').find('div.Series').each(function(a, b) {
+		var type = "unknown";
+		if (jQuery(b).hasClass('highlighted-human-a') || jQuery(b).hasClass('highlighted-human-b')) {
+			// needs to go into training set - positive negative examples
+			if (jQuery(b).hasClass('highlighted-human-a'))
+				type = "a";
+			else
+				type = "b";
+		}
+		var studyinstanceuid = jQuery(this).parent().attr('id');
+		var seriesinstanceuid = jQuery(this).attr('id');
+		if (type != "unknown") {
+			data['train'].push({
+				class: type,
+				study: studyinstanceuid,
+				series: seriesinstanceuid,
+				data: dataCache[studyinstanceuid][seriesinstanceuid]
+			});
+		} else {
+			data['predict'].push({
+				study: studyinstanceuid,
+				series: seriesinstanceuid,
+				data: dataCache[studyinstanceuid][seriesinstanceuid]
+			});
+		}
+	});
+	// before we send the query out we should remove our current results
+	jQuery('#content-selected div.Series').remove();
+	jQuery('#content div.Series.a').removeClass('a');
+	jQuery('#content div.Series.b').removeClass('b');
+
+	// call the server prediction
+	// TODO: we should only allow the last classification to continue
+	jQuery.post('php/ai01.php', {
+				data: JSON.stringify(data)
+			},
+			function(data) {
+				models_last_run = data;
+				current_model = 0; // set this in the interface
+				updateModel(current_model);
 	}, "json").fail(function() {
 		console.log("we did not get something back ... ");
 		alert("Error: There seems to be a problem with running the statistical analysis, please contact the developer.");
 	});
-
+	
 }
 
 function addThumbnails() {
