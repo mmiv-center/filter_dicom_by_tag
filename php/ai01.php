@@ -61,10 +61,10 @@
       }
       $data[$count] = json_decode(file_get_contents($o), TRUE);
       $data[$count]['processing_time'] = ($end_time - $start_time);
-       if (file_exists($output.".svg")) {
+       if (file_exists(sprintf("%s_%04d.svg", $output, $count))) {
           $data[$count]['tree_image'] = basename(sprintf("%s_%04d.svg", $output, $count));
        }
-       if (file_exists($output."_model.RDS")) {
+       if (file_exists(sprintf("%s_model_%04d.RDS", $output, $count))) {
           $data[$count]['model_binary'] = basename(sprintf("%s_model_%04d.RDS", $output, $count));
        }
        $count = $count + 1;
