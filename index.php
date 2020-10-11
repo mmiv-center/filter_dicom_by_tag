@@ -189,7 +189,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane" id="spreadsheet" style="height: 250px;padding-top: 10px;">
+    <div class="tab-pane active" id="spreadsheet" style="height: 250px;padding-top: 10px;">
        <button class="btn btn-primary download-selected" title="Click here to download a spreadsheet with the StudyInstanceUID and SeriesInstanceUID of your current selection.">Download</button>
     </div>
 
