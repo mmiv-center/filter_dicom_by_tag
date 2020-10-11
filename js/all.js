@@ -131,108 +131,109 @@ models_last_run = [];
 current_model = -1;
 
 function updateModel(current_model) {
-			// remove again in case we have more than one mouse-click
-		// TODO: Any way to cancel the previous iteration? Delayed execution?
-		jQuery('#content-selected div.Series').remove();
-		jQuery('#content div.Series.a').removeClass('a');
-		jQuery('#content div.Series.b').removeClass('b');
-		jQuery('#share-world-button').attr('model-names', JSON.stringify(data[current_model]['model_binary']));
+	var data = models_last_run[current_model];
+	// remove again in case we have more than one mouse-click
+	// TODO: Any way to cancel the previous iteration? Delayed execution?
+	jQuery('#content-selected div.Series').remove();
+	jQuery('#content div.Series.a').removeClass('a');
+	jQuery('#content div.Series.b').removeClass('b');
+	jQuery('#share-world-button').attr('model-names', JSON.stringify(data[current_model]['model_binary']));
+	
+	console.log("Got some data back from the model: " + JSON.stringify(data));
+	jQuery('#processing-time').text(data[current_model]['processing_time'].toFixed(2) + "sec, training acc. = " + data[current_model]['accuracy_percent'].toFixed(0) + "%");
+	if (typeof data[current_model]['tree_image'] !== 'undefined') {
+		jQuery('#tree-space').children().remove();
+		jQuery('#tree-space').append("<img style='width: 100%;' src='php/data/" + data[current_model]['tree_image'] + "'/>");
+		jQuery('#tree-space').append("<div><center>" + data[current_model]['rules'] + "</center></div>");
+	}
+	// lets highlight the class for each
+	// lets reset all series first (remove a, b classes)
+	jQuery('#content div.a').removeClass('a');
+	jQuery('#content div.b').removeClass('b');
+	for (var i = 0; i < data[current_model].class.length; i++) {
+		var st = data[current_model].study[i];
+		var se = "div#" + data[current_model].series[i];
+		var c = data[current_model].class[i];
+		jQuery(se.replace(/\./g, "\\.")).removeClass('a').removeClass('b').addClass(c);
+	}
+	if (typeof data[current_model]['splits'] == 'string') {
+		data[current_model]['splits'] = [data[current_model]['splits']];
+	}
+	if (typeof data[current_model]['splits'] !== 'undefined') {
+		var elems = data[current_model]['splits'];
+		var erg = "";
+		for (var i = 0; i < elems.length; i++) {
+			var elem = elems[i];
+			var el = elem.replace(/^g/, "").replace(".", "").toUpperCase();
+			var nam = "";
+			if (typeof dicom_dict[el] !== 'undefined') {
+				nam = dicom_dict[el];
+			} else {
+				nam = elem;
+			}
+			// what is the importance?
+			var weight = "";
+			if (data[current_model]['splits_weight'].length > i) {
+				weight = " (" + Number.parseFloat(data[current_model]['splits_weight'][i]).toFixed(2) + ")";
+			}
+			if (i < elems.length - 1) {
+				erg = erg + nam + weight + ", ";
+			} else {
+				erg = erg + nam + weight;
+			}
+		}
+		var erg2 = "";
+		if (typeof data[current_model]['treevars'] === 'string') {
+			data[current_model]['treevars'] = [data[current_model]['treevars']];
+		}
+		for (var i = 0; i < data[current_model]['treevars'].length; i++) {
+			var elem = data[current_model]['treevars'][i];
+			var el = elem.replace(/^g/, "").replace(".", "").toUpperCase();
+			var nam = "";
+			if (typeof dicom_dict[el] !== 'undefined') {
+				nam = dicom_dict[el];
+			} else {
+				nam = elem;
+			}
+			if (i < data[current_model]['treevars'].length - 1) {
+				erg2 = erg2 + nam + ", ";
+			} else {
+				erg2 = erg2 + nam;
+			}
+		}
+		jQuery('#chat').val(erg2 + "; replacement if missing: " + erg);
+		jQuery('#chat').effect('highlight');
 		
-		console.log("Got some data back from the model: " + JSON.stringify(data));
-		jQuery('#processing-time').text(data[current_model]['processing_time'].toFixed(2) + "sec, training acc. = " + data[current_model]['accuracy_percent'].toFixed(0) + "%");
-		if (typeof data[current_model]['tree_image'] !== 'undefined') {
-			jQuery('#tree-space').children().remove();
-			jQuery('#tree-space').append("<img style='width: 100%;' src='php/data/" + data[current_model]['tree_image'] + "'/>");
-			jQuery('#tree-space').append("<div><center>" + data[current_model]['rules'] + "</center></div>");
-		}
-		// lets highlight the class for each
-		// lets reset all series first (remove a, b classes)
-		jQuery('#content div.a').removeClass('a');
-		jQuery('#content div.b').removeClass('b');
-		for (var i = 0; i < data[current_model].class.length; i++) {
-			var st = data[current_model].study[i];
-			var se = "div#" + data[current_model].series[i];
-			var c = data[current_model].class[i];
-			jQuery(se.replace(/\./g, "\\.")).removeClass('a').removeClass('b').addClass(c);
-		}
-		if (typeof data[current_model]['splits'] == 'string') {
-			data[current_model]['splits'] = [data[current_model]['splits']];
-		}
-		if (typeof data[current_model]['splits'] !== 'undefined') {
-			var elems = data[current_model]['splits'];
-			var erg = "";
-			for (var i = 0; i < elems.length; i++) {
-				var elem = elems[i];
-				var el = elem.replace(/^g/, "").replace(".", "").toUpperCase();
-				var nam = "";
-				if (typeof dicom_dict[el] !== 'undefined') {
-					nam = dicom_dict[el];
-				} else {
-					nam = elem;
-				}
-				// what is the importance?
-				var weight = "";
-				if (data[current_model]['splits_weight'].length > i) {
-					weight = " (" + Number.parseFloat(data[current_model]['splits_weight'][i]).toFixed(2) + ")";
-				}
-				if (i < elems.length - 1) {
-					erg = erg + nam + weight + ", ";
-				} else {
-					erg = erg + nam + weight;
-				}
-			}
-			var erg2 = "";
-			if (typeof data[current_model]['treevars'] === 'string') {
-				data[current_model]['treevars'] = [data[current_model]['treevars']];
-			}
-			for (var i = 0; i < data[current_model]['treevars'].length; i++) {
-				var elem = data[current_model]['treevars'][i];
-				var el = elem.replace(/^g/, "").replace(".", "").toUpperCase();
-				var nam = "";
-				if (typeof dicom_dict[el] !== 'undefined') {
-					nam = dicom_dict[el];
-				} else {
-					nam = elem;
-				}
-				if (i < data[current_model]['treevars'].length - 1) {
-					erg2 = erg2 + nam + ", ";
-				} else {
-					erg2 = erg2 + nam;
-				}
-			}
-			jQuery('#chat').val(erg2 + "; replacement if missing: " + erg);
-			jQuery('#chat').effect('highlight');
-			
-		} else
-		jQuery('#chat').val("no splits found for this run...");
-		// now map all the found series to content-selected
-		//jQuery('#content-selected').find('div.Series').remove();	
-		jQuery('#content div.a,div.highlighted-human-a').each(function(a, b) {
-			var study = jQuery(b).parent().attr('id');
-			var series = jQuery(b).attr('id');
-			var escapedstudy = study.replace(/\./g, "\\.");
-			var escapedseries = series.replace(/\./g, "\\.");
-			jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + series + '-s">' +
-			'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
-			'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
-			'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
-			'<div class="SeriesDescription">' + jQuery(b).find('div.SeriesDescription').text() + '</div>' +
-			'<img src="' + jQuery(b).find('img').attr('src') + '" style="margin-left: ' + jQuery(b).find('img').css('margin-left') + '; margin-top: ' + jQuery(b).find('img').css('margin-top') + ';"/>' +
-			'</div>');
-		});
-		var numParticipants = [...new Set(jQuery.map(jQuery('#content div.bottom-back span'), function(a, i) {
-			return jQuery(a).text();
-		}))].length;
-		var numSelectedStudies = 0;
-		jQuery.map(jQuery('#content-selected div.Study'), function(value, i) {
-			if (jQuery(value).find('div.Series').length > 0)
-			numSelectedStudies++;
-		});
-		jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants > 1 ? "s" : "") + ", " +
-		jQuery('#content div.Series').length + " imaging series in " +
-		jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
-		jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies > 1 ? "ies" : "y") + "");
-		//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
+	} else
+	jQuery('#chat').val("no splits found for this run...");
+	// now map all the found series to content-selected
+	//jQuery('#content-selected').find('div.Series').remove();	
+	jQuery('#content div.a,div.highlighted-human-a').each(function(a, b) {
+		var study = jQuery(b).parent().attr('id');
+		var series = jQuery(b).attr('id');
+		var escapedstudy = study.replace(/\./g, "\\.");
+		var escapedseries = series.replace(/\./g, "\\.");
+		jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + series + '-s">' +
+		'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
+		'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
+		'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
+		'<div class="SeriesDescription">' + jQuery(b).find('div.SeriesDescription').text() + '</div>' +
+		'<img src="' + jQuery(b).find('img').attr('src') + '" style="margin-left: ' + jQuery(b).find('img').css('margin-left') + '; margin-top: ' + jQuery(b).find('img').css('margin-top') + ';"/>' +
+		'</div>');
+	});
+	var numParticipants = [...new Set(jQuery.map(jQuery('#content div.bottom-back span'), function(a, i) {
+		return jQuery(a).text();
+	}))].length;
+	var numSelectedStudies = 0;
+	jQuery.map(jQuery('#content-selected div.Study'), function(value, i) {
+		if (jQuery(value).find('div.Series').length > 0)
+		numSelectedStudies++;
+	});
+	jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants > 1 ? "s" : "") + ", " +
+	jQuery('#content div.Series').length + " imaging series in " +
+	jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
+	jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies > 1 ? "ies" : "y") + "");
+	//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
 }
 
 // classify
@@ -279,12 +280,12 @@ function sendToClassifier() {
 	// call the server prediction
 	// TODO: we should only allow the last classification to continue
 	jQuery.post('php/ai01.php', {
-				data: JSON.stringify(data)
-			},
-			function(data) {
-				models_last_run = data;
-				current_model = 0; // set this in the interface
-				updateModel(current_model);
+		data: JSON.stringify(data)
+	},
+	function(data) {
+		models_last_run = data;
+		current_model = 0; // set this in the interface
+		updateModel(current_model);
 	}, "json").fail(function() {
 		console.log("we did not get something back ... ");
 		alert("Error: There seems to be a problem with running the statistical analysis, please contact the developer.");
