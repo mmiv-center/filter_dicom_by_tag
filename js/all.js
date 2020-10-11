@@ -418,7 +418,7 @@ jQuery(document).ready(function() {
     jQuery('#handle-name').on('change', function() {
 	var name = jQuery('#handle-name').val();
 	try {
-	    localStorage.setItem('testObject', JSON.stringify(testObject));
+	    localStorage.setItem('handle-name', JSON.stringify(name));
 	} catch(e) {
 	    console.log("Warning: no localStorage");
 	}
@@ -427,7 +427,7 @@ jQuery(document).ready(function() {
     try {
 	var handle = localStorage.getItem("handle-name");
 	if (handle !== null) {
-	    jQuery('#handle-name').val(handle);
+	    jQuery('#handle-name').val(JSON.parse(handle));
 	}
     } catch(e) {
 	console.log("Warning: no localStorage");
