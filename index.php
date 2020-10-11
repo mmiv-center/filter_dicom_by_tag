@@ -189,7 +189,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane active" id="spreadsheet">
+    <div class="tab-pane active" id="spreadsheet" style="height: 250px;">
 
        <p>Export as a spreadsheet</p>
        <button class="btn btn-primary download-selected">Spreadsheet</button>
@@ -198,8 +198,12 @@
        </div>
     </div>
 
-    <div class="tab-pane" id="data-export">
+    <div class="tab-pane" id="data-export"  style="height: 250px;">
         <h4>Export data</h4>
+        <button class="btn btn-primary" id="full-export">Full data export</button>
+    </div> 
+    <div class="tab-pane" id="share-world"  style="height: 250px;">
+        <p>Share your selection with the world</p>
       	<p>The current classification tree can be uploaded to the cloud. You need internet access to make this work. You will upload your classification tree so that other users can benefit from your selection.</p>
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
@@ -207,13 +211,9 @@
 <script type="text/javascript">
     var BP_ontology_id = "DCM";
 </script>
+           <small id="exportNameHelp" class="form-text text-muted">Search selection from David\'s <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small></div>
         </div>
-        <small id="exportNameHelp" class="form-text text-muted">Search selection from David\'s <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small></div>
         <button class="btn btn-primary" id="share-world-button">Share</button>
-      </div>
-    </div> 
-    <div class="tab-pane" id="share-world">
-        <p>Share your selection with the world</p>
     </div> 
 </div>
 
