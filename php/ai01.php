@@ -57,7 +57,7 @@
      $o = sprintf("%s_%04d", $output, $count);
      // do we still have such a file?
      if (!file_exists($o)) {
-        break  
+       break;  
      }
      $data[$count] = json_decode(file_get_contents($o), TRUE);
      $data[$count]['processing_time'] = ($end_time - $start_time);
