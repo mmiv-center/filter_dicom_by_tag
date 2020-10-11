@@ -171,36 +171,38 @@ function sendToClassifier() {
 	// TODO: we should only allow the last classification to continue
 	jQuery.post('php/ai01.php', {
 		data: JSON.stringify(data)
-	}, function(data) {
+	},
+	function(data) {
+		current_model = 0;
 		// remove again in case we have more than one mouse-click
-		// TODO: Any way to cancel the previous iteration? Delayed executation?
+		// TODO: Any way to cancel the previous iteration? Delayed execution?
 		jQuery('#content-selected div.Series').remove();
 		jQuery('#content div.Series.a').removeClass('a');
 		jQuery('#content div.Series.b').removeClass('b');
-   	        jQuery('#share-world-button').attr('model-names', JSON.stringify(data['model_binary']));
+   	    jQuery('#share-world-button').attr('model-names', JSON.stringify(data[current_model]['model_binary']));
 
 		console.log("Got some data back from the model: " + JSON.stringify(data));
-		jQuery('#processing-time').text(data['processing_time'].toFixed(2) + "sec, training acc. = " + data['accuracy_percent'].toFixed(0) + "%");
-		if (typeof data['tree_image'] !== 'undefined') {
+		jQuery('#processing-time').text(data[current_model]['processing_time'].toFixed(2) + "sec, training acc. = " + data['accuracy_percent'].toFixed(0) + "%");
+		if (typeof data[current_model]['tree_image'] !== 'undefined') {
 			jQuery('#tree-space').children().remove();
-			jQuery('#tree-space').append("<img style='width: 100%;' src='php/data/" + data['tree_image'] + "'/>");
-			jQuery('#tree-space').append("<div><center>" + data['rules'] + "</center></div>");
+			jQuery('#tree-space').append("<img style='width: 100%;' src='php/data/" + data[current_model]['tree_image'] + "'/>");
+			jQuery('#tree-space').append("<div><center>" + data[current_model]['rules'] + "</center></div>");
 		}
 		// lets highlight the class for each
 		// lets reset all series first (remove a, b classes)
 		jQuery('#content div.a').removeClass('a');
 		jQuery('#content div.b').removeClass('b');
-		for (var i = 0; i < data.class.length; i++) {
-			var st = data.study[i];
-			var se = "div#" + data.series[i];
-			var c = data.class[i];
+		for (var i = 0; i < data[current_model].class.length; i++) {
+			var st = data[current_model].study[i];
+			var se = "div#" + data[current_model].series[i];
+			var c = data[current_model].class[i];
 			jQuery(se.replace(/\./g, "\\.")).removeClass('a').removeClass('b').addClass(c);
 		}
-		if (typeof data['splits'] == 'string') {
-			data['splits'] = [data['splits']];
+		if (typeof data[current_model]['splits'] == 'string') {
+			data[current_model]['splits'] = [data[current_model]['splits']];
 		}
-		if (typeof data['splits'] !== 'undefined') {
-			var elems = data['splits'];
+		if (typeof data[current_model]['splits'] !== 'undefined') {
+			var elems = data[current_model]['splits'];
 			var erg = "";
 			for (var i = 0; i < elems.length; i++) {
 				var elem = elems[i];
@@ -213,8 +215,8 @@ function sendToClassifier() {
 				}
 				// what is the importance?
 				var weight = "";
-				if (data['splits_weight'].length > i) {
-					weight = " (" + Number.parseFloat(data['splits_weight'][i]).toFixed(2) + ")";
+				if (data[current_model]['splits_weight'].length > i) {
+					weight = " (" + Number.parseFloat(data[current_model]['splits_weight'][i]).toFixed(2) + ")";
 				}
 				if (i < elems.length - 1) {
 					erg = erg + nam + weight + ", ";
@@ -223,11 +225,11 @@ function sendToClassifier() {
 				}
 			}
 			var erg2 = "";
-			if (typeof data['treevars'] === 'string') {
-				data['treevars'] = [data['treevars']];
+			if (typeof data[current_model]['treevars'] === 'string') {
+				data[current_model]['treevars'] = [data[current_model]['treevars']];
 			}
-			for (var i = 0; i < data['treevars'].length; i++) {
-				var elem = data['treevars'][i];
+			for (var i = 0; i < data[current_model]['treevars'].length; i++) {
+				var elem = data[current_model]['treevars'][i];
 				var el = elem.replace(/^g/, "").replace(".", "").toUpperCase();
 				var nam = "";
 				if (typeof dicom_dict[el] !== 'undefined') {
@@ -235,7 +237,7 @@ function sendToClassifier() {
 				} else {
 					nam = elem;
 				}
-				if (i < data['treevars'].length - 1) {
+				if (i < data[current_model]['treevars'].length - 1) {
 					erg2 = erg2 + nam + ", ";
 				} else {
 					erg2 = erg2 + nam;
