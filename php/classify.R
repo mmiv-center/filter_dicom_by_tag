@@ -141,7 +141,7 @@ repeat {
   confusion.matrix = table(predict(fit.pruned, type="class"), df[sub,]$class)
   accuracy_percent = 100 * sum(diag(confusion.matrix)) / sum(confusion.matrix)
   # ok, we are still in the repeat loop, we want to get out if we have a worst model
-  if (bestAccuracy == NULL) {
+  if (is.null(bestAccuracy)) {
     bestAccuracy <- accuracy_percent
   }
   if (bestAccuracy > accuracy_percent || countModels > 10) {
