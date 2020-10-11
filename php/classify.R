@@ -156,17 +156,17 @@ repeat {
   #
 
   # we should store our model in the output folder for later predictions
-  saveRDS(fit.pruned, paste(args[2], sprintf("_model_%04d", countModel), ".RDS", sep=""))
+  saveRDS(fit.pruned, paste(args[2], sprintf("_model_%04d", countModels), ".RDS", sep=""))
 
   # add some visualization
   # library(rattle) # does not exist on 3.4.4
   library(rpart.plot)
-  svg(paste(args[2], sprintf("_%04d", countModel), ".svg", sep=""))
+  svg(paste(args[2], sprintf("_%04d", countModels), ".svg", sep=""))
   # fancyRpartPlot(fit, caption = "Decision Tree Model")
   rpart.plot( fit.pruned , extra = 104, box.palette = "GnBu", branch.lty = 3, shadow.col = "gray", nn = TRUE, roundint = FALSE)
   dev.off()
 
-  fileConn<-file(paste(args[2], sprintf("_%04d", countModel), sep=""))
+  fileConn<-file(paste(args[2], sprintf("_%04d", countModels), sep=""))
   tab = fromJSON(toJSON(erg))
   tab$splits = names(fit.pruned$variable.importance)
   tab$splits_weight = as.character(fit.pruned$variable.importance)
