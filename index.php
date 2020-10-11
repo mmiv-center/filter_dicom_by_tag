@@ -225,7 +225,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="modal-share" tabindex="-1" role="dialog" aria-labelledby="modalShare" aria-hidden="true">
+<!-- <div class="modal fade" id="modal-share" tabindex="-1" role="dialog" aria-labelledby="modalShare" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -239,7 +239,6 @@
         You will upload your classification tree so that other users can benefit from your selection.</p>
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
-           <!-- <input type="text" class="form-control bp_form_complete-DCM-name" size="100" id="export-name" placeholder="Name your selection (MRI, T1, T2, etc.)"/> -->
            <div id="bp_quick_jump"></div>
 <script type="text/javascript">
     var BP_ontology_id = "DCM";
@@ -253,7 +252,7 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
     
     <!-- Optional JavaScript -->
