@@ -46,7 +46,7 @@ function bpMinVersion(min, actual) {
   } else if (bpMinVersion("1.9", $.fn.jquery)) {
     var jqMigrate = document.createElement('script');
     jqMigrate.type = "text/javascript";
-    jqMigrate.src = "//code.jquery.com/jquery-migrate-1.2.1.min.js";
+    jqMigrate.src = "/js/jquery-migrate-1.2.1.min.js";
     jqMigrate.onload = bpQuickJumpOnLoad;
     document.getElementsByTagName('head')[0].appendChild(jqMigrate);
   } else {
@@ -94,7 +94,7 @@ function bpMinVersion(min, actual) {
   function bpQuickJumpOnLoad() {
     jQuery(document).ready(function() {
         // Install any CSS we need (check to make sure it hasn't been loaded)
-        /* if (jQuery('link[href$="' + BP_SEARCH_SERVER + '/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"]')) {
+        /*if (jQuery('link[href$="' + BP_SEARCH_SERVER + '/javascripts/JqueryPlugins/autocomplete/jquery.autocomplete.css"]')) {
             jQuery("head").append("<link>");
             css = jQuery("head").children(":last");
             css.attr({
@@ -104,7 +104,7 @@ function bpMinVersion(min, actual) {
             });
         }*/
   
-        jQuery("#bp_quick_jump").append("<input type=\"textbox\" class=\"form-control\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\" placeholder=\"Search for known DICOM related entry\">");
+        jQuery("#bp_quick_jump").append("<input type=\"textbox\" class=\"form-control\" id=\"" + jumpTo_searchBoxID + "\" size=\"30\" placeholder=\"Search for a known DICOM related entry on <a href=\"https://bioportal.bioontology.org/ontologies/DCM/?p=summary\">D.C. DCM</a>\">");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_concept_id'>");
         jQuery("#bp_quick_jump").append("<input type='hidden' id='jump_to_ontology_id'>");
 
