@@ -216,6 +216,7 @@
     var BP_ontology_id = "DCM";
 </script>
         </div>
+        <small id="exportNameHelp" class="form-text text-muted">Search selection from David's <a href=\"https://bioportal.bioontology.org/ontologies/DCM/?p=summary\">DCM Ontology</a> thanks to BioPortals.</small></div>
         <button class="btn btn-primary" id="share-world-button">Share</button>
       </div>
       <div class="modal-footer">
