@@ -180,7 +180,7 @@
         </button>
       </div>
       <div class="modal-body" style="overflow-x: scroll;">
-      	<p>The current selection can be exported as a spreadsheet containing a list of StudyInstanceUID and SeriesInstanceUID entries, or as a series of folders that include the raw data.</p>
+      	<p>The current selection can be exported as a spreadsheet containing a list of StudyInstanceUID and SeriesInstanceUID entries, or as a series of folders that include the raw data. If you want to help make the world a better place donate your model to be used by other users.</p>
 
 <ul class="nav nav-tabs" id="tabContent">
     <li class="nav-item active"><a class="nav-link" href="#spreadsheet" data-toggle="tab">Spreadsheet</a></li>
@@ -201,15 +201,14 @@
         <button class="btn btn-primary" id="full-export">Full data export</button>
     </div> 
     <div class="tab-pane" id="share-world"  style="height: 250px; padding-top: 10px;">
-        <p>The current classification tree can be uploaded to the cloud (requires a working internet connection) so that other users can benefit from your knowledge.</p>
-        <p>Other users can use your model to classify their own data and to discover links between classifications.</p>                                                                                                                                                                                                                 
+        <p>The current classification tree can be uploaded to the cloud (requires a working internet connection) so that other users can benefit from your knowledge. Other users can use your model to classify their own data and to discover links between classifications.</p>                                                                                                                                                                                    
         <div class="form-group">
            <label for="export-name" class="control-label">What did you select?</label>
            <div id="bp_quick_jump"></div>
 <script type="text/javascript">
     var BP_ontology_id = "DCM";
 </script>
-           <small id="exportNameHelp" class="form-text text-muted">Search selection from David\'s <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small>
+           <small id="exportNameHelp" class="form-text text-muted">Search selection from David Clunies <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small>
         </div>
         <button class="btn btn-primary" id="share-world-button">Share</button>
     </div> 
