@@ -214,7 +214,7 @@
 <script type="text/javascript">
     var BP_ontology_id = "DCM,IOBC";
 </script>
-           <small id="exportNameHelp" class="form-text text-muted">Search selection from David Clunies <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> thanks to BioPortals.</small>
+           <small id="exportNameHelp" class="form-text text-muted">Search selection from David Clunies <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> and the <a href="https://bioportal.bioontology.org/ontologies/IOBC/">IOBC</a> thanks to BioPortals.</small>
         </div>
         <button class="btn btn-primary" id="share-world-button">Share</button>
     </div> 
