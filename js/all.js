@@ -132,7 +132,7 @@ current_model = -1;
 
 function updateModel(current_model) {
 	jQuery('#model_nav').children().remove();
-	jQuery('#model_nav').append("(<a href='#'>next</a>, <a href='#'>previous</a> " + current_model + "/" + models_last_run.length + ")");
+	jQuery('#model_nav').append("<div>(<a href='#'>next</a>, <a href='#'>previous</a> " + current_model + "/" + models_last_run.length + ")</div>");
 
 	var data = models_last_run[current_model];
 	// remove again in case we have more than one mouse-click
