@@ -182,7 +182,7 @@ function sendToClassifier() {
    	    jQuery('#share-world-button').attr('model-names', JSON.stringify(data[current_model]['model_binary']));
 
 		console.log("Got some data back from the model: " + JSON.stringify(data));
-		jQuery('#processing-time').text(data[current_model]['processing_time'].toFixed(2) + "sec, training acc. = " + data['accuracy_percent'].toFixed(0) + "%");
+		jQuery('#processing-time').text(data[current_model]['processing_time'].toFixed(2) + "sec, training acc. = " + data[current_model]['accuracy_percent'].toFixed(0) + "%");
 		if (typeof data[current_model]['tree_image'] !== 'undefined') {
 			jQuery('#tree-space').children().remove();
 			jQuery('#tree-space').append("<img style='width: 100%;' src='php/data/" + data[current_model]['tree_image'] + "'/>");
