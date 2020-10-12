@@ -156,7 +156,7 @@ function previousModel() {
 
 function updateModel(current_model) {
 	jQuery('#model_nav').children().remove();
-	var previousButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"	viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 512 512;\" xml:space=\"preserve\">" +
+	var previousButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"	viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 512 512; transform: scale(.2);\" xml:space=\"preserve\">" +
 		"<g>" +
 		"   <g>" +
 		"	   <path d=\"M256,0C114.837,0,0,114.837,0,256s114.837,256,256,256s256-114.837,256-256S397.163,0,256,0z M313.749,347.584" +
@@ -166,7 +166,7 @@ function updateModel(current_model) {
 		"	</g>" +
 		"</g>" +
 		"</svg>";
-	var nextButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"	viewBox=\"0 0 300 300\" style=\"enable-background:new 0 0 300 300;\" xml:space=\"preserve\">" +
+	var nextButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"	viewBox=\"0 0 300 300\" style=\"enable-background:new 0 0 300 300; transform: scale(.2);\" xml:space=\"preserve\">" +
 		"<g>" +
 		"   <g>" +
 		"	   <path d=\"M150,0C67.157,0,0,67.157,0,150c0,82.841,67.157,150,150,150s150-67.159,150-150C300,67.157,232.843,0,150,0z" +
