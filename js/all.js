@@ -178,7 +178,7 @@ function updateModel(current_model) {
 		"</g>" +
 		"</svg>";
 
-	jQuery('#model_nav').append("<div>(" + pad((current_model + 1), 2) + "/" + models_last_run.length + " models, <a href='#' onclick='previousModel();'>" + previousButton + "</a> <a href='#' onclick='nextModel();'>" + nextButton + "</a>)</div>");
+	jQuery('#model_nav').append("<div>(" + pad((current_model + 1), 2) + "/" + models_last_run.length + " models, <a href='#' onclick='previousModel();'>" + previousButton + "</a><a href='#' onclick='nextModel();'>" + nextButton + "</a>)</div>");
 
 	var data = models_last_run[current_model];
 	// remove again in case we have more than one mouse-click
