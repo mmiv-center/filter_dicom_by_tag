@@ -126,6 +126,12 @@ function parseDICOMStruct(txt) {
 	return r;
 }
 
+function pad(num, size) {
+	num = num.toString();
+	while (num.length < size) num = "0" + num;
+	return num;
+}
+
 // keep the models from the last run around
 models_last_run = [];
 current_model = -1;
@@ -150,7 +156,7 @@ function previousModel() {
 
 function updateModel(current_model) {
 	jQuery('#model_nav').children().remove();
-	jQuery('#model_nav').append("<div>("+ (current_model + 1) + "/" + models_last_run.length + " models, <a href='#' onclick='nextModel();'>next</a> <a href='#' onclick='previousModel();'>previous</a>)</div>");
+	jQuery('#model_nav').append("<div>(" + pad((current_model + 1), 2) + "/" + models_last_run.length + " models, <a href='#' onclick='nextModel();'>next</a> <a href='#' onclick='previousModel();'>previous</a>)</div>");
 
 	var data = models_last_run[current_model];
 	// remove again in case we have more than one mouse-click
