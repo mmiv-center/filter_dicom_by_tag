@@ -3,7 +3,7 @@ function populateStudyInstanceUIDs() {
 	jQuery.getJSON('php/getProjects.php', function(data) {
 		jQuery('#project').children().remove();
 		jQuery('#project').append("<option></option>"); // add default
-		for (var i = 0; i < data.length; i++) {
+	    	for (var i = 0; i < data.length; i++) {
 			jQuery("#project").append("<option value=\"" + data[i]['record_id'] + "\">" + data[i]['record_id'] + "</option>");
 		}
 		jQuery('select').selectpicker('refresh');
@@ -150,7 +150,7 @@ function previousModel() {
 
 function updateModel(current_model) {
 	jQuery('#model_nav').children().remove();
-	jQuery('#model_nav').append("<div>(<a href='#' onclick='nextModel();'>next</a>, <a href='#' onclick='previousModel();'>previous</a> " + (current_model + 1) + "/" + models_last_run.length + ")</div>");
+	jQuery('#model_nav').append("<div>("+ (current_model + 1) + "/" + models_last_run.length + " models, <a href='#' onclick='nextModel();'>next</a> <a href='#' onclick='previousModel();'>previous</a>)</div>");
 
 	var data = models_last_run[current_model];
 	// remove again in case we have more than one mouse-click
