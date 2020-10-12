@@ -189,11 +189,11 @@
 </ul>
 
 <div class="tab-content">
-    <div class="tab-pane active" id="spreadsheet" style="height: 300px;padding-top: 10px;">
+    <div class="tab-pane active" id="spreadsheet" style="height: 350px;padding-top: 10px;">
        <button class="btn btn-primary download-selected" title="Click here to download a spreadsheet with the StudyInstanceUID and SeriesInstanceUID of your current selection.">Download</button>
     </div>
 
-    <div class="tab-pane" id="data-export"  style="height: 300px; padding-top: 10px;">
+    <div class="tab-pane" id="data-export"  style="height: 350px; padding-top: 10px;">
         <div class="form-group">
            <label for="export-name" class="control-label">Export folder name</label>
            <input type="text" class="form-control" id="export-name" placeholder="Name your selection (T1, T2, DTI, Fieldmap, Localizer, etc.)"/>
@@ -201,7 +201,7 @@
         </div>
         <button class="btn btn-primary" id="full-export">Full data export</button>
     </div> 
-    <div class="tab-pane" id="share-world"  style="height: 300px; padding-top: 10px;">
+    <div class="tab-pane" id="share-world"  style="height: 350px; padding-top: 10px;">
         <p>The current classification tree can be uploaded to the cloud (requires a working internet connection) so that other users can benefit from your knowledge. Other users can use your model to classify their own data and to discover links between classifications.</p>                                                                                                                                                                                    
         <div class="form-group">
            <label for="handle-name" class="control-label">What is your handle?</label>
