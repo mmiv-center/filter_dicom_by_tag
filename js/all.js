@@ -156,7 +156,7 @@ function previousModel() {
 
 function updateModel(current_model) {
 	jQuery('#model_nav').children().remove();
-	var previousButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"1em\" height=\"1em\" x=\"0px\" y=\"0px\" viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 32 32;\" xml:space=\"preserve\">" +
+	var previousButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"1em\" height=\".9em\" x=\"0px\" y=\"0px\" viewBox=\"0 0 512 512\" style=\"enable-background:new 0 0 32 32;\" xml:space=\"preserve\">" +
 		"<g>" +
 		"   <g>" +
 		"	   <path fill=\"white\" d=\"M256,0C114.837,0,0,114.837,0,256s114.837,256,256,256s256-114.837,256-256S397.163,0,256,0z M313.749,347.584" +
@@ -166,7 +166,7 @@ function updateModel(current_model) {
 		"	</g>" +
 		"</g>" +
 		"</svg>";
-	var nextButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"	width=\"1em\" height=\"1em\" viewBox=\"0 0 300 300\" style=\"enable-background:new 0 0 300 300;\" xml:space=\"preserve\">" +
+	var nextButton = "<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"	width=\"1em\" height=\".9em\" viewBox=\"0 0 300 300\" style=\"enable-background:new 0 0 300 300;\" xml:space=\"preserve\">" +
 		"<g>" +
 		"   <g>" +
 		"	   <path fill=\"white\" d=\"M150,0C67.157,0,0,67.157,0,150c0,82.841,67.157,150,150,150s150-67.159,150-150C300,67.157,232.843,0,150,0z" +
@@ -178,7 +178,7 @@ function updateModel(current_model) {
 		"</g>" +
 		"</svg>";
 
-	jQuery('#model_nav').append("<div>(" + pad((current_model + 1), 2) + "/" + models_last_run.length + " models, <a href='#' onclick='nextModel();'>" + nextButton + "</a> <a href='#' onclick='previousModel();'>" + previousButton + "</a>)</div>");
+	jQuery('#model_nav').append("<div>(" + pad((current_model + 1), 2) + "/" + models_last_run.length + " models, <a href='#' onclick='previousModel();'>" + previousButton + "</a> <a href='#' onclick='nextModel();'>" + nextButton + "</a>)</div>");
 
 	var data = models_last_run[current_model];
 	// remove again in case we have more than one mouse-click
