@@ -2,7 +2,7 @@
 
 Research medical imaging data is complex. Luckily, the DICOM standard provides structured information on the project level in each image file. As many processing pipelines require a subset of the collected data this project helps exporting data appropriate for a processing or data sharing task.
 
-The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples all image series in all studies of the project are classified.
+The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples and by continuously running the model training and prediction steps all image series in all studies of the project are classified.
 
 ![Interface](images/example.png)
 
@@ -35,7 +35,17 @@ Reloading the application after the cache has been created should show all the i
 
 Teaching the application what image series you want is done by providing pairs of examples. Select an image you want using left mouse click. Follow this by Shift+left-click an image that you don't like to have in your result. Continue this process until the column on the right shows the correct number and type of selected series.
 
-Export the selection as a spreadsheet using the download-icon on the columns labelled "Selected".
+Export the selection as a spreadsheet using the download-icon on the columns labelled "Selected". There are two different ways to export the data. Either a spreadsheet with the selected StudyInstanceUID's and SeriesInstanceUID's is created or a full copy of the data in the output "exports" folder (see how to setup the shared folder in the Tips section).
+
+## Share your knowledge
+
+It turns out, that for normal DICOM data many tags can be used to get equivalent models, i.e. models that provide identical selections for a given project. We will call such models, equivalent models or models that belong to the same equivalence class. Up to 11 different models are created by the training step using an iterative process of successfully removing terms from the data matrix that appear in previous models. All models in the equivalence class are available for inspection using the "previous"/"next" buttons above the list of model variables once sufficient training data has been selected. 
+
+If models are found to be in the same equivalent class for a given project we can use this to establish a distance between any model (across projects). Such a distance between models is a useful tool as it establishes an empirically distance between different DICOM tags and a distance between models that is purely driven by data observed in the wild.
+
+Equivalence classes (collections of models providing the same classification) can be shared between projects. The user can upload an equivalence class to a central repository by providing i) an ontology name based on the DCM and IOBC ontologies (BioPortals, requires a working internet connection) and ii) by specifying a user identifier.
+
+<b>Goal</b>: If this is done by a sufficient number of people for a sufficiently diverse group of projects we can hope to use this similarity metric to automatically classify project data. This can be done based on a set of classifications that split the image series of a project into a hierarchy where each series is successfully classified. In such a hierarchy of classification models we expect modality type classes (this is an MRI) to appear at the root of the hierarchy whereas individual classes like "Localizer" appear further down. The goal of the project is therefore to empirically discover the classes and the hierarchy between the classes in order to provide a fully automated hierarchical classification for real world DICOM series. 
 
 ### Tips
 
