@@ -4,7 +4,7 @@ Research medical imaging data is complex. Luckily, the DICOM standard provides s
 
 The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples and by continuously running the model training and prediction steps all image series in all studies of the project are classified.
 
-![How to select 470 image series with 5 mouse clicks](images/howTo.png)
+![How to select 470 image series with 5 mouse clicks](images/howTo.gif)
 
 The example above shows how to select 470 image series from 815 with 5 mouse clicks. Admittedly an easy task but it works just as well with any other selection and also if the data is overly anonymized.
 
