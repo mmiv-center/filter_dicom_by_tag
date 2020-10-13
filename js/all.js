@@ -475,24 +475,40 @@ function alignRight() {
 var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
-
-    jQuery('#handle-name').on('change', function() {
-	var name = jQuery('#handle-name').val();
+	
+	jQuery('#allowCachedVersion').on('change', function() {
+		var allow = jQuery('#allowCachedVersion').prop('checked');
+		try {
+			localStorage.setItem('allowCachedVersion', JSON.stringify(allow));
+		} catch (e) {
+			console.log("Warning: no localStorage");
+		}
+	});
 	try {
-	    localStorage.setItem('handle-name', JSON.stringify(name));
+		var allow = localStorage.getItem("allowCachedVersion");
+		if (allow !== null) {
+			jQuery('#allowCachedVersion').prop('checked', JSON.parse(allow));
+		}
+	} catch (e) {
+		console.log("Warning: no localStorage");
+	}
+	jQuery('#handle-name').on('change', function() {
+		var name = jQuery('#handle-name').val();
+		try {
+			localStorage.setItem('handle-name', JSON.stringify(name));
+		} catch(e) {
+			console.log("Warning: no localStorage");
+		}
+	});
+	// if the name exists we pull and fill
+	try {
+		var handle = localStorage.getItem("handle-name");
+		if (handle !== null) {
+			jQuery('#handle-name').val(JSON.parse(handle));
+		}
 	} catch(e) {
-	    console.log("Warning: no localStorage");
-	}
-    });
-    // if the name exists we pull and fill
-    try {
-	var handle = localStorage.getItem("handle-name");
-	if (handle !== null) {
-	    jQuery('#handle-name').val(JSON.parse(handle));
-	}
-    } catch(e) {
-	console.log("Warning: no localStorage");
-    }    
+		console.log("Warning: no localStorage");
+	}    
     
     jQuery('#share-world-button').on('click', function() {
 	var handle = jQuery('#handle-name').val();
