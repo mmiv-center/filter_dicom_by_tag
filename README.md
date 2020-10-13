@@ -1,12 +1,12 @@
 # Filter DICOM data by DICOM tags
 
-Research medical imaging data is complex. Luckily, the DICOM standard provides structured information on the project level in each image file. As many processing pipelines require a subset of the collected data this project helps exporting data appropriate for a processing or data sharing task.
+Research medical imaging data is complex. Luckily, the DICOM standard provides structured information in each image file. As many processing pipelines require a subset of the collected data this project helps exporting data appropriate for a processing or data sharing task.
 
 The user visually selects samples of the data he/she wants to export. From this sample the application learns a model that is applied to all data of the project. By providing a small number of examples and by continuously running the model training and prediction steps all image series in all studies of the project are classified.
 
-![Interface](images/example.png)
+![How to select 470 image series with 5 mouse clicks](images/howTo.png)
 
-In the image above selected icons with "love" are in green and "hate" icons selected with Shift+left-mouse are in red. A single image series is selected on the right. The selection only included "love" examples for a sagittal DX.
+The example above shows how to select 470 image series from 815 with 5 mouse clicks. Admittedly an easy task but it works just as well with any other selection and also if the data is overly anonymized.
 
 ### Setup
 
