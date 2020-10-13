@@ -66,4 +66,7 @@ Equivalence classes (collections of models providing the same classification) ca
  - In order to be able to see the website outside of the docker environment
  start a local docker with '--network host' instead of providing the '-p' argument. This will run
  the system on the hosts network and thus make it accessible to external users.
- 
+ - As an observation: If you run the docker container on MacOS and you mount external folders 
+ you will need to wait quite some time before an existing project is loaded. Partially this is
+ caused by a slow file copy between the docker environment running Linux and the MacOS file system.
+ It is faster to run this software on Linux.
