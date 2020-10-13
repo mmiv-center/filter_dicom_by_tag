@@ -90,9 +90,9 @@
       </div>
       <div class="row">
 	<div class="col-md-12">
-	  <div class="progress" style="margin-bottom: 2px; display: none;">
+	  <div class="progress" style="margin-bottom: 2px; display: none; position: relative;">
 	    <div id="finished" class="finished progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: 50%;"></div>
-      <div id="progress-message" style="margin-left: auto; margin-right: auto; margin-top: 8px; font-size: 9px;">time to finish, calculating...</div>
+      <div id="progress-message" style="padding-left: 10px; margin-top: 8px; font-size: 9px; position: absolute;">time to finish, calculating...</div>
     </div>
 	</div>
       </div>
