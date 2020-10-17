@@ -3,11 +3,12 @@
 // We want to cache the data for a project. We can leave it up to the
 // user if he wants to update the cache or use the existing cache.
 
-$num_allowed = 5;
+$num_allowed = 8;
+$reduce_to = 5; // using two values here reduce the number of removals
 $dirs_tmp = glob('data/*', GLOB_ONLYDIR);
 $dirs = [];
 foreach ($dirs_tmp as $d) {
-   if(!preg_match("#^\.#", $d)) {
+   if (!preg_match("#^\.#", $d)) {
      $dirs[] = $d;
    }
 }
@@ -25,7 +26,7 @@ function delTree($dir) {
 
 if (count($dirs) > $num_allowed) {
    // remove the oldest
-   $deleteThisMany = count($dirs) - $num_allowed;
+   $deleteThisMany = count($dirs) - $reduce_to;
    $counter = 0;
    foreach ($dirs as $v) {
       //echo("delete directory (".$v.")");
@@ -64,24 +65,26 @@ foreach($files as $file) {
   if (!isset($data[$StudyInstanceUID])) {
      $data[$StudyInstanceUID] = array();
   }
+  // lets replace this operation - should be slow - with something faster
   $output = explode("\n", shell_exec('cat "'.$file.'" | sort | uniq | tr -cd \'[:print:]\n\' | tr -d \'<\' | sed "s/[\\"\']/~/g" '));
+  $output2 = array_values(array_unique(file($file)));
+  asort($output2);
+  foreach ($output2 as &$val) {
+    $val = preg_replace( array( '/[^[:print:]]/', '/</', '/[\\"\']/'), array('','','~'), $val);
+  }
+  // is $output and $output2 now the same?
+  foreach ($output2 as $key => $value) {
+    if ($value != $output[$key]) {
+      syslog(LOG_EMERG, "Not the same: ".$value. " _______ " . $output[$key]);
+    }
+  }
+
   //syslog(LOG_EMERG, "output is: \"".json_encode($output)."\"");
   foreach($output as &$out) {
     $out = htmlentities($out);
   }
   $data[$StudyInstanceUID][$SeriesInstanceUID] = $output;
 }
-
-//$output = explode("\n", shell_exec('cat data/'.$uid.'/*.cache | sort | uniq'));
-// now parse the result into key, value pairs
-//$counter = 1;
-//foreach($output as $line) {
-//   if (strlen($line) > 0) {
-//     $data[] = array( "key" => $counter, "value" => $line);
-//     $counter = $counter + 1;
-//   }
-//}
-
 //syslog(LOG_EMERG, "\"".json_encode($data)."\"");
 echo(json_encode($data));
 
