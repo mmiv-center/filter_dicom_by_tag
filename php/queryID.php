@@ -74,8 +74,12 @@ foreach($files as $file) {
   }
   // is $output and $output2 now the same?
   foreach ($output2 as $key => $value) {
+    if (!isset($output[$key])) {
+      syslog(LOG_EMERG, "LINE does not exist: ".$key);
+      continue;
+    }
     if ($value != $output[$key]) {
-      syslog(LOG_EMERG, "Not the same: ".$value. " _______ " . $output[$key]);
+      syslog(LOG_EMERG, "Not the same line [".$key."]: ".$value. " _______ " . $output[$key]);
     }
   }
 
