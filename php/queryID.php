@@ -66,28 +66,18 @@ foreach($files as $file) {
      $data[$StudyInstanceUID] = array();
   }
   // lets replace this operation - should be slow - with something faster
-  $output = explode("\n", shell_exec('cat "'.$file.'" | sort | uniq | tr -cd \'[:print:]\n\' | tr -d \'<\' | sed "s/[\\"\']/~/g" '));
+  // $output = explode("\n", shell_exec('cat "'.$file.'" | sort | uniq | tr -cd \'[:print:]\n\' | tr -d \'<\' | sed "s/[\\"\']/~/g" '));
   $output2 = array_values(array_unique(file($file)));
   asort($output2);
   foreach ($output2 as &$val) {
     $val = preg_replace( array( '/[^[:print:]]/', '/</', '/[\\"\']/'), array('','','~'), $val);
   }
-  // is $output and $output2 now the same?
-  foreach ($output2 as $key => $value) {
-    if (!isset($output[$key])) {
-      syslog(LOG_EMERG, "LINE does not exist: ".$key);
-      continue;
-    }
-    if ($value != $output[$key]) {
-      syslog(LOG_EMERG, "Not the same line [".$key."]: ".$value. " _______ " . $output[$key]);
-    }
-  }
 
   //syslog(LOG_EMERG, "output is: \"".json_encode($output)."\"");
-  foreach($output as &$out) {
+  foreach($output2 as &$out) {
     $out = htmlentities($out);
   }
-  $data[$StudyInstanceUID][$SeriesInstanceUID] = $output;
+  $data[$StudyInstanceUID][$SeriesInstanceUID] = array_values($output2);
 }
 //syslog(LOG_EMERG, "\"".json_encode($data)."\"");
 echo(json_encode($data));
