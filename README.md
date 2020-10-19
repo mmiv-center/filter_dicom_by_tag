@@ -14,7 +14,7 @@ Clone this repository and create a docker container (requires git and docker ins
 ```
 git clone https://github.com/mmiv-center/filter_dicom_by_tag.git
 cd filter_dicom_by_tag
-docker build -t filter_dicom_by_tag -f Dockerfile .
+docker build -t filter_dicom_by_tag build
 ```
 from the command line.
 

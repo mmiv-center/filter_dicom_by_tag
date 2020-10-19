@@ -190,7 +190,8 @@
 
 <div class="tab-content">
     <div class="tab-pane active" id="spreadsheet" style="height: 350px;padding-top: 10px;">
-       <button class="btn btn-primary download-selected" title="Click here to download a spreadsheet with the StudyInstanceUID and SeriesInstanceUID of your current selection.">Download</button>
+      <p>The spreadsheet (CSV format) contains the StudyInstanceUID and SeriesInstanceUID keys for the selected image series. Such information is sufficient to select DICOM files.</p>
+      <button class="btn btn-primary download-selected" title="Click here to download a spreadsheet with the StudyInstanceUID and SeriesInstanceUID of your current selection.">Download</button>
     </div>
 
     <div class="tab-pane" id="data-export"  style="height: 350px; padding-top: 10px;">
