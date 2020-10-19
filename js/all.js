@@ -483,6 +483,8 @@ jQuery(document).ready(function() {
 		// use the API key for the ClassifyDICOMSeries project from BioPortals
 		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id) + "?apikey=c6dfe87e-50eb-4b32-b044-86511dbe0b5d", function(data) {
 			console.log("got data back: " + JSON.stringify(data));
+			// the value we are looking for is in Definition
+			jQuery('#BP_search_box').attr('title', data['definition'][0]);
 		});
 	});
 
