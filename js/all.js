@@ -480,7 +480,7 @@ jQuery(document).ready(function() {
 		console.log("a search happened");
 		var concept_id = jQuery('#jump_to_concept_id').val();
 		var ontology_id = jQuery('#jump_to_ontology_id').val();
-		jQuery.getJSON("http://bioportal.bioontology.org/ajax/json_class?callback=?&ontologyid=" + ontology_id + "&conceptid=" + encodeURIComponent(concept_id), function(data) {
+		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id), function(data) {
 			console.log("got data back: " + JSON.stringify(data));
 		});
 	});
