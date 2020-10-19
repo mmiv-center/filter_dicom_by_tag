@@ -22,6 +22,7 @@ if ($allowCache == "1") {
    if (is_dir($project_cache)) {
       // copy all cache data over (takes too long, better to just link to the path)
        //shell_exec("cp -R ".$project_cache."/* ".$path."/".$uid."/");
+      shell_exec("cp -R ".$project_cache."/imageIndex.txt ".$project_cache."/imageMontage.jpg ".$path."/".$uid."/");
       $data['startdate'] = "now";
       $data['enddate'] = "now";
       $data['cache_path'] = $project_cache;
