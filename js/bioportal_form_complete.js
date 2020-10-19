@@ -265,7 +265,8 @@ function bpMinVersion(min, actual) {
   // concepts that have the same preferred name but different ids.
   function jumpTo_jumpToSelect(li) {
   	jQuery("#jump_to_concept_id").val(li.extra[0]);
-  	jQuery("#jump_to_ontology_id").val(li.extra[2]);
+      jQuery("#jump_to_ontology_id").val(li.extra[2]);
+      jQuery("#jump_to_ontology_id").trigger('change');
   }
 
   function jumpTo_jump_clicked() {
