@@ -349,7 +349,9 @@ function addThumbnails() {
 			return a.split("/").pop().replace(".png", "");
 		});
 		var imageURL = "/php/data/" + lastQueryID + "/imageMontage.jpg?_=" + Math.random();
-		l.forEach(function(value, idx) {
+		var itemsProcessed = 0;
+		l.forEach(function(value, idx, ar) {
+					itemsProcessed++;
 			if (value.length > 0) {
 				// given the idx what is the image we look for?
 				// each image has a with of 60 * 32 (image size is 32x32)
@@ -363,8 +365,10 @@ function addThumbnails() {
 				jQuery('#series_' + escapedvalue + ' img').css('margin-top', -y * 32);
 				//jQuery('#series_'+value+' img').attr('bla', idx);
 			}
+			if (itemsProcessed === ar.length) {
+				alignRight();
+			}
 		});
-		alignRight();
 	});
 }
 
