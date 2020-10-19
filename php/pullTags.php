@@ -20,10 +20,11 @@ $data = array( 'ID' => $uid, 'project' => $project );
 if ($allowCache == "1") {
    $project_cache = dirname(__FILE__)."/project_cache/".$project;
    if (is_dir($project_cache)) {
-      // copy all cache data over
-      shell_exec("cp -R ".$project_cache."/* ".$path."/".$uid."/");
+      // copy all cache data over (takes too long, better to just link to the path)
+       //shell_exec("cp -R ".$project_cache."/* ".$path."/".$uid."/");
       $data['startdate'] = "now";
       $data['enddate'] = "now";
+      $data['cache_path'] = $project_cache;
       file_put_contents($path . "/". $uid . "/info.json", json_encode($data));
       echo("{ \"ID\": \"". $uid . "\", \"cache\": \"ok\" }");
       // done

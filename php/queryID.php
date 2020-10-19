@@ -52,11 +52,19 @@ if (!file_exists($infofn)) {
   echo("{ \"message\": \"no query for this uid\" }");
   exit();
 }
+$config = json_decode(file_get_contents($infofn), TRUE);
+$cache_path = 'data/'.$uid.'/*/*.cache';
+if (isset($config['cache_path'])) {
+    $p = $config['cache_path'];
+    if (is_dir($p)) {
+        $cache_path = $p."/*/*.cache";
+    }
+}
 
 // collect all the dcmdump info and return them
 $data = array();
 // parse the directory for all .cache files
-$files = glob('data/'.$uid.'/*/*.cache');
+$files = glob($cache_path);
 foreach($files as $file) {
   $tmp = explode("/", $file);
   $StudyInstanceUID=$tmp[count($tmp)-2];
