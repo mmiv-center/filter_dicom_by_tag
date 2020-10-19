@@ -214,6 +214,7 @@
            <div id="bp_quick_jump"></div>
 <script type="text/javascript">
     var BP_ontology_id = "DCM,IOBC";
+    var BP_include_definitions = true;
 </script>
            <small id="exportNameHelp" class="form-text text-muted">Search selection from David Clunies <a href="https://bioportal.bioontology.org/ontologies/DCM/?p=summary">DCM Ontology</a> and the <a href="https://bioportal.bioontology.org/ontologies/IOBC/">IOBC</a> thanks to BioPortals.</small>
         </div>
