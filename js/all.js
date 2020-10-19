@@ -480,7 +480,8 @@ jQuery(document).ready(function() {
 		console.log("a search happened");
 		var concept_id = jQuery('#jump_to_concept_id').val();
 		var ontology_id = jQuery('#jump_to_ontology_id').val();
-		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id), function(data) {
+		// use the API key for the ClassifyDICOMSeries project from BioPortals
+		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id) + "?apikey=c6dfe87e-50eb-4b32-b044-86511dbe0b5d", function(data) {
 			console.log("got data back: " + JSON.stringify(data));
 		});
 	});
