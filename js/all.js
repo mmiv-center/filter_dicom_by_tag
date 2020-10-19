@@ -476,6 +476,15 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 	
+	jQuery('#BP_search_box').on('change', function() {
+		console.log("a search happened");
+		var concept_id = jQuery('#jump_to_concept_id').val();
+		var ontology_id = jQuery('#jump_to_ontology_id').val();
+		jQuery.getJSON("http://bioportal.bioontology.org/ajax/json_class?callback=?&ontologyid=" + ontology_id + "&conceptid=" + encodeURIComponent(concept_id), function(data) {
+			console.log("got data back: " + JSON.stringify(data));
+		});
+	});
+
 	jQuery('#allowCachedVersion').on('change', function() {
 		var allow = jQuery('#allowCachedVersion').prop('checked');
 		try {
