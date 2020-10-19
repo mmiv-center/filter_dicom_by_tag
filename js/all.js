@@ -476,7 +476,7 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 	
-	jQuery('#BP_search_box').on('change', function() {
+	jQuery('#BP_quick_jump').on('change', ".ac_input", function() {
 		console.log("a search happened");
 		var concept_id = jQuery('#jump_to_concept_id').val();
 		var ontology_id = jQuery('#jump_to_ontology_id').val();
