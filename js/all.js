@@ -366,7 +366,9 @@ function addThumbnails() {
 				//jQuery('#series_'+value+' img').attr('bla', idx);
 			}
 			if (itemsProcessed === ar.length) {
-				alignRight();
+				setTimeout(function() {
+					alignRight();
+				}, 100); // wait a little bit for the update on the screen
 			}
 		});
 	});
