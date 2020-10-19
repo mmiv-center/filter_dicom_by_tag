@@ -488,6 +488,7 @@ jQuery(document).ready(function() {
 		var concept_id = jQuery('#jump_to_concept_id').val();
 		var ontology_id = jQuery('#jump_to_ontology_id').val();
 		// use the API key for the ClassifyDICOMSeries project from BioPortals
+		jQuery('#BP_search_box').attr('title', ""); // reset the title before trying to get another
 		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id) + "?apikey=c6dfe87e-50eb-4b32-b044-86511dbe0b5d", function(data) {
 			console.log("got data back: " + JSON.stringify(data));
 			// the value we are looking for is in Definition
