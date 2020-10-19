@@ -364,6 +364,7 @@ function addThumbnails() {
 				//jQuery('#series_'+value+' img').attr('bla', idx);
 			}
 		});
+		alignRight();
 	});
 }
 
