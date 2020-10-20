@@ -145,7 +145,7 @@ repeat {
   erg = data.frame(class=array(pred), study=df[idx,"study"], series=df[idx,"series"])
   # here we know the predictions, we should compare with the once we have already and 
   # find entries where the class is different (we don't care about the class).
-  if (is.na(model_before))
+  if (is.null(model_before))
     model_before <- erg
   disagree_list <- merge(disagree_list, (anti_join(model_before, erg))[,c("study","series")], by=c("study", "series"), all=TRUE)
 
