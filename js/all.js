@@ -486,6 +486,10 @@ var dicom_dict = {};
 jQuery(document).ready(function() {
 	
 	jQuery('#content').on('click', 'div.Study', function() {
+		if (jQuery(this).hasClass("selected")) {
+			jQuery(this).removeClass("selected");
+			return;
+		}
 		jQuery('#content div.Study').removeClass("selected");
 		jQuery(this).addClass("selected");
 	});
