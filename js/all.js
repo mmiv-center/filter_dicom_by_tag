@@ -485,6 +485,11 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 	
+	jQuery('#content').on('click', 'div.Study', function() {
+		jQuery('#content div.Study').removeClass("selected");
+		jQuery(this).addClass("selected");
+	});
+
 	jQuery('#bp_quick_jump').on('change', "#jump_to_ontology_id", function() {
 		console.log("a search happened");
 		var concept_id = jQuery('#jump_to_concept_id').val();
