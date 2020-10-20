@@ -1,6 +1,7 @@
 # run a small R model on the input data
 library(rjson)
 library(rpart)
+library(dplyr)
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args)!=2) {
