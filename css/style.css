@@ -32,10 +32,10 @@ div.actions {
 }
 
 #content div.Study:hover {
-	background-color: #333;
+	background-color: #222;
 }
 #content div.Study.selected {
-	background-color: #222;
+	background-color: #333;
 }
 
 #content div.Study {
@@ -92,6 +92,8 @@ div.actions {
 	background-color: grey;
 	color: yellow;
 	display: inline-block;
+	/* prevent shifting of some boxes */
+	vertical-align: top;
 }
 
 .Series.highlighted-human-a {
