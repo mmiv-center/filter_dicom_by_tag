@@ -188,7 +188,7 @@
     <li class="nav-item"><a class="nav-link" href="#share-world" data-toggle="tab">Share with the World</a></li>
 </ul>
 
-<div class="tab-content">
+<div class="tab-content" style="background-color: #444; padding: 5px;">
     <div class="tab-pane active" id="spreadsheet" style="height: 350px;padding-top: 10px;">
       <p>The spreadsheet (CSV format) contains the StudyInstanceUID and SeriesInstanceUID keys for the selected image series. Such information is sufficient to select DICOM files.</p>
       <button class="btn btn-primary download-selected" title="Click here to download a spreadsheet with the StudyInstanceUID and SeriesInstanceUID of your current selection.">Download</button>
