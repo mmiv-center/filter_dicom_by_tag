@@ -329,7 +329,9 @@ function sendToClassifier() {
 	// call the server prediction
 	// TODO: we should only allow the last classification to continue
 	jQuery.post('php/ai01.php', {
-		data: JSON.stringify(data)
+		data: JSON.stringify(data),
+			project: jQuery('#project').val(),
+			queryID: lastQueryID
 	},
 	function(data) {
 		models_last_run = data;

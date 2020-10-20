@@ -4,8 +4,8 @@ library(rpart)
 library(dplyr)
 
 args = commandArgs(trailingOnly=TRUE)
-if (length(args)!=2) {
-   print(paste("We need two arguments"))
+if (length(args)<2) {
+   print(paste("We need at least two arguments. We will ignore all but the first two."))
    exit(1);
 }
 data <- fromJSON(file=args[1]);

@@ -5,6 +5,14 @@
    // data['train'] = [ { class: X, study: Y, series: Z, data: {} } ]
    // data['predict'] = [ { study: Y, series: Z, data: {} } ]
 
+   $project = "";
+   if (isset($_POST['project'])) {
+      $project = $_POST['project'];
+   }
+   $queryID = "";
+   if (isset($_POST['queryID'])) {
+      $queryID = $_POST['queryID'];
+   }
 
    $data = "";
    if (isset($_POST['data'])) {
@@ -29,27 +37,14 @@
 
    file_put_contents($input, json_encode($data)); // write the JSON as file
 
-   // we should check if a call is already running, we can kill that call first before
-   // starting a new call
-   // this does not work, the exec call will also run the string we are looking for, so we will
-   // always detect at least one job
-   /* exec("pgrep -f \"php/classify.R\"", $out, $return);
-   // file_put_contents("/tmp/bla.log", json_encode($out));
-   if ($return == 0) {
-     echo("Ok, process is running\n");
-     if (count($out) > 1) {
-       foreach($out as $o) {
-          if (strlen($o) > 0) {
-             echo("Kill ".$o);
-             exec("kill -9 ".$o); // would be better to kill only the current users runs
-          }
-       }
-     }
-     } */ 
+   // We check if a call is already running, we can kill that call first before
+   // starting a new call. This allows a single classification BY system. So if we
+   // have multiple users this would break.
+   exec("pgrep -f \"/var/www/html/php/classify.R\" | /usr/bin/xargs -I'{}' /usr/bin/kill -9 {}");
 
    // now call the external classifier and get the output data back
    $start_time = microtime(true);
-   $lastline   = exec("/usr/bin/Rscript --vanilla /var/www/html/php/classify.R ".$input." ".$output);
+   $lastline   = exec("/usr/bin/Rscript --vanilla /var/www/html/php/classify.R ".$input." ".$output." \"".$project."\" \"".$queryID."\"" );
    $end_time   = microtime(true);
    $data = array();
    $count = 0;
