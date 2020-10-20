@@ -90,6 +90,12 @@ if ( !is.na(match("g0028.0030", names(df))) ) {
 # test if we can randomize the column in the data frame to get different answers
 #df = df[,sample(seq(1,dim(df)[2]))]
 
+# If we create more than one model we can identify data objects where the models disagree in their
+# prediction. Those would be good candidates for active learning based "query by commitee". If the 
+# user would label those we can create a better collection of models.
+disagree_list <- data.frame(study=as.character(), series=as.character())
+model_before <- NULL
+
 # we want to compute more than 1 model, in this case we can create a model first and 
 # remove its components from the data frame before computing another model
 censor <- c()
@@ -137,6 +143,11 @@ repeat {
   pred <- predict(fit.pruned, df[!sub,], type = "class")
   idx=row.names(df[!sub,])
   erg = data.frame(class=array(pred), study=df[idx,"study"], series=df[idx,"series"])
+  # here we know the predictions, we should compare with the once we have already and 
+  # find entries where the class is different (we don't care about the class).
+  if (is.na(model_before))
+    model_before <- erg
+  disagree_list <- merge(disagree_list, (anti_join(model_before, erg))[,c("study","series")], by=c("study", "series"), all=TRUE)
 
   confusion.matrix = table(predict(fit.pruned, type="class"), df[sub,]$class)
   accuracy_percent = 100 * sum(diag(confusion.matrix)) / sum(confusion.matrix)
@@ -180,6 +191,7 @@ repeat {
   library(htmlTable)
   tab$rules = htmlTable(rpart.rules(fit.pruned, cover = TRUE))
   tab$formula = f
+  tab$disagree_list = disagree_list
   writeLines(toJSON(tab), fileConn)
   close(fileConn)
 
