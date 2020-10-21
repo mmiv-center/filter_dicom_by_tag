@@ -18,12 +18,12 @@ docker build --no-cache -t filter_dicom_by_tag build
 ```
 from the command line.
 
-The container can be started like this (but see the tips section to allow for caching of results):
+The container can be started on Linux or MacOS using a shell script (but see the tips section to allow for caching of results):
 ```
 ./filter_dicom_by_tag.sh /my/folder/with/projects
-docker run --rm -d -p 80:8888 -v /my/folder/with/projects:/data filter_dicom_by_tag 
 ```
-Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on your local disk. The structure of this folder is not important. One of the nice things about DICOM is that all the information are in the header. You do not have to sort files into specific folders or name the files in a specific way. Open a web-browser on your local machine to start the interface:
+
+Here we assume that a folder with DICOM images is in the /my/folder/with/projects folder on the local disk. Each folder inside this directory is assumed to be one project. One of the nice things about DICOM is that all the information are in the header so no special folder structure is expected inside each project folder. You do not have to sort files into specific folders or name the files in a specific way. Open a web-browser on your local machine to start the interface:
 ```
 open http://localhost:80/
 ```
@@ -62,6 +62,7 @@ Equivalence classes (collections of models providing the same classification) ca
                               -v /my/current/directory/cache:/var/www/html/php/project_cache \
                               -v /my/current/directory/exports:/var/www/html/php/exports filter_dicom_by_tag 
 ```
+ The above steps are performed automatically by the filter_dicom_by_tag.sh shell script.
  - In some environments port 80 is already in use. Change the Dockerfile and use an alternative port
  for the integrated website.
  - In order to be able to see the website outside of the docker environment
@@ -70,4 +71,4 @@ Equivalence classes (collections of models providing the same classification) ca
  - As an observation: If you run the docker container on MacOS and you mount external folders 
  you will need to wait quite some time before an existing project is loaded. Partially this is
  caused by a slow file copy between the docker environment running Linux and the MacOS file system.
- It is faster to run this software on Linux.
+ It is faster to run the software on Linux.
