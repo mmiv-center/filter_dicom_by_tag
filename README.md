@@ -14,11 +14,11 @@ Clone this repository and create a docker container (requires git and docker ins
 ```
 git clone https://github.com/mmiv-center/filter_dicom_by_tag.git
 cd filter_dicom_by_tag
-docker build -t filter_dicom_by_tag build
+docker build --no-cache -t filter_dicom_by_tag build
 ```
 from the command line.
 
-Start the container like this:
+The container can be started like this (but see the tips section to allow for caching of results):
 ```
 docker run --rm -d -p 80:8888 -v /my/folder/with/projects:/data filter_dicom_by_tag 
 ```
@@ -58,8 +58,8 @@ Equivalence classes (collections of models providing the same classification) ca
   mkdir cache
   mkdir exports
   docker run --rm -d -p 80:80 -v /my/folder/with/projects:/data \
-                              -v `pwd`/cache:/var/www/html/php/project_cache \
-                              -v `pwd`/exports:/var/www/html/php/exports filter_dicom_by_tag 
+                              -v /my/current/directory/cache:/var/www/html/php/project_cache \
+                              -v /my/current/directory/exports:/var/www/html/php/exports filter_dicom_by_tag 
 ```
  - In some environments port 80 is already in use. Change the Dockerfile and use an alternative port
  for the integrated website.
