@@ -497,8 +497,8 @@ jQuery(document).ready(function() {
 		jQuery('#content-selected').find('div.Series').remove();
 		jQuery('span.stats-general').text("");
 
-		//jQuery('#content div.highlighted-human-a').removeClass('highlighted-human-a');
-		//jQuery('#content div.highlighted-human-b').removeClass('highlighted-human-b');
+		jQuery('#content div.highlighted-human-a').removeClass('highlighted-human-a');
+		jQuery('#content div.highlighted-human-b').removeClass('highlighted-human-b');
 	});
 
 	jQuery('#content').on('click', 'div.Study', function() {
