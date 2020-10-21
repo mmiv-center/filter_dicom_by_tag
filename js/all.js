@@ -485,6 +485,22 @@ var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function() {
 	
+	jQuery('#clearSelection').on('click', function() {
+		jQuery('#content-selected div.Series').remove();
+		jQuery('#content div.Series.a').removeClass('a');
+		jQuery('#content div.Series.b').removeClass('b');
+		models_last_run = [];
+		current_model = -1;
+		jQuery('#share-world-button').attr('model-names', "");
+		jQuery('#processing-time').text("");
+		jQuery('#chat').val("");
+		jQuery('#content-selected').find('div.Series').remove();
+		jQuery('span.stats-general').text("");
+
+		//jQuery('#content div.highlighted-human-a').removeClass('highlighted-human-a');
+		//jQuery('#content div.highlighted-human-b').removeClass('highlighted-human-b');
+	});
+
 	jQuery('#content').on('click', 'div.Study', function() {
 		if (jQuery(this).hasClass("selected")) {
 			jQuery(this).removeClass("selected");

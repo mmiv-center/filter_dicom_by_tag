@@ -117,7 +117,7 @@ do
                  | grep -v ") UL " | grep -v ") SL " | grep -v ") TM " | grep -v ") UN " \
                  | grep -v "1 WindowCenter" | grep -v "1 WindowWidth" | grep -v "1 SliceLocation" \
                  | grep -v "3 ImagePositionPatient" \
-                 | sort | uniq > ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
+                 | sort -u  > ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache
              # | egrep -v "[^\[]+\[[+0-9\\-\.]+\].*"
              # store the number of files as well
              echo "(0020,1209) IS [1] # Number of series related images" >> ${output}/${StudyInstanceUID}/${SeriesInstanceUID}.cache

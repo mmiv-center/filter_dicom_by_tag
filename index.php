@@ -48,8 +48,12 @@
 	  <p>Decision tree for the classification is pruned using a 1-standard error rule. The importance values for each measure are displayed in brackets.</p>
 <div class="custom-control custom-switch">
   <input type="checkbox" class="custom-control-input" id="allowCachedVersion" checked>
-  <label class="custom-control-label" for="allowCachedVersion">Allow usage of cached results (faster loading)</label>
+  <label class="custom-control-label" for="allowCachedVersion">Allow usage of cached results (faster loading). If this is disabled, loading a project will be very slow.</label>
 </div>
+<div class="form-group">
+  <button class="btn btn-sm btn-primary" type="button" id="clearSelection"> Start again</button>                                             
+  <label for="clearSelection"> Clears the current selection</label>                                                    
+</div>                                                                                                                                       
         </div>
         <div class="col-sm-4 offset-md-1 py-4">
           <h4 class="text-white">Contact</h4>
