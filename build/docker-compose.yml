@@ -1,0 +1,13 @@
+version: "3.8"
+services:
+    filter_dicom_by_tag:
+        ports:
+            - "80:8888"
+        image: filter_dicom_by_tag
+        volumes:
+            - filter_dicom_by_tag_data:/var/www/html/php/cache
+            - ${DATA}:/data
+            - ${OUTPUT}:/var/www/html/php/exports
+
+volumes:
+    filter_dicom_by_tag_data:
