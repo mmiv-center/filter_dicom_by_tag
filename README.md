@@ -72,3 +72,12 @@ Equivalence classes (collections of models providing the same classification) ca
  you will need to wait quite some time before an existing project is loaded. Partially this is
  caused by a slow file copy between the docker environment running Linux and the MacOS file system.
  It is faster to run the software on Linux.
+ - There is now an experimental docker-compose setup that uses a volume to store the cache data and
+ which will create local folders for the image data and the outputs. Here is the basic setup of that
+ component:
+```
+cd build
+export DATA=/my/data/folder
+export OUTPUT=/my/output/exports
+docker-compose up
+```
