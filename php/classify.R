@@ -175,6 +175,7 @@ repeat {
   library(rpart.plot)
   svg(paste(args[2], sprintf("_%04d", countModels), ".svg", sep=""))
   # fancyRpartPlot(fit, caption = "Decision Tree Model")
+  par(mfrow = c(1,2), xpd = NA)
   rpart.plot( fit.pruned , extra = 104, box.palette = "GnBu", branch.lty = 3, shadow.col = "gray", nn = TRUE, roundint = FALSE)
   dev.off()
 
