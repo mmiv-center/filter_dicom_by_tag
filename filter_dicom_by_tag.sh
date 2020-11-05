@@ -57,6 +57,7 @@ else
 fi
 
 # Finally run docker. Running this next line in the background with '-d' is not working as expected.
+echo docker run --rm -d -p ${PORT}:8888 -v "${DATA}":/data -v "${DIR}/cache":/var/www/html/php/project_cache -v "${DIR}/exports":/var/www/html/php/exports filter_dicom_by_tag &
 sudo docker run --rm -d -p ${PORT}:8888 -v "${DATA}":/data -v "${DIR}/cache":/var/www/html/php/project_cache -v "${DIR}/exports":/var/www/html/php/exports filter_dicom_by_tag &
 
 echo "It might take a while for the container to response. Connect at http://localhost:${PORT}"
