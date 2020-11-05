@@ -46,14 +46,14 @@ if [ -d "${DIR}/cache" ]; then
    echo "  Info: Re-use an existing cache folder to store models (${DIR}/cache)."
 else
    echo "  Create cache folder in the script directory \"${DIR}/cache\" (store parsed models across runs)."
-   mkdir -p "${DIR}/cache"
+   mkdir -p -m 777 "${DIR}/cache"
 fi
 
 if [ -d "${DIR}/exports" ]; then
    echo "  Info: Re-use an existing exports folder to store exported results (${DIR}/exports)"
 else
    echo "  Create exports folder in the script directory \"${DIR}/exports\" (store exported selections)."
-   mkdir -p "${DIR}/exports"
+   mkdir -p -m 777 "${DIR}/exports"
 fi
 
 # Finally run docker. Running this next line in the background with '-d' is not working as expected.
