@@ -27,5 +27,9 @@ RUN cd /var/www/html && rm index.html && git clone https://github.com/mmiv-cente
     && sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/7.4/apache2/php.ini \
     && sed -i 's/16KP/32KP/g' /etc/ImageMagick-6/policy.xml
 
+# install libraries needed for compiling the accellerator
+RUN apt-get update && apt-get install -y libboost1.71-all-dev libxslt1-dev libgdcm-tools libvtkgdcm3.0 libboost1.71-dev libgdcm-dev \
+    && apt-get clean
+
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 EXPOSE 8888
