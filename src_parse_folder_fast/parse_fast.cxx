@@ -39,6 +39,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "boost/date_time.hpp"
 #include "boost/filesystem.hpp"
 #include <chrono>
 #include <map>
@@ -367,13 +368,13 @@ struct SliceSortingTags {
   std::string PhilipsBValue;
   gdcm::Tag StandardBValueTag = gdcm::Tag(0x0018, 0x9087);
   std::string StandardBValue;
+  std::string SliceLocation;
 };
 
 template <typename TPrinter>
 static int DoOperation(const std::string &filename, std::stringstream &os,
                        std::string &StudyInstanceUID, std::string &SeriesInstanceUID,
-                       std::string &SOPInstanceUID, std::string &SliceLocation,
-                       SliceSortingTags *sortByThose) {
+                       std::string &SOPInstanceUID, SliceSortingTags *sortByThose) {
   gdcm::Reader reader;
   reader.SetFileName(filename.c_str());
   bool success = reader.Read();
@@ -389,7 +390,7 @@ static int DoOperation(const std::string &filename, std::stringstream &os,
   StudyInstanceUID = "";
   SeriesInstanceUID = "";
   SOPInstanceUID = "";
-  SliceLocation = ""; // 0020,1041
+  // SliceLocation = ""; // 0020,1041
 
   bool lookupUIDsInText = false; // we are faster if we get the values from DICOM instead
   // of getting the values from the text using regular expressions (5% of the time required only)
@@ -428,7 +429,7 @@ static int DoOperation(const std::string &filename, std::stringstream &os,
       // we need the std::string value for that tag
       strm.str("");
       dss.GetDataElement(gdcm::Tag(0x0020, 0x1041)).GetValue().Print(strm);
-      SliceLocation = strm.str();
+      sortByThose->SliceLocation = strm.str();
     }
     // try to read the tags in sortByThose
     if (dss.FindDataElement(sortByThose->TriggerTimeTag) &&
@@ -667,23 +668,25 @@ void *ReadFilesThread(void *voidparams) {
 
   int res = 0;
   const size_t nfiles = params->nfiles;
+  boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
   for (unsigned int file = 0; file < nfiles; ++file) {
     const char *filename = params->filenames[file];
 
     if ((file % (unsigned int)1000) == 0) {
-      fprintf(stdout, "[%d/%zu (%.1f%% done) thread: %d]\n", file, nfiles,
-              100.0 * (file / (1.0 * nfiles)), params->thread + 1);
+      boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
+      fprintf(stdout, "[%d/%zu (%.1f%% done) [thread: %d] %.0fdcm/sec/thread]\n", file, nfiles,
+              100.0 * (file / (1.0 * nfiles)), params->thread + 1,
+              (1.0 * file) / (now - start).total_seconds());
     }
 
     std::stringstream os;
     std::string StudyInstanceUID;
     std::string SeriesInstanceUID;
     std::string SOPInstanceUID;
-    std::string SliceLocation;
     SliceSortingTags *sortByThose = new SliceSortingTags();
     // get the header and StudyInstance and SeriesInstanceUIDs from the file
     res = DoOperation<gdcm::Printer>(filename, os, StudyInstanceUID, SeriesInstanceUID,
-                                     SOPInstanceUID, SliceLocation, sortByThose);
+                                     SOPInstanceUID, sortByThose);
     if (res == 1) {
       // failed to read this file, skip now
       continue;
@@ -701,7 +704,7 @@ void *ReadFilesThread(void *voidparams) {
         &params->sliceData[StudyInstanceUID][SeriesInstanceUID][SOPInstanceUID];
 
     entry->insert(make_pair("filename", std::string(filename)));
-    entry->insert(make_pair("SliceLocation", SliceLocation));
+    entry->insert(make_pair("SliceLocation", sortByThose->SliceLocation));
     entry->insert(make_pair("TriggerTime", sortByThose->TriggerTime));
     entry->insert(make_pair("EchoTime", sortByThose->EchoTime));
     entry->insert(make_pair("FlipAngle", sortByThose->FlipAngle));
@@ -927,7 +930,7 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
       }
     }
     // we have the allSliceData together now.. sort each Series and pick the middle slide
-    fprintf(stdout, "found %ud image series\n", countFiles);
+    fprintf(stdout, "found %u DICOM images\n", countFiles);
   }
 
   // we can access the per thread storage of study instance uid mappings now
