@@ -57,6 +57,16 @@ struct threadparams {
   // each thread will store here the study instance uid (original and mapped)
   std::map<std::string, std::string> byThreadStudyInstanceUID;
   std::map<std::string, std::string> byThreadSeriesInstanceUID;
+
+  // we would like to store a full map here so that we can sort slices to find the one in the middle
+  std::unordered_map<
+      std::string,                                       // StudyInstanceUID
+      std::unordered_map<std::string,                    // SeriesInstanceUID
+                         std::unordered_map<std::string, // SOPInstanceUID
+                                            std::unordered_map<std::string, std::string> // info by
+                                                                                         // slice
+                                            >>>
+      sliceData;
 };
 
 // https://wiki.cancerimagingarchive.net/display/Public/De-identification+Knowledge+Base
@@ -106,7 +116,8 @@ nlohmann::json work = nlohmann::json::array({
     {"0018", "700c", "DateofLastDetectorCalibration", "incrementdate"},
     {"0018", "1012", "DateOfSecondaryCapture", "incrementdate"},
     {"0012", "0063", "DeIdentificationMethod {Per DICOM PS 3.15 AnnexE. Details in 0012,0064}"},
-    {"0012", "0064", "DeIdentificationMethodCodeSequence", "113100/113101/113105/113107/113108/113109/113111"},
+    {"0012", "0064", "DeIdentificationMethodCodeSequence",
+     "113100/113101/113105/113107/113108/113109/113111"},
     {"0008", "2111", "DerivationDescription", "keep"},
     {"0018", "700a", "DetectorID", "keep"},
     {"0018", "1000", "DeviceSerialNumber", "keep"},
@@ -329,9 +340,40 @@ nlohmann::json work = nlohmann::json::array({
     {"0038", "4000", "VisitComments", "keep"},
 });
 
+struct SliceSortingTags {
+  gdcm::Tag TriggerTimeTag = gdcm::Tag(0x0018, 0x1060);
+  std::string TriggerTime;
+  gdcm::Tag EchoTimeTag = gdcm::Tag(0x0018, 0x0081);
+  std::string EchoTime;
+  gdcm::Tag FlipAngleTag = gdcm::Tag(0x0018, 0x1314);
+  std::string FlipAngle;
+  gdcm::Tag RepetitionTimeTag = gdcm::Tag(0x0018, 0x0080);
+  std::string RepetitionTime;
+  gdcm::Tag AcquisitionTimeTag = gdcm::Tag(0x0008, 0x0032);
+  std::string AcquisitionTime;
+  gdcm::Tag SeriesTimeTag = gdcm::Tag(0x0008, 0x0031);
+  std::string SeriesTime;
+  gdcm::Tag ContentTimeTag = gdcm::Tag(0x0008, 0x0033);
+  std::string ContentTime;
+  gdcm::Tag CardiacCycleTag = gdcm::Tag(0x0018, 0x0022);
+  std::string CardiacCycle;
+  gdcm::Tag SiemensBValueTag = gdcm::Tag(0x0019, 0x100c);
+  std::string SiemensBValue;
+  gdcm::Tag GEBValueTag = gdcm::Tag(0x0043, 0x1039);
+  std::string GEBValue;
+  gdcm::Tag TemporalPositionIdentifierTag = gdcm::Tag(0x0020, 0x0100);
+  std::string TemporalPositionIdentifier;
+  gdcm::Tag PhilipsBValueTag = gdcm::Tag(0x2001, 0x1003);
+  std::string PhilipsBValue;
+  gdcm::Tag StandardBValueTag = gdcm::Tag(0x0018, 0x9087);
+  std::string StandardBValue;
+};
+
 template <typename TPrinter>
-static int DoOperation(const std::string &filename, std::stringstream &os, std::string &StudyInstanceUID, std::string &SeriesInstanceUID,
-                       std::string &SOPInstanceUID) {
+static int DoOperation(const std::string &filename, std::stringstream &os,
+                       std::string &StudyInstanceUID, std::string &SeriesInstanceUID,
+                       std::string &SOPInstanceUID, std::string &SliceLocation,
+                       SliceSortingTags *sortByThose) {
   gdcm::Reader reader;
   reader.SetFileName(filename.c_str());
   bool success = reader.Read();
@@ -347,11 +389,14 @@ static int DoOperation(const std::string &filename, std::stringstream &os, std::
   StudyInstanceUID = "";
   SeriesInstanceUID = "";
   SOPInstanceUID = "";
+  SliceLocation = ""; // 0020,1041
+
   bool lookupUIDsInText = false; // we are faster if we get the values from DICOM instead
   // of getting the values from the text using regular expressions (5% of the time required only)
   // This might be different if we would be using a simplier expression.
   if (!lookupUIDsInText) {
-    if (dss.FindDataElement(gdcm::Tag(0x0020, 0x000d))) {
+    if (dss.FindDataElement(gdcm::Tag(0x0020, 0x000d)) &&
+        !dss.GetDataElement(gdcm::Tag(0x0020, 0x000d)).IsEmpty()) {
       // we need the std::string value for that tag
       strm.str("");
       dss.GetDataElement(gdcm::Tag(0x0020, 0x000d)).GetValue().Print(strm);
@@ -359,7 +404,8 @@ static int DoOperation(const std::string &filename, std::stringstream &os, std::
     } else {
       success = false;
     }
-    if (dss.FindDataElement(gdcm::Tag(0x0020, 0x000e))) {
+    if (dss.FindDataElement(gdcm::Tag(0x0020, 0x000e)) &&
+        !dss.GetDataElement(gdcm::Tag(0x0020, 0x000e)).IsEmpty()) {
       // we need the std::string value for that tag
       strm.str("");
       dss.GetDataElement(gdcm::Tag(0x0020, 0x000e)).GetValue().Print(strm);
@@ -367,7 +413,8 @@ static int DoOperation(const std::string &filename, std::stringstream &os, std::
     } else {
       success = false;
     }
-    if (dss.FindDataElement(gdcm::Tag(0x0008, 0x0018))) {
+    if (dss.FindDataElement(gdcm::Tag(0x0008, 0x0018)) &&
+        !dss.GetDataElement(gdcm::Tag(0x0008, 0x0018)).IsEmpty()) {
       // we need the std::string value for that tag
       strm.str("");
       dss.GetDataElement(gdcm::Tag(0x0008, 0x0018)).GetValue().Print(strm);
@@ -375,7 +422,109 @@ static int DoOperation(const std::string &filename, std::stringstream &os, std::
     } else {
       success = false;
     }
-    // fprintf(stdout, "FOUND EARLY: %s %s %s\n", StudyInstanceUID.c_str(), SeriesInstanceUID.c_str(), SOPInstanceUID.c_str());
+
+    if (dss.FindDataElement(gdcm::Tag(0x0020, 0x1041)) &&
+        !dss.GetDataElement(gdcm::Tag(0x0020, 0x1041)).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(gdcm::Tag(0x0020, 0x1041)).GetValue().Print(strm);
+      SliceLocation = strm.str();
+    }
+    // try to read the tags in sortByThose
+    if (dss.FindDataElement(sortByThose->TriggerTimeTag) &&
+        !dss.GetDataElement(sortByThose->TriggerTimeTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->TriggerTimeTag).GetValue().Print(strm);
+      sortByThose->TriggerTime = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->EchoTimeTag) &&
+        !dss.GetDataElement(sortByThose->EchoTimeTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->EchoTimeTag).GetValue().Print(strm);
+      sortByThose->EchoTime = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->FlipAngleTag) &&
+        !dss.GetDataElement(sortByThose->FlipAngleTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->FlipAngleTag).GetValue().Print(strm);
+      sortByThose->FlipAngle = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->RepetitionTimeTag) &&
+        !dss.GetDataElement(sortByThose->RepetitionTimeTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->RepetitionTimeTag).GetValue().Print(strm);
+      sortByThose->RepetitionTime = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->AcquisitionTimeTag) &&
+        !dss.GetDataElement(sortByThose->AcquisitionTimeTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->AcquisitionTimeTag).GetValue().Print(strm);
+      sortByThose->AcquisitionTime = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->SeriesTimeTag) &&
+        !dss.GetDataElement(sortByThose->SeriesTimeTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->SeriesTimeTag).GetValue().Print(strm);
+      sortByThose->SeriesTime = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->ContentTimeTag) &&
+        !dss.GetDataElement(sortByThose->ContentTimeTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->ContentTimeTag).GetValue().Print(strm);
+      sortByThose->ContentTime = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->CardiacCycleTag) &&
+        !dss.GetDataElement(sortByThose->CardiacCycleTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->CardiacCycleTag).GetValue().Print(strm);
+      sortByThose->CardiacCycle = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->SiemensBValueTag) &&
+        !dss.GetDataElement(sortByThose->SiemensBValueTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->SiemensBValueTag).GetValue().Print(strm);
+      sortByThose->SiemensBValue = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->GEBValueTag) &&
+        !dss.GetDataElement(sortByThose->GEBValueTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->GEBValueTag).GetValue().Print(strm);
+      sortByThose->GEBValue = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->TemporalPositionIdentifierTag) &&
+        !dss.GetDataElement(sortByThose->TemporalPositionIdentifierTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->TemporalPositionIdentifierTag).GetValue().Print(strm);
+      sortByThose->TemporalPositionIdentifier = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->PhilipsBValueTag) &&
+        !dss.GetDataElement(sortByThose->PhilipsBValueTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->PhilipsBValueTag).GetValue().Print(strm);
+      sortByThose->PhilipsBValue = strm.str();
+    }
+    if (dss.FindDataElement(sortByThose->StandardBValueTag) &&
+        !dss.GetDataElement(sortByThose->StandardBValueTag).IsEmpty()) {
+      // we need the std::string value for that tag
+      strm.str("");
+      dss.GetDataElement(sortByThose->StandardBValueTag).GetValue().Print(strm);
+      sortByThose->StandardBValue = strm.str();
+    }
+
+    // fprintf(stdout, "FOUND EARLY: %s %s %s\n", StudyInstanceUID.c_str(),
+    // SeriesInstanceUID.c_str(), SOPInstanceUID.c_str());
   }
   int color = 0;
   TPrinter printer;
@@ -383,8 +532,10 @@ static int DoOperation(const std::string &filename, std::stringstream &os, std::
   printer.SetColor(color != 0);
   printer.Print(os);
   // what are the study instance uid and the series instance uids?
-  // "0020", "000d"   (0020,000d) UI [1.3.12.2.1107.5.8.3.484848.578880.49484848.2013070411583314]         # 60,1 Study Instance UID
-  //                  (0020,000e) UI [1.3.12.2.1107.5.2.30.26710.2013112908461563759703652.0.0.0]         # 58,1 Series Instance UID
+  // "0020", "000d"   (0020,000d) UI [1.3.12.2.1107.5.8.3.484848.578880.49484848.2013070411583314]
+  // # 60,1 Study Instance UID
+  //                  (0020,000e) UI [1.3.12.2.1107.5.2.30.26710.2013112908461563759703652.0.0.0] #
+  //                  58,1 Series Instance UID
   // "0020", "000e"
   //  std::regex re1("^\\(0020,000d\\) UI \\[([^\\]]*).*", std::regex::awk);
   //  std::regex re2("^\\(0020,000e\\) UI \\[([^\\]]*).*", std::regex::awk);
@@ -519,12 +670,20 @@ void *ReadFilesThread(void *voidparams) {
   for (unsigned int file = 0; file < nfiles; ++file) {
     const char *filename = params->filenames[file];
 
+    if ((file % (unsigned int)1000) == 0) {
+      fprintf(stdout, "[%d/%zu (%.1f%% done) thread: %d]\n", file, nfiles,
+              100.0 * (file / (1.0 * nfiles)), params->thread + 1);
+    }
+
     std::stringstream os;
     std::string StudyInstanceUID;
     std::string SeriesInstanceUID;
     std::string SOPInstanceUID;
+    std::string SliceLocation;
+    SliceSortingTags *sortByThose = new SliceSortingTags();
     // get the header and StudyInstance and SeriesInstanceUIDs from the file
-    res = DoOperation<gdcm::Printer>(filename, os, StudyInstanceUID, SeriesInstanceUID, SOPInstanceUID);
+    res = DoOperation<gdcm::Printer>(filename, os, StudyInstanceUID, SeriesInstanceUID,
+                                     SOPInstanceUID, SliceLocation, sortByThose);
     if (res == 1) {
       // failed to read this file, skip now
       continue;
@@ -535,6 +694,27 @@ void *ReadFilesThread(void *voidparams) {
     // res += PrintCSA(filename, os);
     // res += PrintPDB(filename, false, os);
     // std::cout << os.str() << std::endl;
+
+    // we should store the information about this image in the map sliceData
+    // we should secure the code with a mutex so we can safely add in the unordered map
+    std::unordered_map<std::string, std::string> *entry =
+        &params->sliceData[StudyInstanceUID][SeriesInstanceUID][SOPInstanceUID];
+
+    entry->insert(make_pair("filename", std::string(filename)));
+    entry->insert(make_pair("SliceLocation", SliceLocation));
+    entry->insert(make_pair("TriggerTime", sortByThose->TriggerTime));
+    entry->insert(make_pair("EchoTime", sortByThose->EchoTime));
+    entry->insert(make_pair("FlipAngle", sortByThose->FlipAngle));
+    entry->insert(make_pair("RepetitionTime", sortByThose->RepetitionTime));
+    entry->insert(make_pair("AcquisitionTime", sortByThose->AcquisitionTime));
+    entry->insert(make_pair("SeriesTime", sortByThose->SeriesTime));
+    entry->insert(make_pair("ContentTime", sortByThose->ContentTime));
+    entry->insert(make_pair("CardiacCycle", sortByThose->CardiacCycle));
+    entry->insert(make_pair("SiemensBValue", sortByThose->SiemensBValue));
+    entry->insert(make_pair("GEBValue", sortByThose->GEBValue));
+    entry->insert(make_pair("TemporalPositionIdentifier", sortByThose->TemporalPositionIdentifier));
+    entry->insert(make_pair("PhilipsBValue", sortByThose->PhilipsBValue));
+    entry->insert(make_pair("StandardBValue", sortByThose->StandardBValue));
 
     // write the header to a cache text file
     std::string filenamestring = SeriesInstanceUID;
@@ -558,7 +738,8 @@ void *ReadFilesThread(void *voidparams) {
       mkdir(dn.c_str(), 0777);
     }
     // create the symbolic links
-    std::string fn = params->outputdir + "/" + seriesdirname + "/" + filenamestring + "/" + SOPInstanceUID;
+    std::string fn =
+        params->outputdir + "/" + seriesdirname + "/" + filenamestring + "/" + SOPInstanceUID;
     symlink(filename, fn.c_str());
 
     fn = params->outputdir + "/" + seriesdirname + "/" + filenamestring + ".cache";
@@ -580,7 +761,8 @@ void *ReadFilesThread(void *voidparams) {
     writer.SetFileName(outfilename.c_str());
     try {
       if (!writer.Write()) {
-        fprintf(stderr, "Error [#file: %d, thread: %d] writing file \"%s\" to \"%s\".\n", file, params->thread, filename, outfilename.c_str());
+        fprintf(stderr, "Error [#file: %d, thread: %d] writing file \"%s\" to \"%s\".\n", file,
+    params->thread, filename, outfilename.c_str());
       }
     } catch (const std::exception &ex) {
       std::cout << "Caught exception \"" << ex.what() << "\"\n";
@@ -598,32 +780,41 @@ void ShowFilenames(const threadparams &params) {
   std::cout << "end" << std::endl;
 }
 
-void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bool byseries, int numthreads, std::string storeMappingAsJSON) {
+void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bool byseries,
+               int numthreads, std::string storeMappingAsJSON) {
   // \precondition: nfiles > 0
   assert(nfiles > 0);
 
-  // lets change the DICOM dictionary and add some private tags - this is still not sufficient to be able to write the private tags
+  // lets change the DICOM dictionary and add some private tags - this is still not sufficient to be
+  // able to write the private tags
   gdcm::Global gl;
   if (gl.GetDicts().GetPrivateDict().FindDictEntry(gdcm::Tag(0x0013, 0x0010))) {
     gl.GetDicts().GetPrivateDict().RemoveDictEntry(gdcm::Tag(0x0013, 0x0010));
   }
-  gl.GetDicts().GetPrivateDict().AddDictEntry(gdcm::Tag(0x0013, 0x0010),
-                                              gdcm::DictEntry("Private Creator Group CTP-LIKE", "0x0013, 0x0010", gdcm::VR::LO, gdcm::VM::VM1));
+  gl.GetDicts().GetPrivateDict().AddDictEntry(
+      gdcm::Tag(0x0013, 0x0010), gdcm::DictEntry("Private Creator Group CTP-LIKE", "0x0013, 0x0010",
+                                                 gdcm::VR::LO, gdcm::VM::VM1));
 
   if (gl.GetDicts().GetPrivateDict().FindDictEntry(gdcm::Tag(0x0013, 0x1010))) {
     gl.GetDicts().GetPrivateDict().RemoveDictEntry(gdcm::Tag(0x0013, 0x1010));
   }
-  gl.GetDicts().GetPrivateDict().AddDictEntry(gdcm::Tag(0x0013, 0x1010), gdcm::DictEntry("ProjectName", "0x0013, 0x1010", gdcm::VR::LO, gdcm::VM::VM1));
+  gl.GetDicts().GetPrivateDict().AddDictEntry(
+      gdcm::Tag(0x0013, 0x1010),
+      gdcm::DictEntry("ProjectName", "0x0013, 0x1010", gdcm::VR::LO, gdcm::VM::VM1));
 
   if (gl.GetDicts().GetPrivateDict().FindDictEntry(gdcm::Tag(0x0013, 0x1013))) {
     gl.GetDicts().GetPrivateDict().RemoveDictEntry(gdcm::Tag(0x0013, 0x1013));
   }
-  gl.GetDicts().GetPrivateDict().AddDictEntry(gdcm::Tag(0x0013, 0x1013), gdcm::DictEntry("SiteID", "0x0013, 0x1013", gdcm::VR::LO, gdcm::VM::VM1));
+  gl.GetDicts().GetPrivateDict().AddDictEntry(
+      gdcm::Tag(0x0013, 0x1013),
+      gdcm::DictEntry("SiteID", "0x0013, 0x1013", gdcm::VR::LO, gdcm::VM::VM1));
 
   if (gl.GetDicts().GetPrivateDict().FindDictEntry(gdcm::Tag(0x0013, 0x1012))) {
     gl.GetDicts().GetPrivateDict().RemoveDictEntry(gdcm::Tag(0x0013, 0x1012));
   }
-  gl.GetDicts().GetPrivateDict().AddDictEntry(gdcm::Tag(0x0013, 0x1012), gdcm::DictEntry("SiteName", "0x0013, 0x1012", gdcm::VR::LO, gdcm::VM::VM1));
+  gl.GetDicts().GetPrivateDict().AddDictEntry(
+      gdcm::Tag(0x0013, 0x1012),
+      gdcm::DictEntry("SiteName", "0x0013, 0x1012", gdcm::VR::LO, gdcm::VM::VM1));
 
   /*  const char *reference = filenames[0]; // take the first image as reference
 
@@ -685,18 +876,74 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
     pthread_join(pthread[thread], NULL);
   }
 
+  if (1) {
+    // in order to do a better job we should create the symbolic links now - catch the center slice
+    // we have to merge the by-thread-lists for sliceData - instead of using a mutex
+    std::unordered_map<
+        std::string,                                       // StudyInstanceUID
+        std::unordered_map<std::string,                    // SeriesInstanceUID
+                           std::unordered_map<std::string, // SOPInstanceUID
+                                              std::unordered_map<std::string, std::string> // info
+                                                                                           // by
+                                                                                           // slice
+                                              >>>
+        allSliceData;
+    unsigned int countFiles = 0;
+    for (unsigned int thread = 0; thread < nthreads; thread++) {
+      std::string StudyInstanceUID = "";
+      std::string SeriesInstanceUID = "";
+      std::string SOPInstanceUID = "";
+      for (std::unordered_map<
+               std::string, // StudyInstanceUID
+               std::unordered_map<
+                   std::string,                    // SeriesInstanceUID
+                   std::unordered_map<std::string, // SOPInstanceUID
+                                      std::unordered_map<std::string, std::string>>>>::iterator it =
+               params[thread].sliceData.begin();
+           it != params[thread].sliceData.end(); ++it) { // over all StudyInstanceUIDs
+        StudyInstanceUID = it->first;
+        for (std::unordered_map<
+                 std::string,                    // SeriesInstanceUID
+                 std::unordered_map<std::string, // SOPInstanceUID
+                                    std::unordered_map<std::string, std::string>>>::iterator it2 =
+                 it->second.begin();
+             it2 != it->second.end(); ++it2) { // over all SeriesInstanceUIDs
+          SeriesInstanceUID = it2->first;
+          for (std::unordered_map<std::string, // SOPInstanceUID
+                                  std::unordered_map<std::string, std::string>>::iterator it3 =
+                   it2->second.begin();
+               it3 != it2->second.end(); ++it3) { // over all SOPInstanceUIDs
+            SOPInstanceUID = it3->first;
+            countFiles++;
+            std::unordered_map<std::string, std::string> *entry =
+                &allSliceData[StudyInstanceUID][SeriesInstanceUID][SOPInstanceUID];
+            for (std::unordered_map<std::string, std::string>::iterator it4 = it3->second.begin();
+                 it4 != it3->second.end(); ++it4) {
+              entry->insert(make_pair(it4->first, it4->second));
+              // allSliceData.insert(std::pair<std::string, std::string>(it->first, it->second));
+            }
+          }
+        }
+      }
+    }
+    // we have the allSliceData together now.. sort each Series and pick the middle slide
+    fprintf(stdout, "found %ud image series\n", countFiles);
+  }
+
   // we can access the per thread storage of study instance uid mappings now
   if (storeMappingAsJSON.length() > 0) {
     std::map<std::string, std::string> uidmappings1;
     std::map<std::string, std::string> uidmappings2;
     for (unsigned int thread = 0; thread < nthreads; thread++) {
-      for (std::map<std::string, std::string>::iterator it = params[thread].byThreadStudyInstanceUID.begin();
+      for (std::map<std::string, std::string>::iterator it =
+               params[thread].byThreadStudyInstanceUID.begin();
            it != params[thread].byThreadStudyInstanceUID.end(); ++it) {
         uidmappings1.insert(std::pair<std::string, std::string>(it->first, it->second));
       }
     }
     for (unsigned int thread = 0; thread < nthreads; thread++) {
-      for (std::map<std::string, std::string>::iterator it = params[thread].byThreadSeriesInstanceUID.begin();
+      for (std::map<std::string, std::string>::iterator it =
+               params[thread].byThreadSeriesInstanceUID.begin();
            it != params[thread].byThreadSeriesInstanceUID.end(); ++it) {
         uidmappings2.insert(std::pair<std::string, std::string>(it->first, it->second));
       }
@@ -704,10 +951,12 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
     nlohmann::json ar;
     ar["StudyInstanceUID"] = {};
     ar["SeriesInstanceUID"] = {};
-    for (std::map<std::string, std::string>::iterator it = uidmappings1.begin(); it != uidmappings1.end(); ++it) {
+    for (std::map<std::string, std::string>::iterator it = uidmappings1.begin();
+         it != uidmappings1.end(); ++it) {
       ar["StudyInstanceUID"][it->first] = it->second;
     }
-    for (std::map<std::string, std::string>::iterator it = uidmappings2.begin(); it != uidmappings2.end(); ++it) {
+    for (std::map<std::string, std::string>::iterator it = uidmappings2.begin();
+         it != uidmappings2.end(); ++it) {
       ar["SeriesInstanceUID"][it->first] = it->second;
     }
 
@@ -725,11 +974,25 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
 }
 
 struct Arg : public option::Arg {
-  static option::ArgStatus Required(const option::Option &option, bool) { return option.arg == 0 ? option::ARG_ILLEGAL : option::ARG_OK; }
-  static option::ArgStatus Empty(const option::Option &option, bool) { return (option.arg == 0 || option.arg[0] == 0) ? option::ARG_OK : option::ARG_IGNORE; }
+  static option::ArgStatus Required(const option::Option &option, bool) {
+    return option.arg == 0 ? option::ARG_ILLEGAL : option::ARG_OK;
+  }
+  static option::ArgStatus Empty(const option::Option &option, bool) {
+    return (option.arg == 0 || option.arg[0] == 0) ? option::ARG_OK : option::ARG_IGNORE;
+  }
 };
 
-enum optionIndex { UNKNOWN, HELP, INPUT, OUTPUT, EXPORTANON, BYSERIES, NUMTHREADS, TAGCHANGE, STOREMAPPING };
+enum optionIndex {
+  UNKNOWN,
+  HELP,
+  INPUT,
+  OUTPUT,
+  EXPORTANON,
+  BYSERIES,
+  NUMTHREADS,
+  TAGCHANGE,
+  STOREMAPPING
+};
 const option::Descriptor usage[] = {
     {UNKNOWN, 0, "", "", option::Arg::None,
      "USAGE: ParseFast [options]\n\n"
@@ -742,8 +1005,10 @@ const option::Descriptor usage[] = {
     {BYSERIES, 0, "b", "byseries", Arg::None,
      "  --byseries, -b  \tWrites each DICOM file into a separate directory "
      "by image series."},
-    {STOREMAPPING, 0, "m", "storemapping", Arg::None, "  --storemapping, -m  \tStore the StudyInstanceUID mapping as a JSON file."},
-    {NUMTHREADS, 0, "t", "numthreads", Arg::Required, "  --numthreads, -t  \tHow many threads should be used (default 4)."},
+    {STOREMAPPING, 0, "m", "storemapping", Arg::None,
+     "  --storemapping, -m  \tStore the StudyInstanceUID mapping as a JSON file."},
+    {NUMTHREADS, 0, "t", "numthreads", Arg::Required,
+     "  --numthreads, -t  \tHow many threads should be used (default 4)."},
     {UNKNOWN, 0, "", "", Arg::None,
      "\nExamples:\n"
      "  anonymize --input directory --output directory -b\n"
@@ -752,9 +1017,15 @@ const option::Descriptor usage[] = {
 
 std::vector<std::string> listFilesSTD(const std::string &path) {
   std::vector<std::string> files;
+  std::string extension;
   for (boost::filesystem::recursive_directory_iterator end, dir(path); dir != end; ++dir) {
     // std::cout << *dir << "\n";  // full path
     if (is_regular_file(dir->path())) {
+      // reasing zip and tar files might take a lot of time.. filter out here
+      extension = boost::filesystem::extension(dir->path());
+      if (extension == ".tar" || extension == ".gz" || extension == ".zip" || extension == ".tgz" ||
+          extension == ".bz2")
+        continue;
       files.push_back(dir->path().c_str());
       if ((files.size() % 200) == 0) {
         fprintf(stdout, "[reading files %05lu]\r", files.size());
@@ -870,7 +1141,7 @@ int main(int argc, char *argv[]) {
   if (gdcm::System::FileIsDirectory(input.c_str())) {
     std::vector<std::string> files;
     files = listFilesSTD(input.c_str());
-    fprintf(stdout, "reading files done\n");
+    fprintf(stdout, "\nreading files done\n");
 
     const size_t nfiles = files.size();
     const char **filenames = new const char *[nfiles];
