@@ -783,6 +783,80 @@ void ShowFilenames(const threadparams &params) {
   std::cout << "end" << std::endl;
 }
 
+// Provide a sorter for the two SOPInstanceUIDs based on the values in the
+// unordered_map about stack break tags.
+bool sortStackFunc(std::pair<std::string, std::unordered_map<std::string, std::string>> i1,
+                   std::pair<std::string, std::unordered_map<std::string, std::string>> i2) {
+  // i1->first is the SOPInstanceUID
+  /*
+    entry->insert(make_pair("SliceLocation", sortByThose->SliceLocation));
+    entry->insert(make_pair("TriggerTime", sortByThose->TriggerTime));
+    entry->insert(make_pair("EchoTime", sortByThose->EchoTime));
+    entry->insert(make_pair("FlipAngle", sortByThose->FlipAngle));
+    entry->insert(make_pair("RepetitionTime", sortByThose->RepetitionTime));
+    entry->insert(make_pair("AcquisitionTime", sortByThose->AcquisitionTime));
+    entry->insert(make_pair("SeriesTime", sortByThose->SeriesTime));
+    entry->insert(make_pair("ContentTime", sortByThose->ContentTime));
+    entry->insert(make_pair("CardiacCycle", sortByThose->CardiacCycle));
+    entry->insert(make_pair("SiemensBValue", sortByThose->SiemensBValue));
+    entry->insert(make_pair("GEBValue", sortByThose->GEBValue));
+    entry->insert(make_pair("TemporalPositionIdentifier", sortByThose->TemporalPositionIdentifier));
+    entry->insert(make_pair("PhilipsBValue", sortByThose->PhilipsBValue));
+    entry->insert(make_pair("StandardBValue", sortByThose->StandardBValue));
+  */
+  std::unordered_map<std::string, std::string>::const_iterator got;
+
+  //
+  // EchoTime
+  //
+  int EchoTime1 = 0;
+  got = i1.second.find("EchoTime");
+  if (got != i1.second.end() && got->second.length() > 0) {
+    EchoTime1 = std::stoi(got->second);
+  }
+  int EchoTime2 = 0;
+  got = i2.second.find("EchoTime");
+  if (got != i2.second.end() && got->second.length() > 0) {
+    EchoTime2 = std::stoi(got->second);
+  }
+  if (EchoTime1 != EchoTime2) {
+    return (EchoTime1 - EchoTime2);
+  }
+
+  //
+  // FlipAngle
+  //
+  int FlipAngle1 = 0;
+  got = i1.second.find("FlipAngle");
+  if (got != i1.second.end() && got->second.length() > 0) {
+    FlipAngle1 = std::stoi(got->second);
+  }
+  int FlipAngle2 = 0;
+  got = i2.second.find("FlipAngle");
+  if (got != i2.second.end() && got->second.length() > 0) {
+    FlipAngle2 = std::stoi(got->second);
+  }
+  if (FlipAngle1 != FlipAngle2) {
+    return (FlipAngle1 - FlipAngle2);
+  }
+
+  //
+  // SliceLocation
+  //
+  float SliceLocation1 = 0.0f;
+  got = i1.second.find("SliceLocation");
+  if (got != i1.second.end() && got->second.length() > 0) {
+    SliceLocation1 = std::stof(got->second);
+  }
+  float SliceLocation2 = 0.0f;
+  got = i2.second.find("SliceLocation");
+  if (got != i2.second.end() && got->second.length() > 0) {
+    SliceLocation2 = std::stof(got->second);
+  }
+  fprintf(stdout, "SliceLocation1: %f SliceLocation2: %f\n", SliceLocation1, SliceLocation2);
+  return (SliceLocation1 - SliceLocation2);
+}
+
 void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bool byseries,
                int numthreads, std::string storeMappingAsJSON) {
   // \precondition: nfiles > 0
@@ -819,22 +893,6 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
       gdcm::Tag(0x0013, 0x1012),
       gdcm::DictEntry("SiteName", "0x0013, 0x1012", gdcm::VR::LO, gdcm::VM::VM1));
 
-  /*  const char *reference = filenames[0]; // take the first image as reference
-
-    gdcm::ImageReader reader;
-    reader.SetFileName(reference);
-    if (!reader.Read()) {
-      // That would be very bad...
-      assert(0);
-    }
-
-    const gdcm::Image &image = reader.GetImage();
-    gdcm::PixelFormat pixeltype = image.GetPixelFormat();
-    unsigned long len = image.GetBufferLength();
-    const unsigned int *dims = image.GetDimensions();
-    unsigned short pixelsize = pixeltype.GetPixelSize();
-    (void)pixelsize;
-    assert(image.GetNumberOfDimensions() == 2); */
   if (nfiles <= numthreads) {
     numthreads = 1; // fallback if we don't have enough files to process
   }
@@ -881,15 +939,13 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
 
   if (1) {
     // in order to do a better job we should create the symbolic links now - catch the center slice
-    // we have to merge the by-thread-lists for sliceData - instead of using a mutex
+    // we have to merge the by-thread-lists for sliceData - instead of using a mutex this should be
+    // faster
     std::unordered_map<
-        std::string,                                       // StudyInstanceUID
-        std::unordered_map<std::string,                    // SeriesInstanceUID
-                           std::unordered_map<std::string, // SOPInstanceUID
-                                              std::unordered_map<std::string, std::string> // info
-                                                                                           // by
-                                                                                           // slice
-                                              >>>
+        std::string,                                          // StudyInstanceUID
+        std::unordered_map<std::string,                       // SeriesInstanceUID
+                           std::vector<std::pair<std::string, // SOPInstanceUID
+                                                 std::unordered_map<std::string, std::string>>>>>
         allSliceData;
     unsigned int countFiles = 0;
     for (unsigned int thread = 0; thread < nthreads; thread++) {
@@ -912,25 +968,38 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
                  it->second.begin();
              it2 != it->second.end(); ++it2) { // over all SeriesInstanceUIDs
           SeriesInstanceUID = it2->first;
+
+          std::vector<std::pair<std::string, std::unordered_map<std::string, std::string>>> *entry =
+              &allSliceData[StudyInstanceUID][SeriesInstanceUID];
+
           for (std::unordered_map<std::string, // SOPInstanceUID
                                   std::unordered_map<std::string, std::string>>::iterator it3 =
                    it2->second.begin();
                it3 != it2->second.end(); ++it3) { // over all SOPInstanceUIDs
             SOPInstanceUID = it3->first;
             countFiles++;
-            std::unordered_map<std::string, std::string> *entry =
-                &allSliceData[StudyInstanceUID][SeriesInstanceUID][SOPInstanceUID];
-            for (std::unordered_map<std::string, std::string>::iterator it4 = it3->second.begin();
+
+            /*for (std::unordered_map<std::string, std::string>::iterator it4 = it3->second.begin();
                  it4 != it3->second.end(); ++it4) {
               entry->insert(make_pair(it4->first, it4->second));
               // allSliceData.insert(std::pair<std::string, std::string>(it->first, it->second));
-            }
+            }*/
+            std::pair<std::string, std::unordered_map<std::string, std::string>> sop_entry = {
+                SOPInstanceUID, it3->second};
+            // We should insert element in a sorted manner, this will save time later if we need
+            // to extract a representive slice.
+            std::vector<std::pair<std::string,
+                                  std::unordered_map<std::string, std::string>>>::iterator it4 =
+                std::lower_bound(entry->begin(), entry->end(), sop_entry, sortStackFunc);
+            entry->insert(it4, sop_entry); // pull elements back with pop_back()
+            // entry->push_back(sop_entry);
           }
         }
       }
     }
-    // we have the allSliceData together now.. sort each Series and pick the middle slide
     fprintf(stdout, "found %u DICOM images\n", countFiles);
+    // We have the allSliceData together now. They are sorted so we can pick the center slice for
+    // each volume.
   }
 
   // we can access the per thread storage of study instance uid mappings now
