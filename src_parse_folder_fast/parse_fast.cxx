@@ -42,6 +42,7 @@
 #include "boost/date_time.hpp"
 #include "boost/filesystem.hpp"
 #include <chrono>
+#include <locale.h>
 #include <map>
 #include <pthread.h>
 #include <regex>
@@ -672,9 +673,9 @@ void *ReadFilesThread(void *voidparams) {
   for (unsigned int file = 0; file < nfiles; ++file) {
     const char *filename = params->filenames[file];
 
-    if ((file % (unsigned int)1000) == 0) {
+    if ((file % (unsigned int)1000) == 1) {
       boost::posix_time::ptime now = boost::posix_time::microsec_clock::local_time();
-      fprintf(stdout, "[%d/%zu (%.1f%% done) [thread: %d] %.0fdcm/sec/thread]\n", file, nfiles,
+      fprintf(stdout, "[%'d / %'zu (%.1f%% done) [thread: %d] %.0fdcm/sec/thread]\n", file, nfiles,
               100.0 * (file / (1.0 * nfiles)), params->thread + 1,
               (1.0 * file) / (now - start).total_seconds());
     }
@@ -853,7 +854,7 @@ bool sortStackFunc(std::pair<std::string, std::unordered_map<std::string, std::s
   if (got != i2.second.end() && got->second.length() > 0) {
     SliceLocation2 = std::stof(got->second);
   }
-  fprintf(stdout, "SliceLocation1: %f SliceLocation2: %f\n", SliceLocation1, SliceLocation2);
+  // fprintf(stdout, "SliceLocation1: %f SliceLocation2: %f\n", SliceLocation1, SliceLocation2);
   return (SliceLocation1 - SliceLocation2);
 }
 
@@ -997,9 +998,67 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
         }
       }
     }
-    fprintf(stdout, "found %u DICOM images\n", countFiles);
+    fprintf(stdout, "found %'u DICOM images\n", countFiles);
     // We have the allSliceData together now. They are sorted so we can pick the center slice for
     // each volume.
+    for (std::unordered_map<
+             std::string, // StudyInstanceUID
+             std::unordered_map<
+                 std::string,                       // SeriesInstanceUID
+                 std::vector<std::pair<std::string, // SOPInstanceUID
+                                       std::unordered_map<std::string, std::string>>>>>::iterator
+             study_it = allSliceData.begin();
+         study_it != allSliceData.end(); ++study_it) {
+      std::string StudyInstanceUID = study_it->first;
+      for (std::unordered_map<
+               std::string,                       // SeriesInstanceUID
+               std::vector<std::pair<std::string, // SOPInstanceUID
+                                     std::unordered_map<std::string, std::string>>>>::iterator
+               series_it = study_it->second.begin();
+           series_it != study_it->second.end(); ++series_it) {
+        std::string SeriesInstanceUID = series_it->first;
+        int l = series_it->second.size();
+        if (l >= 0) {
+          // select slice in the middle
+          int middle = static_cast<int>(l / 2);
+          std::string filename = series_it->second[middle].second.find("filename")->second;
+          std::string SOPInstanceUID = series_it->first;
+          // fprintf(stdout, "filename: %s\n", filename.c_str());
+          // create the folders for the symbolic links as well
+          struct stat buffer;
+          std::string dn;
+          dn = params[0].outputdir;
+          if (!(stat(dn.c_str(), &buffer) == 0)) {
+            // DIR *dir = opendir(dn.c_str());
+            // if ( ENOENT == errno)	{
+            mkdir(dn.c_str(), 0777);
+          }
+          dn = params[0].outputdir + "/images";
+          if (!(stat(dn.c_str(), &buffer) == 0)) {
+            // DIR *dir = opendir(dn.c_str());
+            // if ( ENOENT == errno)	{
+            mkdir(dn.c_str(), 0777);
+          }
+          dn = params[0].outputdir + "/images/" + StudyInstanceUID;
+          if (!(stat(dn.c_str(), &buffer) == 0)) {
+            // DIR *dir = opendir(dn.c_str());
+            // if ( ENOENT == errno)	{
+            mkdir(dn.c_str(), 0777);
+          }
+
+          dn = params[0].outputdir + "/images/" + StudyInstanceUID + "/" + SeriesInstanceUID;
+          if (!(stat(dn.c_str(), &buffer) == 0)) {
+            // DIR *dir = opendir(dn.c_str());
+            // if ( ENOENT == errno)	{
+            mkdir(dn.c_str(), 0777);
+          }
+          // create the symbolic links
+          std::string fn = params[0].outputdir + "/images/" + StudyInstanceUID + "/" +
+                           SeriesInstanceUID + "/" + SOPInstanceUID + ".dcm";
+          symlink(filename.c_str(), fn.c_str());
+        }
+      }
+    }
   }
 
   // we can access the per thread storage of study instance uid mappings now
@@ -1093,7 +1152,7 @@ std::vector<std::string> listFilesSTD(const std::string &path) {
   for (boost::filesystem::recursive_directory_iterator end, dir(path); dir != end; ++dir) {
     // std::cout << *dir << "\n";  // full path
     if (is_regular_file(dir->path())) {
-      // reasing zip and tar files might take a lot of time.. filter out here
+      // reading zip and tar files might take a lot of time.. filter out here
       extension = boost::filesystem::extension(dir->path());
       if (extension == ".tar" || extension == ".gz" || extension == ".zip" || extension == ".tgz" ||
           extension == ".bz2")
@@ -1109,7 +1168,7 @@ std::vector<std::string> listFilesSTD(const std::string &path) {
 }
 
 int main(int argc, char *argv[]) {
-
+  setlocale(LC_NUMERIC, "en_US.utf-8");
   argc -= (argc > 0);
   argv += (argc > 0); // skip program name argv[0] if present
 
