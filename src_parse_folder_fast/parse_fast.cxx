@@ -1001,6 +1001,25 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
     fprintf(stdout, "found %'u DICOM images\n", countFiles);
     // We have the allSliceData together now. They are sorted so we can pick the center slice for
     // each volume.
+
+    // write all dcm files into a cache file
+    struct stat buffer;
+    std::string dn;
+    dn = params[0].outputdir;
+    if (!(stat(dn.c_str(), &buffer) == 0)) {
+      // DIR *dir = opendir(dn.c_str());
+      // if ( ENOENT == errno)	{
+      mkdir(dn.c_str(), 0777);
+    }
+    dn = params[0].outputdir + "/images";
+    if (!(stat(dn.c_str(), &buffer) == 0)) {
+      // DIR *dir = opendir(dn.c_str());
+      // if ( ENOENT == errno)	{
+      mkdir(dn.c_str(), 0777);
+    }
+
+    FILE *fp = fopen((dn + "/convertToPNG.txt").c_str(), "w");
+
     for (std::unordered_map<
              std::string, // StudyInstanceUID
              std::unordered_map<
@@ -1025,40 +1044,24 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
           std::string SOPInstanceUID = series_it->first;
           // fprintf(stdout, "filename: %s\n", filename.c_str());
           // create the folders for the symbolic links as well
-          struct stat buffer;
-          std::string dn;
-          dn = params[0].outputdir;
-          if (!(stat(dn.c_str(), &buffer) == 0)) {
-            // DIR *dir = opendir(dn.c_str());
-            // if ( ENOENT == errno)	{
-            mkdir(dn.c_str(), 0777);
-          }
-          dn = params[0].outputdir + "/images";
-          if (!(stat(dn.c_str(), &buffer) == 0)) {
-            // DIR *dir = opendir(dn.c_str());
-            // if ( ENOENT == errno)	{
-            mkdir(dn.c_str(), 0777);
-          }
           dn = params[0].outputdir + "/images/" + StudyInstanceUID;
           if (!(stat(dn.c_str(), &buffer) == 0)) {
-            // DIR *dir = opendir(dn.c_str());
-            // if ( ENOENT == errno)	{
             mkdir(dn.c_str(), 0777);
           }
 
           dn = params[0].outputdir + "/images/" + StudyInstanceUID + "/" + SeriesInstanceUID;
           if (!(stat(dn.c_str(), &buffer) == 0)) {
-            // DIR *dir = opendir(dn.c_str());
-            // if ( ENOENT == errno)	{
             mkdir(dn.c_str(), 0777);
           }
           // create the symbolic links
           std::string fn = params[0].outputdir + "/images/" + StudyInstanceUID + "/" +
                            SeriesInstanceUID + "/" + SOPInstanceUID + ".dcm";
           symlink(filename.c_str(), fn.c_str());
+          fprintf(fp, "%s\n", fn.c_str());
         }
       }
     }
+    fclose(fp);
   }
 
   // we can access the per thread storage of study instance uid mappings now
