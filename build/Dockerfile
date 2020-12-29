@@ -29,7 +29,11 @@ RUN cd /var/www/html && rm index.html && git clone https://github.com/mmiv-cente
 
 # install libraries needed for compiling the accellerator
 RUN apt-get update && apt-get install -y libboost1.71-all-dev libxslt1-dev libgdcm-tools libvtkgdcm3.0 libboost1.71-dev libgdcm-dev \
-    && apt-get clean
+    && apt-get install -y cmake gcc g++ \
+    && apt-get clean \
+    && cd /var/www/html/src_parse_folder_fast \
+    && cmake . \
+    && make
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 EXPOSE 8888
