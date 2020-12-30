@@ -1018,7 +1018,7 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
       mkdir(dn.c_str(), 0777);
     }
 
-    FILE *fp = fopen((dn + "/convertToPNG.txt").c_str(), "w");
+    FILE *fp = fopen((params[0].outputdir + "/convertToPNG.txt").c_str(), "w");
 
     for (std::unordered_map<
              std::string, // StudyInstanceUID

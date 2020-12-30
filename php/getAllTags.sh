@@ -33,20 +33,20 @@ output="/var/www/html/php/data/$uid/"
 DCMDICTPATH=/usr/share/libdcmtk14/dicom.dic:/usr/share/libdcmtk14/private.dic
 #/usr/bin/findscu -v -aet FIONA -aec DICOM_QR_SCP --study -k "(0008,0052)=STUDY" -k "InstitutionName=$project" -k "PatientID" -k "StudyInstanceUID" -od "${od}/" -X +sr --repeat 2 vir-app5274.ihelse.net 7840
 
-# option 2, use the accellerator to make parsing the study faster
+# Use the accellerator to make parsing the study faster. This will (usually) pick the best slice in a volume.
 ACCELLERATOR="YES"
 if [ ${ACCELLERATOR} = "YES" ]; then
     # could take 20min...
-    /var/www/html/src_parse_folder_fast/ParseFast -i \"/data/${project}\" -o \"${output}\" -t 4
+    /var/www/html/src_parse_folder_fast/ParseFast -i "/data/${project}" -o "${output}" -t 4
     # now we still need to generate the image cache
-    if [ -e "/data/${project}/images/convertToPNG.txt" ]; then
+    if [ -e "${output}/convertToPNG.txt" ]; then
         # might be better if we do this using gnu-parallel
         while IFS="" read -r p || [ -n "$p" ]
         do
             StudyInstanceUID=$(basename $(dirname ${p}))
             SeriesInstanceUID=$(basename $(dirname $(dirname ${p})))
             ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${p}"
-        done < "/data/${project}/images/convertToPNG.txt"
+        done < "${output}/convertToPNG.txt"
     fi
 else 
     # instead use manual parsing using dcmtk - slower
