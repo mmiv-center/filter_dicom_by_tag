@@ -154,7 +154,7 @@ tmp="$(mktemp)"
 mv "$tmp" $infofilename
 rm "$tmp"
 
-./generateImageCache.sh ${uid} " " "force"
+./generateImageCache.sh ${uid} " " "force" " "
 
 # we can now make a copy of this projects data
 if [ ! -d "/var/www/html/php/project_cache/${project}/" ]; then
