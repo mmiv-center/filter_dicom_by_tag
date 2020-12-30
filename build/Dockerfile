@@ -4,7 +4,9 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y \
     && apt-get dist-upgrade -y \
-    && apt-get install -y apache2 apache2-utils wget emacs-nox htop less dcmtk git libapache2-mod-php jq imagemagick libcurl4-openssl-dev \
+    && apt-get install -y apache2 apache2-utils wget emacs-nox \
+    htop less dcmtk git libapache2-mod-php jq imagemagick \
+    libcurl4-openssl-dev openssl \
     && apt-get clean
 
 RUN apt-get install -y r-base \
