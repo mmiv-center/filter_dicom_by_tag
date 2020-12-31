@@ -12,7 +12,7 @@ fi
 uid="$1"
 project="$2"
 
-infofilename="data/${uid}/info.json"
+infofilename="/var/www/html/php/data/${uid}/info.json"
 if [ ! -f "$infofilename" ]; then
     echo "Error: info.json not found"
     pwd
@@ -28,7 +28,12 @@ rm "$tmp"
 
 
 # put results into this folder
-output="/var/www/html/php/data/$uid/"
+#output="/var/www/html/php/data/$uid/"
+# to speed up read time directly put results into the output folder
+output="/var/www/html/php/project_cache/${project}/"
+if [ ! -d "/var/www/html/php/project_cache/${project}/" ]; then
+    mkdir -p "/var/www/html/php/project_cache/${project}/"
+fi
 
 DCMDICTPATH=/usr/share/libdcmtk14/dicom.dic:/usr/share/libdcmtk14/private.dic
 #/usr/bin/findscu -v -aet FIONA -aec DICOM_QR_SCP --study -k "(0008,0052)=STUDY" -k "InstitutionName=$project" -k "PatientID" -k "StudyInstanceUID" -od "${od}/" -X +sr --repeat 2 vir-app5274.ihelse.net 7840
@@ -37,7 +42,7 @@ DCMDICTPATH=/usr/share/libdcmtk14/dicom.dic:/usr/share/libdcmtk14/private.dic
 ACCELLERATOR="YES"
 if [ ${ACCELLERATOR} = "YES" ]; then
     # could take 20min...
-    /var/www/html/src_parse_folder_fast/ParseFast -i "/data/${project}" -o "${output}" -t 4
+    /var/www/html/src_parse_folder_fast/ParseFast -i "/data/${project}" -o "${output}" -t 4 --infofile "${infofilename}"
     # now we still need to generate the image cache
     if [ -e "${output}/convertToPNG.txt" ]; then
         # might be better if we do this using gnu-parallel
@@ -45,7 +50,7 @@ if [ ${ACCELLERATOR} = "YES" ]; then
         do
             StudyInstanceUID=$(basename $(dirname ${p}))
             SeriesInstanceUID=$(basename $(dirname $(dirname ${p})))
-            ./generateImageCache.sh ${uid} ${StudyInstanceUID} ${SeriesInstanceUID} "${p}"
+            ./generateImageCache.sh ${output} ${StudyInstanceUID} ${SeriesInstanceUID} "${p}"
         done < "${output}/convertToPNG.txt"
     fi
 else 
@@ -154,12 +159,14 @@ tmp="$(mktemp)"
 mv "$tmp" $infofilename
 rm "$tmp"
 
-./generateImageCache.sh ${uid} " " "force" " "
+./generateImageCache.sh ${output} " " "force" " "
+
+# we don't need a copy now because the data is created in the cache folder
 
 # we can now make a copy of this projects data
-if [ ! -d "/var/www/html/php/project_cache/${project}/" ]; then
-    mkdir -p "/var/www/html/php/project_cache/${project}/"
-fi
+#if [ ! -d "/var/www/html/php/project_cache/${project}/" ]; then
+#    mkdir -p "/var/www/html/php/project_cache/${project}/"
+#fi
 # this will fail if we have many files - because the bash command buffer is too small
 #cp -R "${output}"* "/var/www/html/php/project_cache/${project}/"
-/usr/bin/rsync -a "${output}/" "/var/www/html/php/project_cache/${project}/"
+#cp -a "${output}/." "/var/www/html/php/project_cache/${project}/"

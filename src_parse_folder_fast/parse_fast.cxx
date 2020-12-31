@@ -60,8 +60,9 @@ struct threadparams {
   char *scalarpointer;
   std::string outputdir;
   bool byseries;
-  int thread;   // number of the current thread
-  int nthreads; // total number of threads
+  int thread;           // number of the current thread
+  int nthreads;         // total number of threads
+  std::string infofile; // path to the info.json file
   // each thread will store here the study instance uid (original and mapped)
   std::map<std::string, std::string> byThreadStudyInstanceUID;
   std::map<std::string, std::string> byThreadSeriesInstanceUID;
@@ -679,7 +680,7 @@ void *ReadFilesThread(void *voidparams) {
   bool infoFileExists = false;
   if (1 && params->thread == 0) {
     // check if the info file exists
-    std::string dn = params->outputdir + "/info.json";
+    std::string dn = params->infofile;
     struct stat buffer;
     if (!(stat(dn.c_str(), &buffer) == 0)) {
       infoFileExists = false;
@@ -688,11 +689,11 @@ void *ReadFilesThread(void *voidparams) {
     }
     if (infoFileExists) {
       // Load the json file in this ptree
-      pt::read_json((params->outputdir + "/info.json").c_str(), root);
+      pt::read_json(params->infofile.c_str(), root);
       // add the number of variables we will add for this thread
       root.put("total_num_participants", params->nfiles * params->nthreads);
       // write a copy now
-      pt::write_json((params->outputdir + "/info.json").c_str(), root);
+      pt::write_json(params->infofile.c_str(), root);
     }
   }
 
@@ -710,7 +711,7 @@ void *ReadFilesThread(void *voidparams) {
       if (params->thread == 0 && infoFileExists) {
         root.put("num_participant", file * params->nthreads);
         // write a copy now
-        pt::write_json((params->outputdir + "/info.json").c_str(), root);
+        pt::write_json(params->infofile.c_str(), root);
       }
     }
 
@@ -893,7 +894,7 @@ bool sortStackFunc(std::pair<std::string, std::unordered_map<std::string, std::s
 }
 
 void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bool byseries,
-               int numthreads, std::string storeMappingAsJSON) {
+               int numthreads, std::string storeMappingAsJSON, std::string infofile_path) {
   // \precondition: nfiles > 0
   assert(nfiles > 0);
 
@@ -950,6 +951,7 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
     params[thread].byseries = byseries;
     params[thread].thread = thread;
     params[thread].nthreads = nthreads;
+    params[thread].infofile = infofile_path;
     if (thread == nthreads - 1) {
       // There is slightly more files to process in this thread:
       params[thread].nfiles += nfiles % nthreads;
@@ -1156,6 +1158,7 @@ enum optionIndex {
   HELP,
   INPUT,
   OUTPUT,
+  INFOFILE,
   EXPORTANON,
   BYSERIES,
   NUMTHREADS,
@@ -1171,6 +1174,8 @@ const option::Descriptor usage[] = {
      "out a cached version of the files."},
     {INPUT, 0, "i", "input", Arg::Required, "  --input, -i  \tInput directory."},
     {OUTPUT, 0, "o", "output", Arg::Required, "  --output, -o  \tOutput directory."},
+    {INFOFILE, 0, "f", "infofile", Arg::Required,
+     "  --infofile, -f  \tPath to the info.json file for tracking."},
     {BYSERIES, 0, "b", "byseries", Arg::None,
      "  --byseries, -b  \tWrites each DICOM file into a separate directory "
      "by image series."},
@@ -1180,7 +1185,7 @@ const option::Descriptor usage[] = {
      "  --numthreads, -t  \tHow many threads should be used (default 4)."},
     {UNKNOWN, 0, "", "", Arg::None,
      "\nExamples:\n"
-     "  anonymize --input directory --output directory -b\n"
+     "  anonymize --input directory --output directory --infofile /data/bla/info.json -b\n"
      "  anonymize --help\n"},
     {0, 0, 0, 0, 0, 0}};
 
@@ -1234,6 +1239,7 @@ int main(int argc, char *argv[]) {
   int numthreads = 4;
   std::string projectname = "";
   std::string storeMappingAsJSON = "";
+  std::string infofile_path = "";
   for (int i = 0; i < parse.optionsCount(); ++i) {
     option::Option &opt = buffer[i];
     // fprintf(stdout, "Argument #%d is ", i);
@@ -1255,6 +1261,15 @@ int main(int argc, char *argv[]) {
         output = opt.arg;
       } else {
         fprintf(stdout, "--output needs a directory specified\n");
+        exit(-1);
+      }
+      break;
+    case INFOFILE:
+      if (opt.arg) {
+        // fprintf(stdout, "--output '%s'\n", opt.arg);
+        infofile_path = opt.arg;
+      } else {
+        fprintf(stdout, "--infofile needs a file name specified\n");
         exit(-1);
       }
       break;
@@ -1328,7 +1343,8 @@ int main(int argc, char *argv[]) {
     }
 
     // ReadFiles(nfiles, filenames, output.c_str(), numthreads, confidence, storeMappingAsJSON);
-    ReadFiles(nfiles, filenames, output.c_str(), byseries, numthreads, storeMappingAsJSON);
+    ReadFiles(nfiles, filenames, output.c_str(), byseries, numthreads, storeMappingAsJSON,
+              infofile_path);
     delete[] filenames;
   } else {
     // its a single file, process that
@@ -1342,7 +1358,8 @@ int main(int argc, char *argv[]) {
     const char **filenames = new const char *[1];
     filenames[0] = input.c_str();
     // ReadFiles(1, filenames, output.c_str(), 1, confidence, storeMappingAsJSON);
-    ReadFiles(1, filenames, output.c_str(), byseries, numthreads, storeMappingAsJSON);
+    ReadFiles(1, filenames, output.c_str(), byseries, numthreads, storeMappingAsJSON,
+              infofile_path);
   }
 
   return 0;
