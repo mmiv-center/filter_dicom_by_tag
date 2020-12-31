@@ -162,4 +162,4 @@ if [ ! -d "/var/www/html/php/project_cache/${project}/" ]; then
 fi
 # this will fail if we have many files - because the bash command buffer is too small
 #cp -R "${output}"* "/var/www/html/php/project_cache/${project}/"
-/usr/bin/rsync -a "${output}/*" "/var/www/html/php/project_cache/${project}/"
+/usr/bin/rsync -a "${output}/" "/var/www/html/php/project_cache/${project}/"
