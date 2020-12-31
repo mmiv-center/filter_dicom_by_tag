@@ -1,9 +1,9 @@
 function populateStudyInstanceUIDs() {
 	// pull the list of projects for the current user
-	jQuery.getJSON('php/getProjects.php', function(data) {
+	jQuery.getJSON('php/getProjects.php', function (data) {
 		jQuery('#project').children().remove();
 		jQuery('#project').append("<option></option>"); // add default
-	    	for (var i = 0; i < data.length; i++) {
+		for (var i = 0; i < data.length; i++) {
 			jQuery("#project").append("<option value=\"" + data[i]['record_id'] + "\">" + data[i]['record_id'] + "</option>");
 		}
 		jQuery('select').selectpicker('refresh');
@@ -187,7 +187,7 @@ function updateModel(current_model) {
 	jQuery('#content div.Series.a').removeClass('a');
 	jQuery('#content div.Series.b').removeClass('b');
 	jQuery('#share-world-button').attr('model-names', JSON.stringify(data['model_binary']));
-	
+
 	console.log("Got some data back from the model: " + JSON.stringify(data));
 	jQuery('#processing-time').text(data['processing_time'].toFixed(2) + "sec, training acc. = " + data['accuracy_percent'].toFixed(0) + "%");
 	if (typeof data['tree_image'] !== 'undefined') {
@@ -252,35 +252,35 @@ function updateModel(current_model) {
 		}
 		jQuery('#chat').val(erg2 + "; replacement if missing: " + erg);
 		jQuery('#chat').effect('highlight');
-		
+
 	} else
-	jQuery('#chat').val("no splits found for this run...");
+		jQuery('#chat').val("no splits found for this run...");
 	// now map all the found series to content-selected
 	//jQuery('#content-selected').find('div.Series').remove();	
-	jQuery('#content div.a,div.highlighted-human-a').each(function(a, b) {
+	jQuery('#content div.a,div.highlighted-human-a').each(function (a, b) {
 		var study = jQuery(b).parent().attr('id');
 		var series = jQuery(b).attr('id');
 		var escapedstudy = study.replace(/\./g, "\\.");
 		var escapedseries = series.replace(/\./g, "\\.");
 		jQuery('#content-selected').find('div#' + escapedstudy + "-s").append('<div class="Series" id="' + series + '-s">' +
-		'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
-		'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
-		'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
-		'<div class="SeriesDescription">' + jQuery(b).find('div.SeriesDescription').text() + '</div>' +
-		'<img src="' + jQuery(b).find('img').attr('src') + '" style="margin-left: ' + jQuery(b).find('img').css('margin-left') + '; margin-top: ' + jQuery(b).find('img').css('margin-top') + ';"/>' +
-		'</div>');
+			'<div class="modality">' + jQuery(b).find('div.modality').text() + '</div>' +
+			'<div class="numImages">' + jQuery(b).find('div.numImages').text() + '</div>' +
+			'<div class="SeriesNumber">' + jQuery(b).find('div.SeriesNumber').text() + '</div>' +
+			'<div class="SeriesDescription">' + jQuery(b).find('div.SeriesDescription').text() + '</div>' +
+			'<img src="' + jQuery(b).find('img').attr('src') + '" style="margin-left: ' + jQuery(b).find('img').css('margin-left') + '; margin-top: ' + jQuery(b).find('img').css('margin-top') + ';"/>' +
+			'</div>');
 	});
-	var numParticipants = [...new Set(jQuery.map(jQuery('#content div.bottom-back span'), function(a, i) {
+	var numParticipants = [...new Set(jQuery.map(jQuery('#content div.bottom-back span'), function (a, i) {
 		return jQuery(a).text();
 	}))].length;
 	var numSelectedStudies = 0;
-	jQuery.map(jQuery('#content-selected div.Study'), function(value, i) {
+	jQuery.map(jQuery('#content-selected div.Study'), function (value, i) {
 		if (jQuery(value).find('div.Series').length > 0)
-		numSelectedStudies++;
+			numSelectedStudies++;
 	});
 	jQuery('span.stats-general').text(" (" + numParticipants + " participant" + (numParticipants > 1 ? "s" : "") + ", " +
-	jQuery('#content div.Series').length + " imaging series in " +
-	jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
+		jQuery('#content div.Series').length + " imaging series in " +
+		jQuery('#content div.Study').length + " imaging stud" + (jQuery('#content div.Study').length > 1 ? "ies" : "y") + ")");
 	jQuery('span.stats').text(" " + jQuery('#content-selected div.Series').length + " series in " + numSelectedStudies + " stud" + (numSelectedStudies > 1 ? "ies" : "y") + "");
 	//jQuery('#message-text').text("Classification of " + data['class'].length + " image series resulted in " + jQuery('#content div.a').length + " matches.");
 }
@@ -295,7 +295,7 @@ function sendToClassifier() {
 		"predict": []
 	}; // we will need training and prediction (request prediction back - one-shot learning)
 
-	jQuery('#content').find('div.Series').each(function(a, b) {
+	jQuery('#content').find('div.Series').each(function (a, b) {
 		var type = "unknown";
 		if (jQuery(b).hasClass('highlighted-human-a') || jQuery(b).hasClass('highlighted-human-b')) {
 			// needs to go into training set - positive negative examples
@@ -330,30 +330,30 @@ function sendToClassifier() {
 	// TODO: we should only allow the last classification to continue
 	jQuery.post('php/ai01.php', {
 		data: JSON.stringify(data),
-			project: jQuery('#project').val(),
-			queryID: lastQueryID
+		project: jQuery('#project').val(),
+		queryID: lastQueryID
 	},
-	function(data) {
-		models_last_run = data;
-		current_model = 0; // set this in the interface
-		updateModel(current_model);
-	}, "json").fail(function() {
-		console.log("we did not get something back ... ");
-		alert("Error: There seems to be a problem with running the statistical analysis, please contact the developer.");
-	});
-	
+		function (data) {
+			models_last_run = data;
+			current_model = 0; // set this in the interface
+			updateModel(current_model);
+		}, "json").fail(function () {
+			console.log("we did not get something back ... ");
+			alert("Error: There seems to be a problem with running the statistical analysis, please contact the developer.");
+		});
+
 }
 
 function addThumbnails() {
-	jQuery.get('php/data/' + lastQueryID + '/imageIndex.txt', function(data) {
+	jQuery.get('php/data/' + lastQueryID + '/imageIndex.txt', function (data) {
 		// the order in this file indicates the order of images in the montage
-		var l = data.split("\n").map(function(a) {
+		var l = data.split("\n").map(function (a) {
 			return a.split("/").pop().replace(".png", "");
 		});
 		var imageURL = "/php/data/" + lastQueryID + "/imageMontage.jpg?_=" + Math.random();
 		var itemsProcessed = 0;
-		l.forEach(function(value, idx, ar) {
-					itemsProcessed++;
+		l.forEach(function (value, idx, ar) {
+			itemsProcessed++;
 			if (value.length > 0) {
 				// given the idx what is the image we look for?
 				// each image has a with of 60 * 32 (image size is 32x32)
@@ -368,7 +368,7 @@ function addThumbnails() {
 				//jQuery('#series_'+value+' img').attr('bla', idx);
 			}
 			if (itemsProcessed === ar.length) {
-				setTimeout(function() {
+				setTimeout(function () {
 					alignRight();
 				}, 100); // wait a little bit for the update on the screen
 			}
@@ -383,7 +383,7 @@ function checkQueryID() {
 
 	jQuery.getJSON('php/queryID.php', {
 		'ID': lastQueryID
-	}, function(data) {
+	}, function (data) {
 		var howmany = jQuery('#results').children().length; // how many series
 		jQuery('#content').show();
 		// tables can be large, we should only add new rows, so no remove first
@@ -417,7 +417,7 @@ function checkQueryID() {
 			jQuery('div.progress').hide();
 			addThumbnails();
 		}
-	}).fail(function(xhr, error, StatusMessage) {
+	}).fail(function (xhr, error, StatusMessage) {
 		console.log("query failed.. no JSON produced...");
 		// maybe it failed only once?
 		setTimeout(checkQueryID, 2000);
@@ -428,7 +428,7 @@ var stopQuery = false;
 var counter = 0;
 var startDateTime; // for tracking of time required to finish
 function checkFinished() {
-	jQuery.getJSON('php/data/' + lastQueryID + '/info.json', function(data) {
+	jQuery.getJSON('php/data/' + lastQueryID + '/info.json', function (data) {
 		if (typeof data['enddate'] != 'undefined') {
 			jQuery('#finished').addClass('finished');
 			stopQuery = true;
@@ -456,14 +456,14 @@ function checkFinished() {
 				dots += ".";
 			}
 
-			jQuery('#message-text').text("Scan for tags" + dots + " (" + data['num_participant'] + " of " + data['total_num_participants'] + " DICOM studies)");
+			jQuery('#message-text').text("Scan for tags" + dots + " (" + data['num_participant'] + " of " + data['total_num_participants'] + " DICOM images)");
 		}
 		setTimeout(checkFinished, 6000);
 	});
 }
 
 function alignRight() {
-	jQuery('#content div.Study').each(function(idx, value) {
+	jQuery('#content div.Study').each(function (idx, value) {
 		// console.log("we have row number: " + (idx % 3));
 		var height = jQuery(value).css('height');
 		var id = jQuery(value).attr('id');
@@ -476,16 +476,16 @@ function alignRight() {
 	// we should also sort the series by SeriesNumber - but this inserts them twice with the same ID
 	/*jQuery('#content div.Study').each(function(idx, value) {
 	jQuery(value).find('div.Series').sort(function(a,b) {
-	    return jQuery(a).find("div.SeriesNumber").text() - jQuery(b).find("div.SeriesNumber").text();
+		return jQuery(a).find("div.SeriesNumber").text() - jQuery(b).find("div.SeriesNumber").text();
 	}).appendTo(value);
-    }); */
+	}); */
 }
 
 var lastQueryID = "";
 var dicom_dict = {};
-jQuery(document).ready(function() {
-	
-	jQuery('#clearSelection').on('click', function() {
+jQuery(document).ready(function () {
+
+	jQuery('#clearSelection').on('click', function () {
 		jQuery('#content-selected div.Series').remove();
 		jQuery('#content div.Series.a').removeClass('a');
 		jQuery('#content div.Series.b').removeClass('b');
@@ -501,7 +501,7 @@ jQuery(document).ready(function() {
 		jQuery('#content div.highlighted-human-b').removeClass('highlighted-human-b');
 	});
 
-	jQuery('#content').on('click', 'div.Study', function() {
+	jQuery('#content').on('click', 'div.Study', function () {
 		if (jQuery(this).hasClass("selected")) {
 			jQuery(this).removeClass("selected");
 			return;
@@ -510,20 +510,20 @@ jQuery(document).ready(function() {
 		jQuery(this).addClass("selected");
 	});
 
-	jQuery('#bp_quick_jump').on('change', "#jump_to_ontology_id", function() {
+	jQuery('#bp_quick_jump').on('change', "#jump_to_ontology_id", function () {
 		console.log("a search happened");
 		var concept_id = jQuery('#jump_to_concept_id').val();
 		var ontology_id = jQuery('#jump_to_ontology_id').val();
 		// use the API key for the ClassifyDICOMSeries project from BioPortals
 		jQuery('#BP_search_box').attr('title', ""); // reset the title before trying to get another
-		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id) + "?apikey=c6dfe87e-50eb-4b32-b044-86511dbe0b5d", function(data) {
+		jQuery.getJSON("http://data.bioontology.org/ontologies/" + ontology_id + "/classes/" + encodeURIComponent(concept_id) + "?apikey=c6dfe87e-50eb-4b32-b044-86511dbe0b5d", function (data) {
 			console.log("got data back: " + JSON.stringify(data));
 			// the value we are looking for is in Definition
 			jQuery('#BP_search_box').attr('title', data['definition'][0]);
 		});
 	});
 
-	jQuery('#allowCachedVersion').on('change', function() {
+	jQuery('#allowCachedVersion').on('change', function () {
 		var allow = jQuery('#allowCachedVersion').prop('checked');
 		try {
 			localStorage.setItem('allowCachedVersion', JSON.stringify(allow));
@@ -539,11 +539,11 @@ jQuery(document).ready(function() {
 	} catch (e) {
 		console.log("Warning: no localStorage");
 	}
-	jQuery('#handle-name').on('change', function() {
+	jQuery('#handle-name').on('change', function () {
 		var name = jQuery('#handle-name').val();
 		try {
 			localStorage.setItem('handle-name', JSON.stringify(name));
-		} catch(e) {
+		} catch (e) {
 			console.log("Warning: no localStorage");
 		}
 	});
@@ -553,35 +553,35 @@ jQuery(document).ready(function() {
 		if (handle !== null) {
 			jQuery('#handle-name').val(JSON.parse(handle));
 		}
-	} catch(e) {
+	} catch (e) {
 		console.log("Warning: no localStorage");
-	}    
-    
-    jQuery('#share-world-button').on('click', function() {
-	var handle = jQuery('#handle-name').val();
-	var name = jQuery('#BP_search_box').val();
-	var models = jQuery('#share-world-button').attr('model-names');
-	if (name == "") {
-	    console.log("Info: a name for the export is not required, nor a handle");
 	}
-	jQuery.getJSON('/php/shareModel.php', { name: name, handle: handle, models: models }, function(data) {
-	    console.log("got back: " + JSON.stringify(data));
-	});
-    });
 
-        jQuery('#processing-time').on('click', function() {
+	jQuery('#share-world-button').on('click', function () {
+		var handle = jQuery('#handle-name').val();
+		var name = jQuery('#BP_search_box').val();
+		var models = jQuery('#share-world-button').attr('model-names');
+		if (name == "") {
+			console.log("Info: a name for the export is not required, nor a handle");
+		}
+		jQuery.getJSON('/php/shareModel.php', { name: name, handle: handle, models: models }, function (data) {
+			console.log("got back: " + JSON.stringify(data));
+		});
+	});
+
+	jQuery('#processing-time').on('click', function () {
 		// display the decision tree as a graphic
 		jQuery('#tree-modal').modal('show');
 	});
 
-	jQuery('#full-export').on('click', function() {
+	jQuery('#full-export').on('click', function () {
 		var name = jQuery('#export-name').val();
 		if (name.length == 0) {
 			name = "selection";
 		}
 
 		var to_export = {};
-		jQuery('#content-selected').find('div.Series').each(function(i, a) {
+		jQuery('#content-selected').find('div.Series').each(function (i, a) {
 			var SeriesInstanceUID = jQuery(a).attr('id').replace("-s", "").replace("series_", "");
 			var StudyInstanceUID = jQuery(a).parent().attr('id').replace("-s", "").replace("study_", "");
 			if (typeof to_export[StudyInstanceUID] === 'undefined')
@@ -592,17 +592,17 @@ jQuery(document).ready(function() {
 			name: name,
 			id: lastQueryID,
 			to_export: JSON.stringify(to_export)
-		}, function(data) {
+		}, function (data) {
 			// should be in the background.. may take a long time
 			console.log("ok, is running now");
 			alert(data['message']);
 		}, 'json');
 	});
 
-	jQuery('.download-selected').on('click', function() {
+	jQuery('.download-selected').on('click', function () {
 		// download a spreadsheet with the series instance uid's from research PACS
 		var content = "SeriesInstanceUID,StudyInstanceUID\n";
-		jQuery('#content-selected').find('div.Series').each(function(i, a) {
+		jQuery('#content-selected').find('div.Series').each(function (i, a) {
 			var SeriesInstanceUID = jQuery(a).attr('id').replace("-s", "").replace("series_", "");
 			var StudyInstanceUID = jQuery(a).parent().attr('id').replace("-s", "").replace("study_", "");
 			content = content + SeriesInstanceUID + "," + StudyInstanceUID + "\n";
@@ -622,24 +622,24 @@ jQuery(document).ready(function() {
 	});
 
 	// get the DICOM dictionary
-	jQuery.getJSON('js/StandardDICOMElements.json', function(data) {
+	jQuery.getJSON('js/StandardDICOMElements.json', function (data) {
 		dicom_dict = data;
 	});
 
-	jQuery(window).resize(function() {
+	jQuery(window).resize(function () {
 		alignRight();
 	});
 
 	if (typeof calledQueryID != 'undefined') {
 		lastQueryID = calledQueryID;
-		setTimeout(function() {
+		setTimeout(function () {
 			setTimeout(checkQueryID, 2000);
 			setTimeout(checkFinished, 10000);
 		}, 10);
 	}
 
 	populateStudyInstanceUIDs();
-	jQuery('#project').on('change', function() {
+	jQuery('#project').on('change', function () {
 		console.log("change project to " + jQuery(this).val());
 		jQuery('#model_nav').children().remove();
 		jQuery('#finished').removeClass('finished');
@@ -659,7 +659,7 @@ jQuery(document).ready(function() {
 		jQuery.getJSON('php/pullTags.php', {
 			'project': project,
 			'allowCache': allowCache
-		}, function(data) {
+		}, function (data) {
 			lastQueryID = data.ID;
 			stopQuery = false;
 			setTimeout(checkQueryID, 2000);
@@ -668,17 +668,17 @@ jQuery(document).ready(function() {
 	});
 
 	// for touch devices we do a touch for click and a taphold for shift-click (right mouse)
-	jQuery('#content').on('touch', 'div.Series', function(e) {
+	jQuery('#content').on('touch', 'div.Series', function (e) {
 		jQuery(this).trigger('click');
 	});
 
-	jQuery('#content').on('taphold', 'div.Series', function(e) {
+	jQuery('#content').on('taphold', 'div.Series', function (e) {
 		var shiftClick = jQuery.Event('click');
 		shiftClick.shiftKey = true;
 		jQuery(this).trigger(shiftClick);
 	});
 
-	jQuery('#content').on('click', 'div.Series', function(e) {
+	jQuery('#content').on('click', 'div.Series', function (e) {
 		// console.log(jQuery(this).attr('data'));
 		var studyinstanceuid = jQuery(this).parent().attr('id');
 		var seriesinstanceuid = jQuery(this).attr('id');

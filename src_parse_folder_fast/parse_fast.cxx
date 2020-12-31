@@ -60,7 +60,8 @@ struct threadparams {
   char *scalarpointer;
   std::string outputdir;
   bool byseries;
-  int thread; // number of the thread
+  int thread;   // number of the current thread
+  int nthreads; // total number of threads
   // each thread will store here the study instance uid (original and mapped)
   std::map<std::string, std::string> byThreadStudyInstanceUID;
   std::map<std::string, std::string> byThreadSeriesInstanceUID;
@@ -689,7 +690,7 @@ void *ReadFilesThread(void *voidparams) {
       // Load the json file in this ptree
       pt::read_json((params->outputdir + "/info.json").c_str(), root);
       // add the number of variables we will add for this thread
-      root.put("total_num_participants", params->nfiles);
+      root.put("total_num_participants", params->nfiles * params->nthreads);
       // write a copy now
       pt::write_json((params->outputdir + "/info.json").c_str(), root);
     }
@@ -707,7 +708,7 @@ void *ReadFilesThread(void *voidparams) {
               100.0 * (file / (1.0 * nfiles)), params->thread + 1,
               (1.0 * file) / (now - start).total_seconds());
       if (params->thread == 0 && infoFileExists) {
-        root.put("num_participant", file);
+        root.put("num_participant", file * params->nthreads);
         // write a copy now
         pt::write_json((params->outputdir + "/info.json").c_str(), root);
       }
@@ -948,6 +949,7 @@ void ReadFiles(size_t nfiles, const char *filenames[], const char *outputdir, bo
     params[thread].nfiles = partition;
     params[thread].byseries = byseries;
     params[thread].thread = thread;
+    params[thread].nthreads = nthreads;
     if (thread == nthreads - 1) {
       // There is slightly more files to process in this thread:
       params[thread].nfiles += nfiles % nthreads;
@@ -1185,6 +1187,7 @@ const option::Descriptor usage[] = {
 std::vector<std::string> listFilesSTD(const std::string &path) {
   std::vector<std::string> files;
   std::string extension;
+
   for (boost::filesystem::recursive_directory_iterator end, dir(path); dir != end; ++dir) {
     // std::cout << *dir << "\n";  // full path
     if (is_regular_file(dir->path())) {
