@@ -41,6 +41,8 @@
 
 #include "boost/date_time.hpp"
 #include "boost/filesystem.hpp"
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <chrono>
 #include <locale.h>
 #include <map>
@@ -48,6 +50,9 @@
 #include <regex>
 #include <stdio.h>
 #include <thread>
+
+// Short alias for this namespace
+namespace pt = boost::property_tree;
 
 struct threadparams {
   const char **filenames;
@@ -667,6 +672,29 @@ static int PrintCSA(const std::string &filename, std::stringstream &os) {
 void *ReadFilesThread(void *voidparams) {
   threadparams *params = static_cast<threadparams *>(voidparams);
 
+  // If we are the first thread we can store some debug info in info.json (progress-bar)
+  // Create a root
+  pt::ptree root;
+  bool infoFileExists = false;
+  if (1 && params->thread == 0) {
+    // check if the info file exists
+    std::string dn = params->outputdir + "/info.json";
+    struct stat buffer;
+    if (!(stat(dn.c_str(), &buffer) == 0)) {
+      infoFileExists = false;
+    } else {
+      infoFileExists = true;
+    }
+    if (infoFileExists) {
+      // Load the json file in this ptree
+      pt::read_json((params->outputdir + "/info.json").c_str(), root);
+      // add the number of variables we will add for this thread
+      root.put("total_num_participants", params->nfiles);
+      // write a copy now
+      pt::write_json((params->outputdir + "/info.json").c_str(), root);
+    }
+  }
+
   int res = 0;
   const size_t nfiles = params->nfiles;
   boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
@@ -678,6 +706,11 @@ void *ReadFilesThread(void *voidparams) {
       fprintf(stdout, "[%'d / %'zu (%.1f%% done) [thread: %d] %.0fdcm/sec/thread]\n", file, nfiles,
               100.0 * (file / (1.0 * nfiles)), params->thread + 1,
               (1.0 * file) / (now - start).total_seconds());
+      if (params->thread == 0 && infoFileExists) {
+        root.put("num_participant", file);
+        // write a copy now
+        pt::write_json((params->outputdir + "/info.json").c_str(), root);
+      }
     }
 
     std::stringstream os;
