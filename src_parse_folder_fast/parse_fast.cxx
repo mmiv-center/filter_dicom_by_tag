@@ -765,15 +765,11 @@ void *ReadFilesThread(void *voidparams) {
     std::string dn = params->outputdir + "/" + seriesdirname;
     struct stat buffer;
     if (!(stat(dn.c_str(), &buffer) == 0)) {
-      // DIR *dir = opendir(dn.c_str());
-      // if ( ENOENT == errno)	{
       mkdir(dn.c_str(), 0777);
     }
     // create the folders for the symbolic links as well
     dn = params->outputdir + "/" + seriesdirname + "/" + filenamestring;
     if (!(stat(dn.c_str(), &buffer) == 0)) {
-      // DIR *dir = opendir(dn.c_str());
-      // if ( ENOENT == errno)	{
       mkdir(dn.c_str(), 0777);
     }
     // create the symbolic links
@@ -784,7 +780,7 @@ void *ReadFilesThread(void *voidparams) {
     fn = params->outputdir + "/" + seriesdirname + "/" + filenamestring + ".cache";
     // if the cache exists already, don't write again
     struct stat stat_buffer;
-    if (stat(fn.c_str(), &stat_buffer) == 0) {
+    if (!(stat(fn.c_str(), &stat_buffer) == 0)) {
       fprintf(stdout, "[%d] write to cache file: %s\n", params->thread, fn.c_str());
       std::string outfilename(fn);
       std::ofstream outFile;
