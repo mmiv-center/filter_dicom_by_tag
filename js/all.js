@@ -345,12 +345,13 @@ function sendToClassifier() {
 }
 
 function addThumbnails() {
-	jQuery.get('php/data/' + lastQueryID + '/imageIndex.txt', function (data) {
+	var project = jQuery('#project').val();
+	jQuery.get('php/project_cache/' + project + '/imageIndex.txt', function (data) {
 		// the order in this file indicates the order of images in the montage
 		var l = data.split("\n").map(function (a) {
 			return a.split("/").pop().replace(".png", "");
 		});
-		var imageURL = "/php/data/" + lastQueryID + "/imageMontage.jpg?_=" + Math.random();
+		var imageURL = "/php/project_cache/" + project + "/imageMontage.jpg?_=" + Math.random();
 		var itemsProcessed = 0;
 		l.forEach(function (value, idx, ar) {
 			itemsProcessed++;
