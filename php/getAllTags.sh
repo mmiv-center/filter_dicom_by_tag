@@ -48,8 +48,8 @@ if [ ${ACCELLERATOR} = "YES" ]; then
         # might be better if we do this using gnu-parallel
         while IFS="" read -r p || [ -n "$p" ]
         do
-            StudyInstanceUID=$(basename $(dirname ${p}))
-            SeriesInstanceUID=$(basename $(dirname $(dirname ${p})))
+            SeriesInstanceUID=$(basename $(dirname ${p}))
+            StudyInstanceUID=$(basename $(dirname $(dirname ${p})))
             ./generateImageCache.sh ${output} ${StudyInstanceUID} ${SeriesInstanceUID} "${p}"
         done < "${output}/convertToPNG.txt"
     fi
