@@ -701,12 +701,19 @@ jQuery(document).ready(function () {
 		// get a classification based on the selected subsets
 		sendToClassifier();
 	});
-	jQuery('#content-selected').on('click', 'div.Series', function () {
+	jQuery('#content-selected').on('click', 'div.Series', function (e) {
 		// If someone selects an icon we need to un-select it. We can  do this by just triggering
 		// a click on the corresponding icon on the left.
+		// If the user Shift+click we add them to removed, otherwise just unselect
 		var id = jQuery(this).attr('id');
 		id = id.replace("-s", "");
 		var id_escaped = id.replace(/\./g, "\\.");
-		jQuery("#" + id_escaped).trigger('click');
+		if (e.shiftKey) {
+			var shiftClick = jQuery.Event('click');
+			shiftClick.shiftKey = true;
+			jQuery("#" + id_escaped).trigger(shiftClick);
+		} else {
+			jQuery("#" + id_escaped).trigger("click");
+		}
 	});
 });
