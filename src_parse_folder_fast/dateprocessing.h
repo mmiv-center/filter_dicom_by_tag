@@ -1,7 +1,8 @@
 #ifndef INCLUDE_DATEPROCESSING_HPP_
 #define INCLUDE_DATEPROCESSING_HPP_
 
-#include <sys/time.h>
+//#include <sys/time.h>
+#include <ctime>
 
 struct sdate {
   long y;

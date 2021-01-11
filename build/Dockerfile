@@ -4,7 +4,9 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y \
     && apt-get dist-upgrade -y \
-    && apt-get install -y apache2 apache2-utils wget emacs-nox htop less dcmtk git libapache2-mod-php jq imagemagick libcurl4-openssl-dev \
+    && apt-get install -y apache2 apache2-utils wget emacs-nox \
+    htop less dcmtk git libapache2-mod-php jq imagemagick \
+    libcurl4-openssl-dev libssl-dev rsync \
     && apt-get clean
 
 RUN apt-get install -y r-base \
@@ -26,6 +28,14 @@ RUN cd /var/www/html && rm index.html && git clone https://github.com/mmiv-cente
     && sed -i 's/128M/2048M/g' /etc/php/7.4/apache2/php.ini \
     && sed -i 's/max_execution_time = 30/max_execution_time = 240/' /etc/php/7.4/apache2/php.ini \
     && sed -i 's/16KP/32KP/g' /etc/ImageMagick-6/policy.xml
+
+# install libraries needed for compiling the accellerator
+RUN apt-get update && apt-get install -y libboost1.71-all-dev libxslt1-dev libgdcm-tools libvtkgdcm3.0 libboost1.71-dev libgdcm-dev \
+    && apt-get install -y cmake gcc g++ \
+    && apt-get clean \
+    && cd /var/www/html/src_parse_folder_fast \
+    && cmake . \
+    && make
 
 CMD ["apache2ctl", "-D", "FOREGROUND"]
 EXPOSE 8888
