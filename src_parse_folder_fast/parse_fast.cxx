@@ -491,8 +491,12 @@ void *ReadFilesThread(void *voidparams) {
 
     // std::string fn = params->outputdir + "/" + filenamestring + ".cache";
     // use the series instance uid as a directory name
-    std::string dn = params->outputdir + "/" + seriesdirname;
+    std::string dn = params->outputdir;
     struct stat buffer;
+    if (!(stat(dn.c_str(), &buffer) == 0)) {
+      mkdir(dn.c_str(), 0777);
+    }
+    dn = params->outputdir + "/" + seriesdirname;
     if (!(stat(dn.c_str(), &buffer) == 0)) {
       mkdir(dn.c_str(), 0777);
     }
