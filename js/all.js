@@ -485,6 +485,12 @@ function alignRight() {
 var lastQueryID = "";
 var dicom_dict = {};
 jQuery(document).ready(function () {
+	jQuery.getJSON('php/checkPermissions.php', function (data) {
+		// show the permission errors, in case there are any...
+		if (Object.keys(data).length > 0) {
+			alert("We found some errors in your configuration. Please check: " + JSON.stringify(data));
+		}
+	});
 
 	jQuery('#clearSelection').on('click', function () {
 		jQuery('#content-selected div.Series').remove();
