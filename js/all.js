@@ -719,7 +719,14 @@ jQuery(document).ready(function () {
 			shiftClick.shiftKey = true;
 			jQuery("#" + id_escaped).trigger(shiftClick);
 		} else {
-			jQuery("#" + id_escaped).trigger("click");
+			// An image can be on the right hand (selected) side
+			// because its selected by hand or because the model
+			// thinks it should be there.
+			// In both cases the image should be marked on the left
+			// hand side as red - hate selection.
+			jQuery("#" + id_escaped).removeClass('highlighted-human-a'); // not needed
+			jQuery("#" + id_escaped).addClass('highlighted-human-b'); // needed
+			//jQuery("#" + id_escaped).trigger("click");
 		}
 	});
 });
