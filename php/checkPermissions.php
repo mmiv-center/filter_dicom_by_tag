@@ -32,8 +32,9 @@
         $data["exports_folder"] = "Error: the exports folder ".$exports_folder." is not writable.";
     } else {
         $test_file = $exports_folder."/test.txt";
+        touch($test_file);
         if (!file_exists($test_file)) {
-            $data["exports_folder"] = "Error: we tried to write a file to the cache folder ".$exports_folder." but the file was not readable afterwards.";
+            $data["exports_folder"] = "Error: we tried to write a file to the exports folder ".$exports_folder." but the file was not readable afterwards.";
         } else {
             unlink($test_file);
         }
