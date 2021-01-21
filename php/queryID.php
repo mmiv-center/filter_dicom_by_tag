@@ -53,7 +53,8 @@ if (!file_exists($infofn)) {
   exit();
 }
 $config = json_decode(file_get_contents($infofn), TRUE);
-$cache_path = 'data/'.$uid.'/*/*.cache';
+$project_name = $config["project"];
+$cache_path = 'project_cache/'.$project_name.'/*/*.cache';
 if (isset($config['cache_path'])) {
     $p = $config['cache_path'];
     if (is_dir($p)) {
