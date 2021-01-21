@@ -17,6 +17,7 @@ fi
 name=`jq -r ".name" "${folder}"`
 output=`jq -r ".output" "${folder}"`
 id=`jq -r ".id" "${folder}"`
+project_name=`jq -r ".project" "${folder}"`
 echo "OK, we are ready to start processing on the information in ${folder} (${output})."
 
 tmp="$(mktemp)"
@@ -45,7 +46,7 @@ for row in $(jq -r '.data | @base64' "${folder}"); do
                 mkdir -p "${p}"
             fi
             c=$(( c + 1 ))
-            /usr/bin/cp -L -R "/var/www/html/php/data/${id}/${StudyInstanceUID}/${v}/"* "${p}/"
+            /usr/bin/cp -L -R "/var/www/html/php/project_cache/${project_name}/${StudyInstanceUID}/${v}/"* "${p}/"
             # store the number of exported image series
             tmp="$(mktemp)"
             /usr/bin/jq '. |= .+ { "num_exported": "'"${c}"'" }' "$folder" > "$tmp"
