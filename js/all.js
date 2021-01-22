@@ -598,6 +598,7 @@ jQuery(document).ready(function () {
 		jQuery.post('php/exportAsFolders.php', {
 			name: name,
 			id: lastQueryID,
+			project: jQuery('#project').val(),
 			to_export: JSON.stringify(to_export)
 		}, function (data) {
 			// should be in the background.. may take a long time
