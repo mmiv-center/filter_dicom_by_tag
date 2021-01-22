@@ -725,7 +725,9 @@ jQuery(document).ready(function () {
 			// In both cases the image should be marked on the left
 			// hand side as red - hate selection.
 			jQuery("#" + id_escaped).removeClass('highlighted-human-a'); // not needed
-			jQuery("#" + id_escaped).addClass('highlighted-human-b'); // needed
+			var shiftClick = jQuery.Event('click');
+			shiftClick.shiftKey = true;
+			jQuery("#" + id_escaped).trigger(shiftClick);
 			//jQuery("#" + id_escaped).trigger("click");
 		}
 	});
